@@ -6,7 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Users, Play, Settings, BarChart, Square, Activity, Trophy, Loader2 } from "lucide-react";
-import { pusherClient } from "@/lib/pusher";
+import { getPusherClient } from "@/lib/pusherClient";
 import { useToast } from "@/hooks/use-toast";
 
 type Player = {
@@ -60,6 +60,9 @@ export default function TeacherDashboard() {
       fetchSession();
       
       // 3. Subscribe to Pusher
+      const pusherClient = getPusherClient();
+      if (!pusherClient) return;
+
       const channel = pusherClient.subscribe(`session-${sessionId}`);
       
       channel.bind('player-joined', (data: { participant: Player }) => {
