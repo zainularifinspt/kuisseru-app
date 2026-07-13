@@ -6,6 +6,7 @@ import { Trophy } from "lucide-react";
 import { motion } from "framer-motion";
 
 export type LeaderboardUser = {
+  id?: string;
   rank: number;
   nickname: string;
   score: number;
