@@ -7,7 +7,7 @@ import { eq } from 'drizzle-orm';
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 
-export async function addQuestion(sessionId: string, questionContent: string, questionOptions: {text: string, isCorrect: boolean}[]) {
+export async function addQuestion(sessionId: string, questionContent: string, questionOptions: {text: string, isCorrect: boolean}[], timeLimit: number = 1) {
   try {
     const session = await auth.api.getSession({
         headers: await headers()
@@ -24,6 +24,7 @@ export async function addQuestion(sessionId: string, questionContent: string, qu
       id: questionId,
       content: questionContent,
       quizSessionId: sessionId,
+      timeLimit: timeLimit,
     });
     
     // Add the options

@@ -26,6 +26,7 @@ export default function TeacherDashboard() {
   const [quizStatus, setQuizStatus] = useState<'menunggu' | 'berjalan' | 'selesai'>('menunggu');
   const [isLoading, setIsLoading] = useState(true);
   const [sessionTitle, setSessionTitle] = useState("");
+  const [totalQuestions, setTotalQuestions] = useState(0);
   const questionIndex = 1; // Dummy for now, can be fetched if needed
 
   useEffect(() => {
@@ -39,9 +40,10 @@ export default function TeacherDashboard() {
           return;
         }
         const data = await res.json();
-        setSessionTitle(data.title);
-        if (data.status === 'active') setQuizStatus('berjalan');
-        else if (data.status === 'finished') setQuizStatus('selesai');
+        setSessionTitle(data.session.title);
+        setTotalQuestions(data.stats.totalQuestions);
+        if (data.session.status === 'active') setQuizStatus('berjalan');
+        else if (data.session.status === 'finished') setQuizStatus('selesai');
         
         // 2. Fetch Participants
         const partRes = await fetch(`/api/quiz-sessions/${sessionId}/participants`);
@@ -134,7 +136,7 @@ export default function TeacherDashboard() {
           </div>
           
           <div className="flex flex-wrap items-center gap-3">
-            <Button variant="outline" className="rounded-full shadow-sm" onClick={() => router.push(`/teacher/session/${sessionId}/qr`)}>
+            <Button variant="outline" className="rounded-full shadow-sm" onClick={() => window.open(`/teacher/session/${sessionId}/qr`, '_blank')}>
               Lihat QR Code
             </Button>
             
@@ -215,9 +217,6 @@ export default function TeacherDashboard() {
                     <Activity className="w-5 h-5 text-indigo-500 animate-pulse" />
                     Pemantauan Kuis Berjalan
                   </CardTitle>
-                  <CardDescription>
-                    Posisi sementara (Soal ke-{Math.floor(questionIndex)} dari 10)
-                  </CardDescription>
                 </CardHeader>
                 <CardContent className="bg-slate-50/50 p-6 min-h-[300px]">
                   <div className="space-y-3">
@@ -277,7 +276,7 @@ export default function TeacherDashboard() {
               </div>
               <div className="bg-slate-50 p-4 rounded-xl flex items-center justify-between border border-slate-200">
                 <span className="text-slate-700 font-medium">Total Soal</span>
-                <span className="text-xl font-black text-slate-600">10</span>
+                <span className="text-xl font-black text-slate-600">{totalQuestions}</span>
               </div>
               
               <div className="mt-4 p-4 border-2 border-dashed border-slate-200 rounded-xl text-center">

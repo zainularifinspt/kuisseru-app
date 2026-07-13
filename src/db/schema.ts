@@ -56,6 +56,7 @@ export const questions = sqliteTable('questions', {
   id: text('id').primaryKey(),
   content: text('content').notNull(),
   quizSessionId: text('quiz_session_id').references(() => quizSessions.id).notNull(),
+  timeLimit: integer('time_limit').notNull().default(1), // In minutes
   createdAt: integer('created_at', { mode: 'timestamp' }).notNull().$defaultFn(() => new Date()),
   updatedAt: integer('updated_at', { mode: 'timestamp' }).notNull().$defaultFn(() => new Date()),
 });

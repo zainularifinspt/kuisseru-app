@@ -15,6 +15,7 @@ import { getPusherClient } from "@/lib/pusherClient";
 type Question = {
   id: string;
   content: string;
+  timeLimit?: number;
   options: { id: string; text: string }[];
 };
 
@@ -39,6 +40,9 @@ function QuizContent() {
   const [currentScore, setCurrentScore] = useState(0);
   const [liveLeaderboard, setLiveLeaderboard] = useState<LeaderboardUser[]>([]);
 
+  const [forceSubmit, setForceSubmit] = useState(false);
+  const [timeRemaining, setTimeRemaining] = useState(60);
+
   useEffect(() => {
     if (!sessionId || !participantId) {
       router.push("/");
@@ -51,7 +55,7 @@ function QuizContent() {
         const resSession = await fetch(`/api/quiz-sessions/${sessionId}`);
         if (resSession.ok) {
           const data = await resSession.json();
-          setSessionInfo(data);
+          setSessionInfo(data.session || data);
         }
 
         // Fetch questions
@@ -59,6 +63,10 @@ function QuizContent() {
         if (resQuestions.ok) {
           const data = await resQuestions.json();
           setQuestions(data.questions);
+          // Set initial time remaining in seconds (timeLimit is in minutes)
+          if (data.questions.length > 0) {
+            setTimeRemaining((data.questions[0].timeLimit || 1) * 60);
+          }
         }
 
         // Fetch participants for leaderboard and find current player
@@ -99,6 +107,25 @@ function QuizContent() {
     }
   }, [sessionId, participantId, router]);
 
+  // Timer logic
+  useEffect(() => {
+    if (isLoading || isFinished || questions.length === 0) return;
+    
+    // Reset forceSubmit if we moved to a new question
+    if (forceSubmit) setForceSubmit(false);
+
+    if (timeRemaining <= 0) {
+      setForceSubmit(true); // Tell QuestionCard to submit
+      return;
+    }
+
+    const timer = setInterval(() => {
+      setTimeRemaining((prev) => prev - 1);
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, [isLoading, isFinished, questions.length, currentQuestionIndex, timeRemaining]);
+
   const handleAnswerSubmit = async (optionId: string, _isCorrect: boolean) => {
     // We send to backend, backend checks correctness
     try {
@@ -123,6 +150,7 @@ function QuizContent() {
     setTimeout(() => {
       if (currentQuestionIndex < questions.length - 1) {
         setCurrentQuestionIndex(prev => prev + 1);
+        setTimeRemaining((questions[currentQuestionIndex + 1].timeLimit || 1) * 60);
       } else {
         setIsFinished(true);
       }
@@ -152,6 +180,12 @@ function QuizContent() {
   // Calculate rank based on live leaderboard
   const sortedLeaderboard = [...liveLeaderboard].sort((a, b) => (b.score || 0) - (a.score || 0));
   const playerRank = sortedLeaderboard.findIndex(p => p.id === participantId) + 1;
+
+  const formatTime = (seconds: number) => {
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+  };
 
   return (
     <>
@@ -184,9 +218,9 @@ function QuizContent() {
               <CardTitle className="text-sm font-medium text-slate-500 uppercase tracking-wider">
                 Pertanyaan {currentQuestionIndex + 1} dari {questions.length}
               </CardTitle>
-              <div className="flex items-center text-rose-500 font-bold bg-rose-100 px-3 py-1 rounded-full animate-pulse">
+              <div className={`flex items-center font-bold px-3 py-1 rounded-full ${timeRemaining <= 10 ? 'text-rose-500 bg-rose-100 animate-pulse' : 'text-slate-600 bg-slate-200'}`}>
                 <Timer className="w-4 h-4 mr-1" />
-                00:15
+                {formatTime(timeRemaining)}
               </div>
             </CardHeader>
             <div className="px-6 -mt-3">
@@ -227,6 +261,7 @@ function QuizContent() {
                     <QuestionCard 
                       question={question} 
                       onAnswerSubmit={handleAnswerSubmit} 
+                      forceSubmit={forceSubmit}
                     />
                   </motion.div>
                 )}

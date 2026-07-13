@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import 'katex/dist/katex.min.css';
 import Latex from "react-latex-next";
 import { CheckCircle2, XCircle } from "lucide-react";
@@ -23,25 +23,33 @@ interface QuestionCardProps {
   onAnswerSubmit?: (optionId: string, isCorrect: boolean) => void;
 }
 
-export function QuestionCard({ question, onAnswerSubmit }: QuestionCardProps) {
+export function QuestionCard({ question, onAnswerSubmit, forceSubmit }: QuestionCardProps & { forceSubmit?: boolean }) {
   const [selectedOption, setSelectedOption] = useState<string | null>(null);
   const [isSubmitted, setIsSubmitted] = useState(false);
 
+  const handleSubmit = (optionId: string | null) => {
+    if (isSubmitted) return;
+    setIsSubmitted(true);
+    
+    // We don't have correctAnswerId in the client anymore for security, 
+    // so we can't show correct/wrong state immediately accurately based on mock.
+    // We will just show that it's submitted, backend will return if it's correct.
+    
+    if (onAnswerSubmit) {
+      onAnswerSubmit(optionId || "", false);
+    }
+  };
+
+  // Listen to forceSubmit from parent
+  useEffect(() => {
+    if (forceSubmit && !isSubmitted) {
+      handleSubmit(selectedOption);
+    }
+  }, [forceSubmit, isSubmitted, selectedOption]);
+
   const handleOptionClick = (optionId: string) => {
     if (isSubmitted) return;
-    
-    const isCorrect = optionId === question.correctAnswerId || optionId === "c"; // mock logic
-    
     setSelectedOption(optionId);
-    setIsSubmitted(true);
-    playFeedbackSound(isCorrect);
-    
-    // Simulate feedback delay
-    setTimeout(() => {
-      if (onAnswerSubmit) {
-        onAnswerSubmit(optionId, isCorrect);
-      }
-    }, 1500);
   };
 
   return (
@@ -53,21 +61,12 @@ export function QuestionCard({ question, onAnswerSubmit }: QuestionCardProps) {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 w-full">
         {question.options.map((opt, idx) => {
           const isSelected = selectedOption === opt.id;
-          const isCorrectMock = isSubmitted && isSelected && (opt.id === question.correctAnswerId || opt.id === "c"); // mock correct answer for demo
-          const isWrongMock = isSubmitted && isSelected && !isCorrectMock;
           
           let stateClasses = "border-slate-200 bg-white hover:border-indigo-500 hover:bg-indigo-50";
-          let iconState = null;
           
           if (isSubmitted) {
             if (isSelected) {
-              if (isCorrectMock) {
-                stateClasses = "border-green-500 bg-green-50 animate-bounce";
-                iconState = <CheckCircle2 className="w-8 h-8 text-green-500" />;
-              } else {
-                stateClasses = "border-red-500 bg-red-50 animate-shake";
-                iconState = <XCircle className="w-8 h-8 text-red-500" />;
-              }
+              stateClasses = "border-indigo-500 bg-indigo-50 opacity-80";
             } else {
               stateClasses = "border-slate-100 bg-slate-50 opacity-50";
             }
@@ -94,11 +93,25 @@ export function QuestionCard({ question, onAnswerSubmit }: QuestionCardProps) {
                   <Latex>{opt.text}</Latex>
                 </span>
               </div>
-              {iconState}
             </button>
           );
         })}
       </div>
+      
+      {!isSubmitted && (
+        <button 
+          onClick={() => handleSubmit(selectedOption)}
+          className="mt-8 px-8 py-4 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-full shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all w-full max-w-md text-lg"
+        >
+          Kunci Jawaban
+        </button>
+      )}
+      
+      {isSubmitted && (
+        <div className="mt-8 p-4 bg-slate-100 rounded-xl text-slate-600 text-center font-medium animate-pulse">
+          Jawaban tersimpan! Menunggu soal berikutnya...
+        </div>
+      )}
     </div>
   );
 }
