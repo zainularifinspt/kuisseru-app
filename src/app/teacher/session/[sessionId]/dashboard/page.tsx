@@ -5,7 +5,7 @@ import { useParams, useRouter } from 'next/navigation';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { Users, Play, Settings, BarChart, Square, Activity, Trophy, Loader2 } from "lucide-react";
+import { Users, Play, Settings, BarChart, Square, Activity, Trophy, Loader2, Sparkles } from "lucide-react";
 import { getPusherClient } from "@/lib/pusherClient";
 
 
