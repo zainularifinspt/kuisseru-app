@@ -65,7 +65,7 @@ export default function QRCodeLoginPage() {
             <Button 
               size="lg" 
               className="w-full h-14 rounded-xl text-lg font-bold bg-indigo-600 hover:bg-indigo-700 shadow-lg shadow-indigo-200 transition-all hover:scale-[1.02]"
-              onClick={() => router.push(`/teacher/dashboard`)}
+              onClick={() => router.push(`/teacher/session/${sessionId}/dashboard`)}
             >
               Lihat Ruang Tunggu
             </Button>
