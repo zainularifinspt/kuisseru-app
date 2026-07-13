@@ -26,6 +26,7 @@ export default function TeacherDashboard() {
   const [quizStatus, setQuizStatus] = useState<'menunggu' | 'berjalan' | 'selesai'>('menunggu');
   const [isLoading, setIsLoading] = useState(true);
   const [sessionTitle, setSessionTitle] = useState("");
+  const [joinCode, setJoinCode] = useState("");
   const [totalQuestions, setTotalQuestions] = useState(0);
   const questionIndex = 1; // Dummy for now, can be fetched if needed
 
@@ -41,6 +42,7 @@ export default function TeacherDashboard() {
         }
         const data = await res.json();
         setSessionTitle(data.session.title);
+        setJoinCode(data.session.joinCode || "");
         setTotalQuestions(data.stats.totalQuestions);
         if (data.session.status === 'active') setQuizStatus('berjalan');
         else if (data.session.status === 'finished') setQuizStatus('selesai');
@@ -279,6 +281,17 @@ export default function TeacherDashboard() {
               </CardTitle>
             </CardHeader>
             <CardContent className="p-6 flex flex-col gap-4">
+              {joinCode && (
+                <div className="bg-indigo-900/40 p-4 rounded-xl flex items-center justify-between border border-indigo-500/30 shadow-inner relative overflow-hidden">
+                  <div className="absolute top-0 left-0 w-1 h-full bg-indigo-400" />
+                  <span className="text-indigo-300 font-bold flex items-center gap-2">
+                    Kode Kuis
+                  </span>
+                  <span className="text-2xl font-black text-white tracking-widest drop-shadow-[0_0_10px_rgba(99,102,241,0.8)]">
+                    {joinCode}
+                  </span>
+                </div>
+              )}
               <div className="bg-blue-900/30 p-4 rounded-xl flex items-center justify-between border border-blue-500/30 shadow-inner">
                 <span className="text-blue-300 font-bold">Total Peserta</span>
                 <span className="text-2xl font-black text-white transition-all duration-300 drop-shadow-[0_0_10px_rgba(59,130,246,0.8)]">{players.length}</span>

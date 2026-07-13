@@ -20,9 +20,13 @@ export async function createNewSession() {
     const sessionId = randomUUID();
     const shortId = sessionId.split('-')[0].toUpperCase();
     
+    // Generate a random 6 digit string for the join code
+    const joinCode = Math.floor(100000 + Math.random() * 900000).toString();
+    
     await db.insert(quizSessions).values({
       id: sessionId,
       title: `Kuis Interaktif ${shortId}`,
+      joinCode: joinCode,
       status: 'draft',
       teacherId: session.user.id,
     });
