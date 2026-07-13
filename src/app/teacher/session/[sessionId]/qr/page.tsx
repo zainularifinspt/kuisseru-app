@@ -5,17 +5,46 @@ import { useParams, useRouter } from "next/navigation";
 import { QRCodeSVG } from "qrcode.react";
 import { Button } from "@/components/ui/button";
 import { Users, PlayCircle, Loader2 } from "lucide-react";
+import { getPusherClient } from "@/lib/pusherClient";
 
 export default function QRCodeLoginPage() {
   const params = useParams();
   const router = useRouter();
   const sessionId = params.sessionId as string;
   const [joinUrl, setJoinUrl] = useState<string>("");
+  const [playerCount, setPlayerCount] = useState(0);
 
   useEffect(() => {
     if (typeof window !== "undefined") {
       setJoinUrl(`${window.location.origin}/join/${sessionId}`);
     }
+
+    // Fetch initial participants
+    async function fetchParticipants() {
+      try {
+        const res = await fetch(`/api/quiz-sessions/${sessionId}/participants`);
+        if (res.ok) {
+          const data = await res.json();
+          setPlayerCount(data.participants?.length || 0);
+        }
+      } catch (e) {
+        console.error(e);
+      }
+    }
+    fetchParticipants();
+
+    // Subscribe to pusher for real-time updates
+    const pusherClient = getPusherClient();
+    if (!pusherClient) return;
+
+    const channel = pusherClient.subscribe(`session-${sessionId}`);
+    channel.bind('player-joined', () => {
+      setPlayerCount(prev => prev + 1);
+    });
+
+    return () => {
+      pusherClient.unsubscribe(`session-${sessionId}`);
+    };
   }, [sessionId]);
 
   return (
@@ -56,7 +85,7 @@ export default function QRCodeLoginPage() {
             
             <div className="bg-slate-50 border border-slate-100 rounded-2xl p-6 text-center mb-8">
               <Users className="w-10 h-10 text-indigo-500 mx-auto mb-2" />
-              <div className="text-4xl font-black text-slate-800">0</div>
+              <div className="text-4xl font-black text-slate-800">{playerCount}</div>
               <p className="text-slate-500 text-sm font-medium">Siswa Terhubung</p>
             </div>
           </div>
