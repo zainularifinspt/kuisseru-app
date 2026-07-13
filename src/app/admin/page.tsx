@@ -5,9 +5,9 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Shield, Sparkles, UserPlus, Loader2, Users } from 'lucide-react';
-import { createTeacherAccount } from '@/app/actions/admin';
 import { motion } from 'framer-motion';
 import { useRouter } from 'next/navigation';
+import { signUp } from '@/lib/auth-client';
 
 export default function AdminPortal() {
   const router = useRouter();
