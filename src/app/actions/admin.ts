@@ -13,10 +13,8 @@ export async function createTeacherAccount(data: FormData) {
   }
 
   try {
-    // Check if the current user calling this is an admin
-    // For simplicity of MVP, we can bypass this or verify a secret
-    // Let's use betterAuth signUp api
     const response = await auth.api.signUpEmail({
+        headers: await headers(),
         body: {
             email,
             password,
@@ -30,7 +28,7 @@ export async function createTeacherAccount(data: FormData) {
     }
     return { success: false, error: 'Gagal membuat akun' };
   } catch (error: any) {
-    console.error("Failed to create teacher:", error);
+    console.error("Full error from better-auth:", error, error.cause, error.message);
     return { success: false, error: error.message || "Gagal membuat akun" };
   }
 }

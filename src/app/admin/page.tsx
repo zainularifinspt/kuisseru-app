@@ -36,20 +36,19 @@ export default function AdminPortal() {
     setIsSubmitting(true);
     setMessage('');
     
-    const formData = new FormData();
-    formData.append('name', name);
-    formData.append('email', email);
-    formData.append('password', password);
+    const { data, error } = await signUp.email({
+        email,
+        password,
+        name
+    });
     
-    const result = await createTeacherAccount(formData);
-    
-    if (result.success) {
+    if (data) {
       setMessage('✅ Akun Guru berhasil dibuat!');
       setName('');
       setEmail('');
       setPassword('');
     } else {
-      setMessage('❌ Gagal: ' + result.error);
+      setMessage('❌ Gagal: ' + (error?.message || 'Terjadi kesalahan'));
     }
     setIsSubmitting(false);
   };
