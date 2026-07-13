@@ -5,7 +5,7 @@ import { useParams, useRouter } from 'next/navigation';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { Users, Play, Settings, BarChart, Square, Activity, Trophy, Loader2, Sparkles } from "lucide-react";
+import { Users, Play, Settings, BarChart, Square, Activity, Trophy, Loader2, Sparkles, ArrowLeft } from "lucide-react";
 import { getPusherClient } from "@/lib/pusherClient";
 
 
@@ -140,6 +140,12 @@ export default function TeacherDashboard() {
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-[#111827]/80 backdrop-blur-xl p-6 rounded-[2rem] shadow-[0_0_30px_rgba(59,130,246,0.15)] border border-white/10 relative overflow-hidden">
           <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-500 to-purple-500" />
           <div>
+            <div className="flex items-center gap-3 mb-2">
+              <Button variant="outline" size="sm" onClick={() => router.push('/teacher')} className="h-8 rounded-lg border-white/10 bg-white/5 text-slate-300 hover:text-white hover:bg-white/10 shadow-sm transition-all">
+                <ArrowLeft className="w-4 h-4 mr-1" />
+                Kembali
+              </Button>
+            </div>
             <h1 className="text-2xl font-black text-white tracking-tight flex items-center gap-2 drop-shadow-sm">
               <Sparkles className="w-6 h-6 text-cyan-400" /> Dashboard Guru
             </h1>
