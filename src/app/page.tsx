@@ -12,8 +12,13 @@ export default function Home() {
           Selamat datang di platform kuis interaktif yang seru dan menegangkan!
         </p>
         <Link href="/quiz">
-          <Button size="lg" className="w-full rounded-full text-lg font-bold bg-indigo-600 hover:bg-indigo-700 h-14 shadow-lg shadow-indigo-200 transition-all hover:scale-105">
+          <Button size="lg" className="w-full rounded-full text-lg font-bold bg-indigo-600 hover:bg-indigo-700 h-14 shadow-lg shadow-indigo-200 transition-all hover:scale-[1.02] mb-3">
             Mulai Kuis Demo
+          </Button>
+        </Link>
+        <Link href="/teacher">
+          <Button size="lg" variant="outline" className="w-full rounded-full text-md font-semibold border-2 border-slate-200 text-slate-600 hover:bg-slate-50 h-12 transition-all hover:scale-[1.02]">
+            Masuk sebagai Guru
           </Button>
         </Link>
       </div>
