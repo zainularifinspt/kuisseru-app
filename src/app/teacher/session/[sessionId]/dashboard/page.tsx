@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Users, Play, Settings, BarChart, Square, Activity, Trophy, Loader2 } from "lucide-react";
 import { getPusherClient } from "@/lib/pusherClient";
-import { useToast } from "@/hooks/use-toast";
+
 
 type Player = {
   id: string;
