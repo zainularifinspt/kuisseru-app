@@ -54,24 +54,32 @@ export function QuestionCard({ question, onAnswerSubmit, forceSubmit }: Question
 
   return (
     <div className="w-full flex flex-col items-center">
-      <h2 className="text-2xl md:text-4xl font-extrabold text-slate-800 mb-10 leading-tight text-center">
+      <h2 className="text-2xl md:text-4xl font-extrabold text-white mb-10 leading-tight text-center drop-shadow-md">
         <Latex>{question.content}</Latex>
       </h2>
       
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 w-full">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6 w-full">
         {question.options.map((opt, idx) => {
           const isSelected = selectedOption === opt.id;
           
-          let stateClasses = "border-slate-200 bg-white hover:border-indigo-500 hover:bg-indigo-50";
+          const baseColors = [
+            "bg-rose-600 border-rose-500 hover:bg-rose-500 hover:shadow-[0_0_25px_rgba(225,29,72,0.6)]", // A: Red
+            "bg-blue-600 border-blue-500 hover:bg-blue-500 hover:shadow-[0_0_25px_rgba(37,99,235,0.6)]", // B: Blue
+            "bg-amber-500 border-amber-400 hover:bg-amber-400 hover:shadow-[0_0_25px_rgba(217,119,6,0.6)]", // C: Yellow
+            "bg-emerald-600 border-emerald-500 hover:bg-emerald-500 hover:shadow-[0_0_25px_rgba(5,150,105,0.6)]" // D: Green
+          ];
+          
+          const colorClass = baseColors[idx % baseColors.length];
+          let stateClasses = `${colorClass} text-white`;
           
           if (isSubmitted) {
             if (isSelected) {
-              stateClasses = "border-indigo-500 bg-indigo-50 opacity-80";
+              stateClasses = `${colorClass.split(' ')[0]} border-white shadow-[0_0_20px_rgba(255,255,255,0.5)] opacity-100 ring-4 ring-white/50`;
             } else {
-              stateClasses = "border-slate-100 bg-slate-50 opacity-50";
+              stateClasses = `${colorClass.split(' ')[0]} border-transparent opacity-40 grayscale-[30%]`;
             }
           } else if (isSelected) {
-            stateClasses = "border-indigo-500 bg-indigo-50 scale-[1.02] ring-2 ring-indigo-200";
+            stateClasses = `${colorClass.split(' ')[0]} border-white scale-[1.03] ring-4 ring-white/50 shadow-2xl`;
           }
 
           return (
@@ -79,16 +87,16 @@ export function QuestionCard({ question, onAnswerSubmit, forceSubmit }: Question
               key={opt.id} 
               onClick={() => handleOptionClick(opt.id)}
               disabled={isSubmitted}
-              className={`group relative w-full p-4 md:p-6 rounded-2xl border-2 transition-all duration-300 shadow-sm text-left flex items-center justify-between ${stateClasses} ${!isSubmitted ? 'hover:shadow-md hover:-translate-y-1' : 'cursor-default'}`}
+              className={`group relative w-full p-5 md:p-8 rounded-3xl border-b-4 transition-all duration-300 shadow-lg text-left flex items-center justify-between ${stateClasses} ${!isSubmitted ? 'hover:-translate-y-2' : 'cursor-default'}`}
             >
-              <div className="flex items-center">
-                <span className={`flex items-center justify-center w-10 h-10 rounded-full font-bold text-lg transition-colors mr-4 ${
-                  isSelected ? 'bg-indigo-500 text-white' : 'bg-slate-100 text-slate-600 group-hover:bg-indigo-500 group-hover:text-white'
+              <div className="flex items-center w-full">
+                <span className={`flex-shrink-0 flex items-center justify-center w-12 h-12 rounded-2xl font-black text-xl mr-5 shadow-inner transition-colors ${
+                  isSelected ? 'bg-white text-slate-900' : 'bg-white/20 text-white'
                 }`}>
                   {String.fromCharCode(65 + idx)}
                 </span>
-                <span className={`text-lg md:text-xl font-semibold ${
-                  isSelected ? 'text-indigo-900' : 'text-slate-700 group-hover:text-indigo-900'
+                <span className={`text-xl md:text-2xl font-bold break-words w-full ${
+                  isSelected ? 'text-white' : 'text-white/90 group-hover:text-white'
                 }`}>
                   <Latex>{opt.text}</Latex>
                 </span>
@@ -101,15 +109,16 @@ export function QuestionCard({ question, onAnswerSubmit, forceSubmit }: Question
       {!isSubmitted && (
         <button 
           onClick={() => handleSubmit(selectedOption)}
-          className="mt-8 px-8 py-4 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-full shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all w-full max-w-md text-lg"
+          className={`mt-10 px-10 py-5 font-black rounded-full shadow-[0_0_20px_rgba(59,130,246,0.5)] transition-all w-full max-w-md text-xl border-b-4 ${selectedOption ? 'bg-gradient-to-r from-blue-600 to-cyan-500 hover:from-blue-500 hover:to-cyan-400 text-white border-blue-700 hover:-translate-y-1 hover:shadow-[0_0_30px_rgba(34,211,238,0.7)] cursor-pointer' : 'bg-slate-700 text-slate-400 border-slate-800 cursor-not-allowed opacity-50'}`}
+          disabled={!selectedOption}
         >
           Kunci Jawaban
         </button>
       )}
       
       {isSubmitted && (
-        <div className="mt-8 p-4 bg-slate-100 rounded-xl text-slate-600 text-center font-medium animate-pulse">
-          Jawaban tersimpan! Menunggu soal berikutnya...
+        <div className="mt-10 p-5 bg-white/10 backdrop-blur-md rounded-2xl border border-white/20 text-white text-center font-bold text-lg animate-pulse shadow-[0_0_15px_rgba(255,255,255,0.1)]">
+          Jawaban tersimpan! Menunggu soal berikutnya... ⏳
         </div>
       )}
     </div>

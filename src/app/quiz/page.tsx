@@ -164,12 +164,12 @@ function QuizContent() {
   return (
     <>
       {/* Header Info */}
-      <header className="flex justify-between items-center mb-6 bg-white/20 backdrop-blur-md p-4 rounded-2xl shadow-lg border border-white/30 text-white">
+      <header className="flex justify-between items-center mb-6 bg-white/10 backdrop-blur-xl p-4 rounded-2xl shadow-[0_0_20px_rgba(59,130,246,0.2)] border border-white/20 text-white relative z-10">
         <div className="flex items-center gap-3">
-          <span className="font-bold text-lg hidden sm:inline">{playerNickname}</span>
+          <span className="font-bold text-lg hidden sm:inline drop-shadow-md">{playerNickname}</span>
         </div>
         
-        <h1 className="text-xl md:text-2xl font-extrabold tracking-tight drop-shadow-md text-center flex-1">
+        <h1 className="text-xl md:text-2xl font-extrabold tracking-tight drop-shadow-md text-center flex-1 text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-500">
           {sessionInfo?.title || "Kuis"}
         </h1>
         
@@ -178,26 +178,26 @@ function QuizContent() {
         </div>
       </header>
 
-      <div className="flex-1 max-w-4xl w-full mx-auto flex flex-col gap-6">
+      <div className="flex-1 max-w-4xl w-full mx-auto flex flex-col gap-6 relative z-10">
         
         {/* Main Quiz Area */}
         <div className="w-full flex flex-col gap-6">
           
-          <Card className="border-0 shadow-2xl bg-white/95 backdrop-blur-sm rounded-3xl overflow-hidden ring-4 ring-white/50">
-            <CardHeader className="bg-slate-50 border-b pb-4 flex flex-row items-center justify-between">
-              <CardTitle className="text-sm font-medium text-slate-500 uppercase tracking-wider">
+          <Card className="border border-white/10 shadow-[0_0_40px_rgba(59,130,246,0.2)] bg-[#111827]/80 backdrop-blur-2xl rounded-3xl overflow-hidden ring-1 ring-white/10">
+            <CardHeader className="bg-black/20 border-b border-white/10 pb-4 flex flex-row items-center justify-between">
+              <CardTitle className="text-sm font-bold text-cyan-400 uppercase tracking-wider">
                 Pertanyaan {currentQuestionIndex + 1} dari {questions.length}
               </CardTitle>
-              <div className={`flex items-center font-bold px-3 py-1 rounded-full ${timeRemaining <= 10 ? 'text-rose-500 bg-rose-100 animate-pulse' : 'text-slate-600 bg-slate-200'}`}>
+              <div className={`flex items-center font-bold px-3 py-1 rounded-full ${timeRemaining <= 10 ? 'text-red-100 bg-red-600 animate-pulse shadow-[0_0_15px_rgba(220,38,38,0.8)]' : 'text-blue-100 bg-blue-600 shadow-[0_0_10px_rgba(37,99,235,0.5)]'}`}>
                 <Timer className="w-4 h-4 mr-1" />
                 {formatTime(timeRemaining)}
               </div>
             </CardHeader>
             <div className="px-6 -mt-3">
-              <Progress value={progressPercentage} className="h-2 bg-slate-200 [&>div]:bg-indigo-500" />
+              <Progress value={progressPercentage} className="h-2 bg-slate-800 [&>div]:bg-gradient-to-r [&>div]:from-cyan-400 [&>div]:to-blue-600" />
             </div>
             
-            <CardContent className="p-6 md:p-10 flex flex-col items-center text-center overflow-hidden relative min-h-[300px]">
+            <CardContent className="p-6 md:p-10 flex flex-col items-center text-center overflow-hidden relative min-h-[350px]">
               <AnimatePresence mode="wait">
                 {isFinished ? (
                   <motion.div
@@ -206,15 +206,15 @@ function QuizContent() {
                     animate={{ scale: 1, opacity: 1 }}
                     className="w-full h-full flex flex-col items-center justify-center p-6 md:p-10"
                   >
-                    <Trophy className="w-24 h-24 text-yellow-500 mb-6 drop-shadow-xl animate-bounce" />
-                    <h2 className="text-3xl md:text-5xl font-black text-slate-800 mb-4">
+                    <Trophy className="w-24 h-24 text-yellow-400 mb-6 drop-shadow-[0_0_20px_rgba(250,204,21,0.6)] animate-bounce" />
+                    <h2 className="text-3xl md:text-5xl font-black text-white mb-4 drop-shadow-md">
                       Kuis Selesai!
                     </h2>
-                    <p className="text-xl text-slate-600 mb-8">
-                      Skor Akhir Kamu: <span className="font-bold text-indigo-600">{currentScore} pts</span>
+                    <p className="text-xl text-slate-300 mb-8">
+                      Skor Akhir Kamu: <span className="font-bold text-cyan-400 text-2xl drop-shadow-[0_0_10px_rgba(34,211,238,0.5)]">{currentScore} pts</span>
                     </p>
-                    <div className="bg-indigo-50 border-2 border-indigo-200 rounded-2xl p-6 text-lg font-medium text-indigo-900 shadow-inner">
-                      Jawabanmu telah tersimpan. Silakan tunggu intruksi dari guru.
+                    <div className="bg-blue-900/30 border border-blue-400/30 rounded-2xl p-6 text-lg font-medium text-blue-100 shadow-[0_0_20px_rgba(59,130,246,0.2)]">
+                      Jawabanmu telah tersimpan. Silakan tunggu instruksi dari guru.
                     </div>
                   </motion.div>
                 ) : (
@@ -224,7 +224,7 @@ function QuizContent() {
                     animate={{ x: 0, opacity: 1 }}
                     exit={{ x: -100, opacity: 0 }}
                     transition={{ duration: 0.3, ease: "easeInOut" }}
-                    className="w-full absolute inset-0 p-6 md:p-10"
+                    className="w-full absolute inset-0 p-6 md:p-10 flex flex-col"
                   >
                     <QuestionCard 
                       question={question} 
@@ -246,9 +246,18 @@ function QuizContent() {
 
 export default function QuizPage() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 p-4 md:p-8 flex flex-col font-sans text-slate-800">
+    <div className="min-h-screen bg-[#0B0F19] p-4 md:p-8 flex flex-col font-sans text-slate-800 relative overflow-hidden">
+      
+      {/* Background Effects */}
+      <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/stardust.png')] opacity-20 pointer-events-none animate-pulse"></div>
+      <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
+        <div className="absolute top-[-10%] left-[-10%] w-[50vw] h-[50vw] bg-blue-600/20 rounded-full blur-[100px] animate-pulse" style={{ animationDuration: '6s' }}></div>
+        <div className="absolute bottom-[-10%] right-[-10%] w-[50vw] h-[50vw] bg-purple-600/20 rounded-full blur-[120px] animate-pulse" style={{ animationDuration: '8s' }}></div>
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[70vw] h-[70vw] bg-indigo-900/20 rounded-full blur-[150px]"></div>
+      </div>
+
       <audio src="/bgm.mp3" autoPlay loop muted={false} />
-      <Suspense fallback={<div className="flex items-center justify-center min-h-screen"><Loader2 className="w-12 h-12 animate-spin text-white" /></div>}>
+      <Suspense fallback={<div className="flex items-center justify-center min-h-screen"><Loader2 className="w-12 h-12 animate-spin text-cyan-400" /></div>}>
         <QuizContent />
       </Suspense>
     </div>

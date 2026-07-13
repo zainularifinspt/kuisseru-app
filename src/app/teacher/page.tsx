@@ -115,24 +115,31 @@ export default function TeacherPortal() {
   };
 
   return (
-    <div className="min-h-screen bg-[#F8F9FA] text-slate-800 font-sans selection:bg-blue-200">
+    <div className="min-h-screen bg-[#0B0F19] text-slate-200 font-sans selection:bg-cyan-500/30 relative overflow-hidden">
       
+      {/* Background Effects */}
+      <div className="fixed inset-0 bg-[url('https://www.transparenttextures.com/patterns/stardust.png')] opacity-10 pointer-events-none animate-pulse"></div>
+      <div className="fixed top-0 left-0 w-full h-full overflow-hidden pointer-events-none -z-10">
+        <div className="absolute top-[-10%] left-[-10%] w-[50vw] h-[50vw] bg-blue-600/10 rounded-full blur-[100px] animate-pulse" style={{ animationDuration: '6s' }}></div>
+        <div className="absolute bottom-[-10%] right-[-10%] w-[50vw] h-[50vw] bg-purple-600/10 rounded-full blur-[120px] animate-pulse" style={{ animationDuration: '8s' }}></div>
+      </div>
+
       {/* Profile Edit Modal */}
       <AnimatePresence>
         {isEditProfileOpen && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-sm">
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#0B0F19]/80 backdrop-blur-md">
             <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }} className="w-full max-w-md">
-              <Card className="rounded-[24px] border-0 shadow-2xl overflow-hidden">
+              <Card className="rounded-[24px] border border-white/10 shadow-[0_0_50px_rgba(59,130,246,0.2)] bg-[#1e293b]/90 overflow-hidden">
                 <CardContent className="p-8">
-                  <h2 className="text-xl font-bold text-slate-800 mb-6">Pengaturan Profil</h2>
+                  <h2 className="text-xl font-bold text-white mb-6">Pengaturan Profil</h2>
                   <form onSubmit={handleUpdateProfile} className="space-y-5">
                     <div className="space-y-2">
-                      <label className="text-sm font-medium text-slate-600">Nama Lengkap</label>
-                      <Input value={newName} onChange={(e) => setNewName(e.target.value)} className="h-12 rounded-xl bg-slate-50" required />
+                      <label className="text-sm font-medium text-slate-300">Nama Lengkap</label>
+                      <Input value={newName} onChange={(e) => setNewName(e.target.value)} className="h-12 rounded-xl bg-[#0f172a] border-slate-600 focus:border-cyan-400 text-white" required />
                     </div>
                     <div className="flex gap-3 pt-2">
-                      <Button type="button" variant="outline" onClick={() => setIsEditProfileOpen(false)} className="flex-1 h-12 rounded-xl">Batal</Button>
-                      <Button type="submit" disabled={isProfileUpdating} className="flex-1 h-12 rounded-xl bg-blue-600 hover:bg-blue-700 text-white">
+                      <Button type="button" variant="outline" onClick={() => setIsEditProfileOpen(false)} className="flex-1 h-12 rounded-xl border-white/20 text-slate-300 hover:bg-white/10 hover:text-white">Batal</Button>
+                      <Button type="submit" disabled={isProfileUpdating} className="flex-1 h-12 rounded-xl bg-gradient-to-r from-blue-600 to-cyan-500 hover:from-blue-500 hover:to-cyan-400 text-white border-0 shadow-[0_0_15px_rgba(34,211,238,0.4)]">
                         {isProfileUpdating ? <Loader2 className="w-5 h-5 animate-spin" /> : 'Simpan'}
                       </Button>
                     </div>
@@ -154,46 +161,43 @@ export default function TeacherPortal() {
             transition={{ duration: 0.4 }}
             className="flex items-center justify-center min-h-screen p-4 relative overflow-hidden"
           >
-            {/* AI Background Glows */}
-            <div className="absolute top-1/4 -left-32 w-96 h-96 bg-blue-400/20 rounded-full blur-[100px] pointer-events-none" />
-            <div className="absolute bottom-1/4 -right-32 w-96 h-96 bg-cyan-400/20 rounded-full blur-[100px] pointer-events-none" />
-
             <div className="w-full max-w-[440px] relative z-10">
               <div className="text-center mb-10">
-                <div className="inline-flex items-center justify-center p-3 bg-white rounded-2xl shadow-sm mb-6 border border-slate-100 relative group">
-                  <div className="absolute inset-0 bg-blue-100 rounded-2xl scale-110 opacity-0 group-hover:opacity-100 transition-opacity blur-md" />
-                  <Sparkles className="w-8 h-8 text-blue-500 relative z-10" />
+                <div className="inline-flex items-center justify-center p-4 bg-gradient-to-br from-blue-900/50 to-purple-900/50 rounded-2xl shadow-[0_0_20px_rgba(59,130,246,0.5)] mb-6 border border-blue-400/20 relative group">
+                  <div className="absolute inset-0 bg-cyan-400/20 rounded-2xl scale-110 opacity-0 group-hover:opacity-100 transition-opacity blur-md" />
+                  <Sparkles className="w-8 h-8 text-cyan-400 relative z-10 animate-pulse" />
                 </div>
-                <h1 className="text-3xl font-normal text-slate-800 tracking-tight">
-                  Masuk ke <span className="font-semibold bg-clip-text text-transparent bg-gradient-to-r from-blue-500 to-cyan-500">KuisSeru</span>
+                <h1 className="text-3xl font-normal text-white tracking-tight drop-shadow-md">
+                  Masuk ke <span className="font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-500 animate-gradient-x">KuisSeru</span>
                 </h1>
-                <p className="text-slate-500 mt-3 text-lg font-light">Sistem Cerdas Manajemen Pembelajaran</p>
+                <p className="text-slate-400 mt-3 text-lg font-light">Sistem Cerdas Manajemen Pembelajaran</p>
               </div>
 
-              <Card className="border border-white/50 shadow-2xl shadow-blue-900/10 bg-white/70 backdrop-blur-2xl rounded-[32px] overflow-hidden">
+              <Card className="border border-white/10 shadow-[0_0_40px_rgba(59,130,246,0.2)] bg-[#111827]/80 backdrop-blur-2xl rounded-[32px] overflow-hidden relative">
+                <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-500" />
                 <CardContent className="p-8 sm:p-10">
                   <form onSubmit={handleLogin} className="space-y-6">
                     <div className="space-y-2">
-                      <label className="text-sm font-medium text-slate-600 ml-1">Email Akademik</label>
+                      <label className="text-sm font-medium text-slate-300 ml-1">Email Akademik</label>
                       <Input 
                         type="email"
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
                         placeholder="nama@ulm.ac.id"
                         required
-                        className="h-14 rounded-2xl bg-white/50 border-white/50 shadow-sm focus:bg-white focus:border-blue-300 focus:ring-4 focus:ring-blue-100/50 transition-all text-base px-5"
+                        className="h-14 rounded-2xl bg-[#0f172a]/80 border-slate-600 focus:bg-[#1e293b] focus:border-cyan-400 focus:ring-4 focus:ring-cyan-400/20 transition-all text-base px-5 text-white shadow-inner"
                       />
                     </div>
                     
                     <div className="space-y-2">
-                      <label className="text-sm font-medium text-slate-600 ml-1">Kata Sandi</label>
+                      <label className="text-sm font-medium text-slate-300 ml-1">Kata Sandi</label>
                       <Input 
                         type="password"
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
                         placeholder="••••••••"
                         required
-                        className="h-14 rounded-2xl bg-white/50 border-white/50 shadow-sm focus:bg-white focus:border-blue-300 focus:ring-4 focus:ring-blue-100/50 transition-all text-base px-5"
+                        className="h-14 rounded-2xl bg-[#0f172a]/80 border-slate-600 focus:bg-[#1e293b] focus:border-cyan-400 focus:ring-4 focus:ring-cyan-400/20 transition-all text-base px-5 text-white shadow-inner"
                       />
                     </div>
 
@@ -201,7 +205,7 @@ export default function TeacherPortal() {
                       <motion.div 
                         initial={{ opacity: 0, height: 0 }}
                         animate={{ opacity: 1, height: 'auto' }}
-                        className="text-red-500 text-sm font-medium bg-red-50 p-4 rounded-xl flex items-center gap-2"
+                        className="text-red-200 text-sm font-medium bg-red-900/50 border border-red-500/30 p-4 rounded-xl flex items-center gap-2"
                       >
                         <span className="flex-1">{error}</span>
                       </motion.div>
@@ -210,9 +214,8 @@ export default function TeacherPortal() {
                     <Button 
                       type="submit" 
                       disabled={isLoading}
-                      className="w-full h-14 rounded-2xl text-base font-semibold bg-blue-600 hover:bg-blue-700 text-white shadow-lg shadow-blue-200 transition-all hover:scale-[1.02] active:scale-[0.98] group mt-4 relative overflow-hidden"
+                      className="w-full h-14 rounded-2xl text-base font-bold bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 text-white shadow-[0_0_20px_rgba(59,130,246,0.4)] transition-all hover:scale-[1.02] active:scale-[0.98] group mt-4 relative overflow-hidden border-0"
                     >
-                      <div className="absolute inset-0 bg-gradient-to-r from-blue-400 to-blue-600 opacity-0 group-hover:opacity-100 transition-opacity" />
                       <span className="relative z-10 flex items-center justify-center">
                         {isLoading ? (
                           <Loader2 className="w-5 h-5 animate-spin" />
@@ -228,8 +231,8 @@ export default function TeacherPortal() {
                 </CardContent>
               </Card>
               
-              <div className="text-center mt-8 text-sm text-slate-400 font-medium flex items-center justify-center gap-2">
-                <Sparkles className="w-4 h-4 text-cyan-500" />
+              <div className="text-center mt-8 text-sm text-slate-500 font-medium flex items-center justify-center gap-2">
+                <Sparkles className="w-4 h-4 text-cyan-600 animate-pulse" />
                 <span>Didukung oleh AI KuisSeru</span>
               </div>
             </div>
@@ -240,33 +243,30 @@ export default function TeacherPortal() {
             initial={{ opacity: 0, scale: 0.98 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.4 }}
-            className="p-4 md:p-8 lg:p-12 max-w-7xl mx-auto relative"
+            className="p-4 md:p-8 lg:p-12 max-w-7xl mx-auto relative z-10"
           >
-            {/* Subtle Top Glow */}
-            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[300px] bg-blue-400/10 rounded-full blur-[120px] pointer-events-none -z-10" />
-
-            <header className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12 bg-white/50 backdrop-blur-xl p-4 rounded-3xl border border-white shadow-sm">
+            <header className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12 bg-white/5 backdrop-blur-2xl p-5 rounded-[2rem] border border-white/10 shadow-[0_0_30px_rgba(59,130,246,0.15)]">
               <div className="flex items-center gap-4 px-2">
-                <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-blue-500 to-cyan-400 flex items-center justify-center text-white shadow-lg shadow-blue-200">
-                  <Sparkles className="w-6 h-6" />
+                <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-blue-600 to-purple-600 flex items-center justify-center text-white shadow-[0_0_20px_rgba(59,130,246,0.5)] border border-blue-400/30">
+                  <Sparkles className="w-7 h-7" />
                 </div>
                 <div>
-                  <h1 className="text-2xl font-medium text-slate-800 tracking-tight flex items-center gap-2 flex-wrap">
-                    <span>Halo, <span className="font-semibold">{user?.name}</span></span>
-                    <span className={`text-xs font-bold uppercase tracking-wider px-2 py-0.5 rounded-md ${user?.role === 'admin' ? 'bg-amber-100 text-amber-700' : 'bg-blue-100 text-blue-700'}`}>
+                  <h1 className="text-2xl font-medium text-white tracking-tight flex items-center gap-2 flex-wrap drop-shadow-sm">
+                    <span>Halo, <span className="font-extrabold text-cyan-400">{user?.name}</span></span>
+                    <span className={`text-xs font-bold uppercase tracking-wider px-3 py-1 rounded-full border ${user?.role === 'admin' ? 'bg-amber-900/30 text-amber-400 border-amber-500/30' : 'bg-blue-900/30 text-blue-400 border-blue-500/30'}`}>
                       {user?.role === 'admin' ? 'Admin' : 'Guru'}
                     </span>
                   </h1>
-                  <p className="text-slate-500 text-sm">Dashboard Utama KuisSeru</p>
+                  <p className="text-slate-400 text-sm mt-1">Dashboard Utama KuisSeru</p>
                 </div>
               </div>
               
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-3">
                 {user?.role === 'admin' && (
                   <Button 
                     variant="outline" 
                     onClick={() => router.push('/admin')}
-                    className="rounded-xl text-blue-600 hover:text-blue-700 hover:bg-blue-50 border-blue-200 bg-blue-50/50 shadow-sm mr-2"
+                    className="rounded-xl text-cyan-400 hover:text-white hover:bg-cyan-600/20 border-cyan-500/30 bg-cyan-900/20 shadow-[0_0_15px_rgba(34,211,238,0.2)]"
                   >
                     <Shield className="w-4 h-4 mr-2" />
                     Panel Admin
@@ -275,15 +275,15 @@ export default function TeacherPortal() {
                 <Button 
                   variant="outline" 
                   onClick={() => setIsEditProfileOpen(true)}
-                  className="rounded-xl text-slate-500 hover:text-blue-700 hover:bg-blue-50 border-white bg-white/80 shadow-sm"
+                  className="rounded-xl text-slate-300 hover:text-white hover:bg-white/10 border-white/10 bg-white/5"
                 >
                   <Settings className="w-4 h-4 mr-2" />
-                  Pengaturan Profil
+                  Profil
                 </Button>
                 <Button 
                   variant="ghost" 
                   onClick={handleLogout}
-                  className="rounded-xl text-slate-500 hover:text-red-600 hover:bg-red-50"
+                  className="rounded-xl text-slate-400 hover:text-red-400 hover:bg-red-900/20"
                 >
                   <LogOut className="w-4 h-4 mr-2" />
                   Keluar
@@ -295,14 +295,14 @@ export default function TeacherPortal() {
               {/* Action Card */}
               <div className="md:col-span-4">
                 <div className="sticky top-8 space-y-6">
-                  <Card className="border border-white/50 shadow-2xl shadow-blue-900/5 bg-white/70 backdrop-blur-2xl rounded-[32px] overflow-hidden relative group">
-                    <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 to-cyan-500/5 group-hover:opacity-100 opacity-0 transition-opacity duration-500 pointer-events-none" />
+                  <Card className="border border-white/10 shadow-[0_0_40px_rgba(59,130,246,0.15)] bg-[#111827]/80 backdrop-blur-2xl rounded-[2rem] overflow-hidden relative group">
+                    <div className="absolute inset-0 bg-gradient-to-br from-blue-500/10 to-purple-500/10 group-hover:opacity-100 opacity-0 transition-opacity duration-500 pointer-events-none" />
                     <CardContent className="p-10 flex flex-col items-center text-center relative z-10">
-                      <div className="w-24 h-24 rounded-[2rem] bg-gradient-to-br from-blue-50 to-cyan-50 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-500 border border-blue-100 shadow-inner">
-                        <Sparkles className="w-10 h-10 text-blue-600" />
+                      <div className="w-24 h-24 rounded-[2rem] bg-gradient-to-br from-blue-900/50 to-purple-900/50 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-500 border border-blue-400/30 shadow-[0_0_20px_rgba(59,130,246,0.4)]">
+                        <Sparkles className="w-10 h-10 text-cyan-400 animate-pulse" />
                       </div>
-                      <h2 className="text-2xl font-semibold text-slate-800 mb-3 tracking-tight">Kuis Cerdas Baru</h2>
-                      <p className="text-slate-500 mb-8 font-light leading-relaxed">
+                      <h2 className="text-2xl font-bold text-white mb-3 tracking-tight drop-shadow-md">Kuis Cerdas Baru</h2>
+                      <p className="text-slate-400 mb-8 font-light leading-relaxed">
                         Bangkitkan semangat belajar dengan kuis interaktif yang dirancang khusus.
                       </p>
                       
@@ -310,9 +310,8 @@ export default function TeacherPortal() {
                         onClick={handleCreateSession}
                         disabled={isLoading}
                         size="lg"
-                        className="w-full h-14 rounded-2xl text-lg font-medium bg-blue-600 hover:bg-blue-700 text-white shadow-xl shadow-blue-200 transition-all hover:scale-[1.02] active:scale-[0.98] relative overflow-hidden"
+                        className="w-full h-14 rounded-2xl text-lg font-bold bg-gradient-to-r from-blue-600 to-cyan-500 hover:from-blue-500 hover:to-cyan-400 text-white shadow-[0_0_20px_rgba(34,211,238,0.4)] transition-all hover:scale-[1.03] active:scale-[0.98] relative overflow-hidden border-0"
                       >
-                        <div className="absolute inset-0 bg-gradient-to-r from-blue-500 to-cyan-500 opacity-0 hover:opacity-100 transition-opacity" />
                         <span className="relative z-10 flex items-center justify-center">
                           {isLoading ? <Loader2 className="w-5 h-5 animate-spin" /> : <><Plus className="w-5 h-5 mr-2" /> Mulai Sekarang</>}
                         </span>
@@ -324,27 +323,27 @@ export default function TeacherPortal() {
 
               {/* History List */}
               <div className="md:col-span-8">
-                <div className="bg-white/70 backdrop-blur-xl rounded-[32px] shadow-xl shadow-slate-200/40 border border-white p-8 min-h-[500px]">
+                <div className="bg-[#111827]/60 backdrop-blur-xl rounded-[2rem] shadow-[0_0_40px_rgba(0,0,0,0.5)] border border-white/5 p-8 min-h-[500px]">
                   <div className="flex items-center justify-between mb-8">
                     <div className="flex items-center gap-3">
-                      <div className="p-2 bg-blue-50 rounded-xl">
-                        <History className="w-5 h-5 text-blue-600" />
+                      <div className="p-3 bg-blue-900/30 rounded-xl border border-blue-500/20">
+                        <History className="w-5 h-5 text-cyan-400" />
                       </div>
-                      <h2 className="text-xl font-medium text-slate-800">Sesi Kuis Anda</h2>
+                      <h2 className="text-xl font-bold text-white drop-shadow-md">Sesi Kuis Anda</h2>
                     </div>
                   </div>
 
                   {isFetching ? (
-                    <div className="flex justify-center items-center h-64 text-slate-400">
-                      <Loader2 className="w-8 h-8 animate-spin" />
+                    <div className="flex justify-center items-center h-64 text-cyan-400">
+                      <Loader2 className="w-10 h-10 animate-spin drop-shadow-[0_0_10px_rgba(34,211,238,0.5)]" />
                     </div>
                   ) : sessions.length === 0 ? (
-                    <div className="text-center py-24 bg-white/50 rounded-3xl border border-dashed border-slate-200 flex flex-col items-center">
-                      <div className="w-16 h-16 bg-slate-50 rounded-full flex items-center justify-center mb-4">
-                        <Sparkles className="w-8 h-8 text-slate-300" />
+                    <div className="text-center py-24 bg-white/5 rounded-3xl border border-dashed border-white/10 flex flex-col items-center">
+                      <div className="w-20 h-20 bg-slate-800 rounded-full flex items-center justify-center mb-5 border border-slate-700 shadow-inner">
+                        <Sparkles className="w-10 h-10 text-slate-500" />
                       </div>
-                      <h3 className="text-lg font-medium text-slate-700 mb-1">Area Kerja Masih Kosong</h3>
-                      <p className="text-slate-400 font-light">Mulai kuis interaktif pertama Anda hari ini.</p>
+                      <h3 className="text-xl font-bold text-slate-300 mb-2">Area Kerja Masih Kosong</h3>
+                      <p className="text-slate-500 font-light">Mulai kuis interaktif pertama Anda hari ini.</p>
                     </div>
                   ) : (
                     <div className="space-y-4">
@@ -353,7 +352,7 @@ export default function TeacherPortal() {
                           initial={{ opacity: 0, y: 10 }}
                           animate={{ opacity: 1, y: 0 }}
                           key={session.id} 
-                          className="group bg-white hover:bg-blue-50/30 border border-slate-100 hover:border-blue-200 rounded-[24px] p-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4 transition-all hover:shadow-lg hover:shadow-blue-900/5"
+                          className="group bg-[#1e293b]/60 hover:bg-blue-900/30 border border-white/10 hover:border-cyan-500/50 rounded-[1.5rem] p-6 flex flex-col sm:flex-row sm:items-center justify-between gap-5 transition-all duration-300 hover:shadow-[0_0_20px_rgba(34,211,238,0.15)]"
                         >
                           <div 
                             className="flex items-center gap-5 cursor-pointer flex-1"
@@ -365,15 +364,15 @@ export default function TeacherPortal() {
                               }
                             }}
                           >
-                            <div className="w-12 h-12 rounded-xl bg-slate-50 flex items-center justify-center group-hover:bg-white group-hover:shadow-sm transition-all">
-                              <Play className="w-5 h-5 text-slate-400 group-hover:text-blue-500 ml-1" />
+                            <div className="w-14 h-14 rounded-2xl bg-slate-800 flex items-center justify-center group-hover:bg-cyan-500 group-hover:shadow-[0_0_15px_rgba(34,211,238,0.6)] transition-all duration-300 border border-slate-700 group-hover:border-cyan-400">
+                              <Play className="w-6 h-6 text-slate-400 group-hover:text-white ml-1 transition-colors" />
                             </div>
                             <div>
-                              <h3 className="font-medium text-slate-800 group-hover:text-blue-700 transition-colors text-lg mb-1 tracking-tight">
+                              <h3 className="font-bold text-slate-200 group-hover:text-cyan-400 transition-colors text-lg md:text-xl mb-1 tracking-tight">
                                 {session.title}
                               </h3>
-                              <p className="text-sm text-slate-400 font-light">
-                                ID Sesi: <span className="font-medium text-slate-500">{session.id.split('-')[0].toUpperCase()}</span> • {new Date(session.createdAt).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })}
+                              <p className="text-sm text-slate-500 font-light">
+                                ID Sesi: <span className="font-semibold text-slate-400">{session.id.split('-')[0].toUpperCase()}</span> • <span className="text-slate-400">{new Date(session.createdAt).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })}</span>
                               </p>
                             </div>
                           </div>
@@ -389,7 +388,7 @@ export default function TeacherPortal() {
                                   e.stopPropagation();
                                   router.push(`/teacher/session/${session.id}/grading`);
                                 }}
-                                className="rounded-xl border-blue-200 text-blue-600 hover:bg-blue-50 ml-2"
+                                className="rounded-xl border-cyan-500/30 text-cyan-400 hover:bg-cyan-500/20 hover:text-cyan-300 ml-2 shadow-[0_0_10px_rgba(34,211,238,0.1)] bg-transparent"
                               >
                                 <FileText className="w-4 h-4 mr-2" />
                                 Penilaian
@@ -397,7 +396,7 @@ export default function TeacherPortal() {
                             )}
                             
                             <div 
-                              className="w-10 h-10 rounded-full bg-slate-50 flex items-center justify-center text-slate-400 group-hover:text-blue-600 group-hover:bg-blue-100 transition-all cursor-pointer"
+                              className="w-12 h-12 rounded-xl bg-slate-800 flex items-center justify-center text-slate-400 group-hover:text-white group-hover:bg-blue-600 transition-all duration-300 cursor-pointer border border-slate-700 group-hover:border-blue-500"
                               onClick={() => {
                                 if (session.status === 'draft') {
                                   router.push(`/teacher/session/${session.id}/edit`);
