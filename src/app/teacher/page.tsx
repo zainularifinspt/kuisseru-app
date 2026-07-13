@@ -6,7 +6,7 @@ import { createNewSession, getSessions } from '@/app/actions/session';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent } from '@/components/ui/card';
-import { Sparkles, Play, Plus, History, LogOut, Loader2, ArrowRight } from 'lucide-react';
+import { Sparkles, Play, Plus, History, LogOut, Loader2, ArrowRight, Settings } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 export default function TeacherPortal() {
@@ -192,14 +192,24 @@ export default function TeacherPortal() {
                 </div>
               </div>
               
-              <Button 
-                variant="ghost" 
-                onClick={handleLogout}
-                className="rounded-full text-slate-500 hover:text-slate-800 hover:bg-slate-200"
-              >
-                <LogOut className="w-5 h-5 mr-2" />
-                Keluar
-              </Button>
+              <div className="flex items-center gap-2">
+                <Button 
+                  variant="outline" 
+                  onClick={() => alert("Fitur Manajemen Akun (Ubah Profil & Sandi) sedang dalam tahap pengembangan.")}
+                  className="rounded-full text-slate-500 hover:text-slate-800"
+                >
+                  <Settings className="w-5 h-5 mr-2" />
+                  Pengaturan Akun
+                </Button>
+                <Button 
+                  variant="ghost" 
+                  onClick={handleLogout}
+                  className="rounded-full text-slate-500 hover:text-red-600 hover:bg-red-50"
+                >
+                  <LogOut className="w-5 h-5 mr-2" />
+                  Keluar
+                </Button>
+              </div>
             </header>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -207,8 +217,8 @@ export default function TeacherPortal() {
               <div className="md:col-span-1">
                 <div className="sticky top-8 space-y-6">
                   <Card className="border-0 shadow-xl shadow-indigo-100/50 bg-white rounded-3xl overflow-hidden relative group">
-                    <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/5 to-purple-500/5 group-hover:opacity-100 opacity-0 transition-opacity duration-500" />
-                    <CardContent className="p-8 flex flex-col items-center text-center">
+                    <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/5 to-purple-500/5 group-hover:opacity-100 opacity-0 transition-opacity duration-500 pointer-events-none" />
+                    <CardContent className="p-8 flex flex-col items-center text-center relative z-10">
                       <div className="w-20 h-20 rounded-full bg-indigo-50 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-500">
                         <Play className="w-8 h-8 text-indigo-600 ml-1" />
                       </div>
