@@ -6,9 +6,10 @@ import { createNewSession, getSessions } from '@/app/actions/session';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent } from '@/components/ui/card';
-import { Sparkles, Play, Plus, History, LogOut, Loader2, ArrowRight, Settings, Pencil } from 'lucide-react';
+import { Sparkles, Play, Plus, History, LogOut, Loader2, ArrowRight, Settings, Pencil, FileText } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { signIn, signOut, useSession } from '@/lib/auth-client';
+import { updateProfile } from '@/app/actions/user';
 
 export default function TeacherPortal() {
   const router = useRouter();
@@ -25,9 +26,15 @@ export default function TeacherPortal() {
   const [sessions, setSessions] = useState<any[]>([]);
   const [isFetching, setIsFetching] = useState(false);
 
+  // Profile Edit state
+  const [isEditProfileOpen, setIsEditProfileOpen] = useState(false);
+  const [newName, setNewName] = useState('');
+  const [isProfileUpdating, setIsProfileUpdating] = useState(false);
+
   useEffect(() => {
     if (isLoggedIn && user?.id) {
       fetchDashboardData(user.id);
+      setNewName(user.name);
     }
   }, [isLoggedIn, user]);
 
@@ -60,7 +67,6 @@ export default function TeacherPortal() {
 
   const fetchDashboardData = async (teacherId: string) => {
     setIsFetching(true);
-    // getSessions action needs to be updated to accept teacherId
     const result = await getSessions(teacherId);
     if (result.success) {
       setSessions(result.sessions);
@@ -77,6 +83,20 @@ export default function TeacherPortal() {
       alert("Gagal membuat sesi");
       setIsLoading(false);
     }
+  };
+
+  const handleUpdateProfile = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsProfileUpdating(true);
+    const res = await updateProfile(newName);
+    if (res.success) {
+      alert("Profil berhasil diperbarui!");
+      setIsEditProfileOpen(false);
+      window.location.reload();
+    } else {
+      alert("Gagal memperbarui profil: " + res.error);
+    }
+    setIsProfileUpdating(false);
   };
 
   const getStatusBadge = (status: string) => {
@@ -96,6 +116,34 @@ export default function TeacherPortal() {
 
   return (
     <div className="min-h-screen bg-[#F8F9FA] text-slate-800 font-sans selection:bg-blue-200">
+      
+      {/* Profile Edit Modal */}
+      <AnimatePresence>
+        {isEditProfileOpen && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-sm">
+            <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }} className="w-full max-w-md">
+              <Card className="rounded-[24px] border-0 shadow-2xl overflow-hidden">
+                <CardContent className="p-8">
+                  <h2 className="text-xl font-bold text-slate-800 mb-6">Pengaturan Profil</h2>
+                  <form onSubmit={handleUpdateProfile} className="space-y-5">
+                    <div className="space-y-2">
+                      <label className="text-sm font-medium text-slate-600">Nama Lengkap</label>
+                      <Input value={newName} onChange={(e) => setNewName(e.target.value)} className="h-12 rounded-xl bg-slate-50" required />
+                    </div>
+                    <div className="flex gap-3 pt-2">
+                      <Button type="button" variant="outline" onClick={() => setIsEditProfileOpen(false)} className="flex-1 h-12 rounded-xl">Batal</Button>
+                      <Button type="submit" disabled={isProfileUpdating} className="flex-1 h-12 rounded-xl bg-blue-600 hover:bg-blue-700 text-white">
+                        {isProfileUpdating ? <Loader2 className="w-5 h-5 animate-spin" /> : 'Simpan'}
+                      </Button>
+                    </div>
+                  </form>
+                </CardContent>
+              </Card>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+
       <AnimatePresence mode="wait">
         {!isLoggedIn ? (
           <motion.div 
@@ -204,7 +252,7 @@ export default function TeacherPortal() {
                 </div>
                 <div>
                   <h1 className="text-2xl font-medium text-slate-800 tracking-tight">
-                    Halo, <span className="font-semibold">Zainul Arifin</span>
+                    Halo, <span className="font-semibold">{user?.name}</span>
                   </h1>
                   <p className="text-slate-500 text-sm">Dashboard Utama KuisSeru</p>
                 </div>
@@ -213,11 +261,11 @@ export default function TeacherPortal() {
               <div className="flex items-center gap-2">
                 <Button 
                   variant="outline" 
-                  onClick={() => alert("Fitur Manajemen Akun (Ubah Profil & Sandi) sedang dalam tahap pengembangan.")}
+                  onClick={() => setIsEditProfileOpen(true)}
                   className="rounded-xl text-slate-500 hover:text-blue-700 hover:bg-blue-50 border-white bg-white/80 shadow-sm"
                 >
                   <Settings className="w-4 h-4 mr-2" />
-                  Pengaturan
+                  Pengaturan Profil
                 </Button>
                 <Button 
                   variant="ghost" 
@@ -292,16 +340,18 @@ export default function TeacherPortal() {
                           initial={{ opacity: 0, y: 10 }}
                           animate={{ opacity: 1, y: 0 }}
                           key={session.id} 
-                          onClick={() => {
-                            if (session.status === 'draft') {
-                              router.push(`/teacher/session/${session.id}/edit`);
-                            } else {
-                              router.push(`/teacher/session/${session.id}/dashboard`);
-                            }
-                          }}
-                          className="group bg-white hover:bg-blue-50/30 border border-slate-100 hover:border-blue-200 rounded-[24px] p-6 flex items-center justify-between cursor-pointer transition-all hover:shadow-lg hover:shadow-blue-900/5"
+                          className="group bg-white hover:bg-blue-50/30 border border-slate-100 hover:border-blue-200 rounded-[24px] p-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4 transition-all hover:shadow-lg hover:shadow-blue-900/5"
                         >
-                          <div className="flex items-center gap-5">
+                          <div 
+                            className="flex items-center gap-5 cursor-pointer flex-1"
+                            onClick={() => {
+                              if (session.status === 'draft') {
+                                router.push(`/teacher/session/${session.id}/edit`);
+                              } else {
+                                router.push(`/teacher/session/${session.id}/dashboard`);
+                              }
+                            }}
+                          >
                             <div className="w-12 h-12 rounded-xl bg-slate-50 flex items-center justify-center group-hover:bg-white group-hover:shadow-sm transition-all">
                               <Play className="w-5 h-5 text-slate-400 group-hover:text-blue-500 ml-1" />
                             </div>
@@ -314,9 +364,35 @@ export default function TeacherPortal() {
                               </p>
                             </div>
                           </div>
-                          <div className="flex items-center gap-4">
+                          
+                          <div className="flex items-center gap-3 self-end sm:self-center">
                             {getStatusBadge(session.status)}
-                            <div className="w-10 h-10 rounded-full bg-slate-50 flex items-center justify-center text-slate-400 group-hover:text-blue-600 group-hover:bg-blue-100 transition-all">
+                            
+                            {session.status !== 'draft' && (
+                              <Button 
+                                variant="outline" 
+                                size="sm"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  router.push(`/teacher/session/${session.id}/grading`);
+                                }}
+                                className="rounded-xl border-blue-200 text-blue-600 hover:bg-blue-50 ml-2"
+                              >
+                                <FileText className="w-4 h-4 mr-2" />
+                                Penilaian
+                              </Button>
+                            )}
+                            
+                            <div 
+                              className="w-10 h-10 rounded-full bg-slate-50 flex items-center justify-center text-slate-400 group-hover:text-blue-600 group-hover:bg-blue-100 transition-all cursor-pointer"
+                              onClick={() => {
+                                if (session.status === 'draft') {
+                                  router.push(`/teacher/session/${session.id}/edit`);
+                                } else {
+                                  router.push(`/teacher/session/${session.id}/dashboard`);
+                                }
+                              }}
+                            >
                               <ArrowRight className="w-5 h-5" />
                             </div>
                           </div>

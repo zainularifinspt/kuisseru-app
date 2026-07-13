@@ -71,7 +71,7 @@ export const quizSessions = sqliteTable('quiz_sessions', {
   id: text('id').primaryKey(),
   title: text('title').notNull(),
   status: text('status', { enum: ['draft', 'waiting', 'active', 'finished'] }).notNull().default('draft'),
-  teacherId: text('teacher_id').notNull().references(() => user.id), // Link to better auth user
+  teacherId: text('teacher_id').references(() => user.id), // Link to better auth user
   createdAt: integer('created_at', { mode: 'timestamp' }).notNull().$defaultFn(() => new Date()),
   updatedAt: integer('updated_at', { mode: 'timestamp' }).notNull().$defaultFn(() => new Date()),
 });
