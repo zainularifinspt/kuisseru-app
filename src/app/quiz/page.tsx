@@ -4,13 +4,9 @@ import { useState, useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
-import { Badge } from "@/components/ui/badge";
-import { Trophy, Star, Timer, Loader2 } from "lucide-react";
+import { Trophy, Timer, Loader2 } from "lucide-react";
 import { QuestionCard } from "@/components/quiz/QuestionCard";
-import { LiveScore } from "@/components/quiz/LiveScore";
-import { Leaderboard, LeaderboardUser } from "@/components/quiz/Leaderboard";
 import { AnimatePresence, motion } from "framer-motion";
-import { getPusherClient } from "@/lib/pusherClient";
 
 type Question = {
   id: string;
@@ -38,7 +34,6 @@ function QuizContent() {
   
   const [playerNickname, setPlayerNickname] = useState("");
   const [currentScore, setCurrentScore] = useState(0);
-  const [liveLeaderboard, setLiveLeaderboard] = useState<LeaderboardUser[]>([]);
 
   const [forceSubmit, setForceSubmit] = useState(false);
   const [timeRemaining, setTimeRemaining] = useState(60);
@@ -69,11 +64,10 @@ function QuizContent() {
           }
         }
 
-        // Fetch participants for leaderboard and find current player
+        // Fetch participants to find current player
         const resParticipants = await fetch(`/api/quiz-sessions/${sessionId}/participants`);
         if (resParticipants.ok) {
           const data = await resParticipants.json();
-          setLiveLeaderboard(data.participants);
           
           const currentPlayer = data.participants.find((p: any) => p.id === participantId);
           if (currentPlayer) {
@@ -89,22 +83,6 @@ function QuizContent() {
     }
 
     fetchData();
-
-    // Pusher setup for live leaderboard updates
-    const pusherClient = getPusherClient();
-    if (pusherClient) {
-      const channel = pusherClient.subscribe(`session-${sessionId}`);
-      channel.bind('answer-submitted', (data: { participantId: string, score: number, questionId: string, isCorrect: boolean }) => {
-        setLiveLeaderboard((prev) => 
-          prev.map((user) => 
-            user.id === data.participantId ? { ...user, score: data.score } : user
-          )
-        );
-      });
-      return () => {
-        pusherClient.unsubscribe(`session-${sessionId}`);
-      };
-    }
   }, [sessionId, participantId, router]);
 
   // Timer logic
@@ -176,10 +154,6 @@ function QuizContent() {
 
   const question = questions[currentQuestionIndex];
   const progressPercentage = isFinished ? 100 : (currentQuestionIndex / questions.length) * 100;
-  
-  // Calculate rank based on live leaderboard
-  const sortedLeaderboard = [...liveLeaderboard].sort((a, b) => (b.score || 0) - (a.score || 0));
-  const playerRank = sortedLeaderboard.findIndex(p => p.id === participantId) + 1;
 
   const formatTime = (seconds: number) => {
     const mins = Math.floor(seconds / 60);
@@ -192,10 +166,6 @@ function QuizContent() {
       {/* Header Info */}
       <header className="flex justify-between items-center mb-6 bg-white/20 backdrop-blur-md p-4 rounded-2xl shadow-lg border border-white/30 text-white">
         <div className="flex items-center gap-3">
-          <Badge variant="secondary" className="bg-yellow-400 text-yellow-900 hover:bg-yellow-500 text-sm py-1 px-3 shadow-sm">
-            <Star className="w-4 h-4 mr-1 fill-current" />
-            Rank #{playerRank || '-'}
-          </Badge>
           <span className="font-bold text-lg hidden sm:inline">{playerNickname}</span>
         </div>
         
@@ -204,14 +174,14 @@ function QuizContent() {
         </h1>
         
         <div className="flex items-center gap-2">
-          <LiveScore score={currentScore} />
+          {/* Omitted points and rank for student view */}
         </div>
       </header>
 
-      <div className="flex-1 max-w-6xl w-full mx-auto grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className="flex-1 max-w-4xl w-full mx-auto flex flex-col gap-6">
         
         {/* Main Quiz Area */}
-        <div className="lg:col-span-2 flex flex-col gap-6">
+        <div className="w-full flex flex-col gap-6">
           
           <Card className="border-0 shadow-2xl bg-white/95 backdrop-blur-sm rounded-3xl overflow-hidden ring-4 ring-white/50">
             <CardHeader className="bg-slate-50 border-b pb-4 flex flex-row items-center justify-between">
@@ -244,9 +214,7 @@ function QuizContent() {
                       Skor Akhir Kamu: <span className="font-bold text-indigo-600">{currentScore} pts</span>
                     </p>
                     <div className="bg-indigo-50 border-2 border-indigo-200 rounded-2xl p-6 text-lg font-medium text-indigo-900 shadow-inner">
-                      {currentScore >= (questions.length * 80) ? "Luar Biasa! Kamu sangat menguasai materi ini! 🌟" : 
-                       currentScore >= (questions.length * 50) ? "Hebat! Terus pertahankan prestasimu! 👍" : 
-                       "Tetap Semangat! Coba Lagi Ya dan jangan pantang menyerah! 💪"}
+                      Jawabanmu telah tersimpan. Silakan tunggu intruksi dari guru.
                     </div>
                   </motion.div>
                 ) : (
@@ -269,11 +237,6 @@ function QuizContent() {
             </CardContent>
           </Card>
           
-        </div>
-        
-        {/* Sidebar / Leaderboard */}
-        <div className="flex flex-col gap-6">
-          <Leaderboard data={sortedLeaderboard} currentPlayerNickname={playerNickname} />
         </div>
         
       </div>

@@ -27,21 +27,31 @@ function WaitingRoomContent() {
       return;
     }
 
-    async function fetchParticipants() {
+    async function checkSessionAndFetchParticipants() {
       try {
+        // Fetch session status first
+        const sessionRes = await fetch(`/api/quiz-sessions/${sessionId}`);
+        if (sessionRes.ok) {
+          const sessionData = await sessionRes.json();
+          if (sessionData.session?.status === 'active' || sessionData.status === 'active') {
+            router.push(`/quiz?sessionId=${sessionId}&participantId=${participantId}`);
+            return;
+          }
+        }
+
         const res = await fetch(`/api/quiz-sessions/${sessionId}/participants`);
         if (res.ok) {
           const data = await res.json();
           setPlayers(data.participants);
         }
       } catch (error) {
-        console.error("Failed to fetch participants", error);
+        console.error("Failed to fetch data", error);
       } finally {
         setIsLoading(false);
       }
     }
     
-    fetchParticipants();
+    checkSessionAndFetchParticipants();
 
     const pusherClient = getPusherClient();
     if (!pusherClient) return;
