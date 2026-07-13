@@ -251,8 +251,11 @@ export default function TeacherPortal() {
                   <Sparkles className="w-6 h-6" />
                 </div>
                 <div>
-                  <h1 className="text-2xl font-medium text-slate-800 tracking-tight">
-                    Halo, <span className="font-semibold">{user?.name}</span>
+                  <h1 className="text-2xl font-medium text-slate-800 tracking-tight flex items-center gap-2 flex-wrap">
+                    <span>Halo, <span className="font-semibold">{user?.name}</span></span>
+                    <span className={`text-xs font-bold uppercase tracking-wider px-2 py-0.5 rounded-md ${user?.role === 'admin' ? 'bg-amber-100 text-amber-700' : 'bg-blue-100 text-blue-700'}`}>
+                      {user?.role === 'admin' ? 'Admin' : 'Guru'}
+                    </span>
                   </h1>
                   <p className="text-slate-500 text-sm">Dashboard Utama KuisSeru</p>
                 </div>

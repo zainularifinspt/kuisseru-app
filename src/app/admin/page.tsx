@@ -217,7 +217,10 @@ export default function AdminPortal() {
             </div>
             <div>
               <h1 className="text-2xl font-bold text-slate-800">Admin Dashboard</h1>
-              <p className="text-slate-500 text-sm font-medium">Halo, <span className="text-blue-600">{user?.name}</span></p>
+              <p className="text-slate-500 text-sm font-medium flex items-center gap-2">
+                Halo, <span className="text-blue-600">{user?.name}</span>
+                <span className="text-[10px] font-bold uppercase tracking-wider bg-amber-100 text-amber-700 px-2 py-0.5 rounded-md">Admin</span>
+              </p>
             </div>
           </div>
           <div className="flex items-center gap-3">
