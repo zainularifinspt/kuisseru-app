@@ -6,7 +6,7 @@ import { createNewSession, getSessions } from '@/app/actions/session';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent } from '@/components/ui/card';
-import { Sparkles, Play, Plus, History, LogOut, Loader2, ArrowRight, Settings, Pencil, FileText } from 'lucide-react';
+import { Sparkles, Play, Plus, History, LogOut, Loader2, ArrowRight, Settings, Pencil, FileText, Shield } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { signIn, signOut, useSession } from '@/lib/auth-client';
 import { updateProfile } from '@/app/actions/user';
@@ -259,6 +259,16 @@ export default function TeacherPortal() {
               </div>
               
               <div className="flex items-center gap-2">
+                {user?.role === 'admin' && (
+                  <Button 
+                    variant="outline" 
+                    onClick={() => router.push('/admin')}
+                    className="rounded-xl text-blue-600 hover:text-blue-700 hover:bg-blue-50 border-blue-200 bg-blue-50/50 shadow-sm mr-2"
+                  >
+                    <Shield className="w-4 h-4 mr-2" />
+                    Panel Admin
+                  </Button>
+                )}
                 <Button 
                   variant="outline" 
                   onClick={() => setIsEditProfileOpen(true)}
