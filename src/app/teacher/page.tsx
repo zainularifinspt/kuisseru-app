@@ -6,12 +6,16 @@ import { createNewSession, getSessions } from '@/app/actions/session';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent } from '@/components/ui/card';
-import { Sparkles, Play, Plus, History, LogOut, Loader2, ArrowRight, Settings } from 'lucide-react';
+import { Sparkles, Play, Plus, History, LogOut, Loader2, ArrowRight, Settings, Pencil } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { signIn, signOut, useSession } from '@/lib/auth-client';
 
 export default function TeacherPortal() {
   const router = useRouter();
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const { data: sessionData, isPending } = useSession();
+  const isLoggedIn = !!sessionData?.user;
+  const user = sessionData?.user;
+  
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -21,43 +25,43 @@ export default function TeacherPortal() {
   const [sessions, setSessions] = useState<any[]>([]);
   const [isFetching, setIsFetching] = useState(false);
 
-  // Check simple session storage for persistence
   useEffect(() => {
-    const auth = sessionStorage.getItem('teacher_auth');
-    if (auth === 'true') {
-      setIsLoggedIn(true);
-      fetchDashboardData();
+    if (isLoggedIn && user?.id) {
+      fetchDashboardData(user.id);
     }
-  }, []);
+  }, [isLoggedIn, user]);
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
     setError('');
 
-    // Simulate network delay for smooth animation
-    setTimeout(() => {
-      if (email === 'mzainul.arifin@ulm.ac.id' && password === 'ARIfin8167') {
-        sessionStorage.setItem('teacher_auth', 'true');
-        setIsLoggedIn(true);
-        fetchDashboardData();
-      } else {
-        setError('Email atau password salah');
+    try {
+      const res = await signIn.email({
+          email,
+          password
+      });
+      
+      if (res.error) {
+          setError(res.error.message || 'Login gagal');
       }
+    } catch (err: any) {
+      setError(err.message || 'Terjadi kesalahan saat login');
+    } finally {
       setIsLoading(false);
-    }, 800);
+    }
   };
 
-  const handleLogout = () => {
-    sessionStorage.removeItem('teacher_auth');
-    setIsLoggedIn(false);
+  const handleLogout = async () => {
+    await signOut();
     setEmail('');
     setPassword('');
   };
 
-  const fetchDashboardData = async () => {
+  const fetchDashboardData = async (teacherId: string) => {
     setIsFetching(true);
-    const result = await getSessions();
+    // getSessions action needs to be updated to accept teacherId
+    const result = await getSessions(teacherId);
     if (result.success) {
       setSessions(result.sessions);
     }
@@ -68,7 +72,7 @@ export default function TeacherPortal() {
     setIsLoading(true);
     const result = await createNewSession();
     if (result.success) {
-      router.push(`/teacher/session/${result.sessionId}/dashboard`);
+      router.push(`/teacher/session/${result.sessionId}/edit`);
     } else {
       alert("Gagal membuat sesi");
       setIsLoading(false);
@@ -77,6 +81,8 @@ export default function TeacherPortal() {
 
   const getStatusBadge = (status: string) => {
     switch (status) {
+      case 'draft':
+        return <span className="bg-slate-100 text-slate-500 px-2 py-1 rounded-full text-xs font-bold uppercase tracking-wider">Konsep</span>;
       case 'waiting':
         return <span className="bg-amber-100 text-amber-700 px-2 py-1 rounded-full text-xs font-bold uppercase tracking-wider">Menunggu</span>;
       case 'active':
@@ -286,7 +292,13 @@ export default function TeacherPortal() {
                           initial={{ opacity: 0, y: 10 }}
                           animate={{ opacity: 1, y: 0 }}
                           key={session.id} 
-                          onClick={() => router.push(`/teacher/session/${session.id}/dashboard`)}
+                          onClick={() => {
+                            if (session.status === 'draft') {
+                              router.push(`/teacher/session/${session.id}/edit`);
+                            } else {
+                              router.push(`/teacher/session/${session.id}/dashboard`);
+                            }
+                          }}
                           className="group bg-white hover:bg-blue-50/30 border border-slate-100 hover:border-blue-200 rounded-[24px] p-6 flex items-center justify-between cursor-pointer transition-all hover:shadow-lg hover:shadow-blue-900/5"
                         >
                           <div className="flex items-center gap-5">

@@ -3,17 +3,27 @@
 import { db } from "@/db";
 import { quizSessions } from "@/db/schema";
 import { randomUUID } from 'crypto';
+import { auth } from "@/lib/auth";
+import { headers } from "next/headers";
 
-export async function createNewSession(teacherId: string = "teacher-1") {
+export async function createNewSession() {
   try {
+    const session = await auth.api.getSession({
+        headers: await headers()
+    });
+    
+    if (!session || !session.user) {
+        return { success: false, error: "Unauthorized" };
+    }
+    
     const sessionId = randomUUID();
     const shortId = sessionId.split('-')[0].toUpperCase();
     
     await db.insert(quizSessions).values({
       id: sessionId,
       title: `Kuis Interaktif ${shortId}`,
-      status: 'waiting',
-      teacherId: teacherId,
+      status: 'draft',
+      teacherId: session.user.id,
     });
     
     return { success: true, sessionId };
