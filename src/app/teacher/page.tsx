@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { createNewSession, getSessions } from '@/app/actions/session';
-import { Loader2 } from 'lucide-react';
+import { Loader2, Shield, GraduationCap, Hand } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { signIn, signOut, useSession } from '@/lib/auth-client';
 import { updateProfile } from '@/app/actions/user';
@@ -314,8 +314,12 @@ export default function TeacherPortal() {
           <h2 className="font-heading text-xl font-bold text-deep-obsidian">KuisSeru Dashboard</h2>
         </div>
         <div className="flex items-center gap-6">
-          <span className="font-heading font-bold text-sm text-on-surface-variant">
-            {user?.role === 'admin' ? '🛡️ Admin' : '👨‍🏫 Guru'}
+          <span className="font-heading font-bold text-sm text-on-surface-variant flex items-center gap-1.5">
+            {user?.role === 'admin' ? (
+              <><Shield className="w-4 h-4 text-electric-blue" /> Admin</>
+            ) : (
+              <><GraduationCap className="w-4 h-4 text-electric-blue" /> Guru</>
+            )}
           </span>
         </div>
       </header>
@@ -337,8 +341,9 @@ export default function TeacherPortal() {
         {/* Header Section */}
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-12 gap-6 pt-6 md:pt-0">
           <div>
-            <h2 className="font-heading text-3xl md:text-4xl font-bold text-deep-obsidian mb-2">
-              Halo, {user?.name?.split(' ')[0]}. 👋
+            <h2 className="font-heading text-3xl md:text-4xl font-bold text-deep-obsidian mb-2 flex items-center gap-3">
+              Halo, {user?.name?.split(' ')[0]}. 
+              <Hand className="w-8 h-8 md:w-10 md:h-10 text-[#FFB02E] origin-bottom-right animate-[wave_2.5s_infinite]" />
             </h2>
             <p className="font-sans text-on-surface-variant text-lg">
               Anda memiliki {activeSessions.length} kuis aktif hari ini.
