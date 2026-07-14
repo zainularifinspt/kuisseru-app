@@ -20,7 +20,6 @@
     "dotenv": "^17.4.2",
     "drizzle-orm": "^0.45.2",
     "framer-motion": "^12.42.2",
-    "html5-qrcode": "^2.3.8",
     "katex": "^0.17.0",
     "lucide-react": "^1.24.0",
     "next": "16.2.10",
