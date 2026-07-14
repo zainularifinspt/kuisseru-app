@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+
+<html lang="id"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Kuisseru - Login Siswa</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400..700&amp;family=Inter:wght@400..700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "error-container": "#ffdad6",
+                      "on-tertiary": "#ffffff",
+                      "soft-violet": "#8B5CF6",
+                      "on-error": "#ffffff",
+                      "electric-blue": "#0052FF",
+                      "inverse-on-surface": "#f0effe",
+                      "background": "#fbf8ff",
+                      "surface-variant": "#e1e1ef",
+                      "on-tertiary-container": "#c5f600",
+                      "on-primary": "#ffffff",
+                      "cyber-lime": "#CCFF00",
+                      "surface-container-low": "#f3f2ff",
+                      "surface": "#fbf8ff",
+                      "mesh-pink": "#FF00E5",
+                      "on-primary-fixed-variant": "#0038b6",
+                      "outline-variant": "#c3c5d9",
+                      "primary-fixed-dim": "#b7c4ff",
+                      "primary-fixed": "#dde1ff",
+                      "secondary-fixed-dim": "#d0bcff",
+                      "primary-container": "#0052ff",
+                      "on-background": "#191b25",
+                      "tertiary-container": "#576e00",
+                      "on-surface": "#191b25",
+                      "on-secondary-fixed": "#23005c",
+                      "error": "#ba1a1a",
+                      "surface-tint": "#004ced",
+                      "on-surface-variant": "#434656",
+                      "surface-container-highest": "#e1e1ef",
+                      "on-tertiary-fixed": "#161e00",
+                      "inverse-primary": "#b7c4ff",
+                      "on-secondary-container": "#fffbff",
+                      "inverse-surface": "#2e303a",
+                      "surface-bright": "#fbf8ff",
+                      "secondary-fixed": "#e9ddff",
+                      "on-secondary": "#ffffff",
+                      "on-primary-fixed": "#001452",
+                      "secondary-container": "#8455ef",
+                      "on-tertiary-fixed-variant": "#3c4d00",
+                      "surface-container-high": "#e7e7f5",
+                      "surface-container": "#ededfb",
+                      "deep-obsidian": "#0A0A0A",
+                      "tertiary": "#425400",
+                      "surface-dim": "#d9d9e7",
+                      "on-primary-container": "#dfe3ff",
+                      "primary": "#003ec7",
+                      "secondary": "#6b38d4",
+                      "tertiary-fixed-dim": "#abd600",
+                      "on-error-container": "#93000a",
+                      "on-secondary-fixed-variant": "#5516be",
+                      "tertiary-fixed": "#c3f400",
+                      "outline": "#737688",
+                      "surface-container-lowest": "#ffffff"
+              },
+              "borderRadius": {
+                      "DEFAULT": "1rem",
+                      "lg": "2rem",
+                      "xl": "3rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "gutter": "24px",
+                      "margin-desktop": "40px",
+                      "container-max": "1200px",
+                      "margin-mobile": "16px",
+                      "unit": "8px"
+              },
+              "fontFamily": {
+                      "headline-md": [
+                              "Space Grotesk"
+                      ],
+                      "headline-lg": [
+                              "Space Grotesk"
+                      ],
+                      "label-bold": [
+                              "Space Grotesk"
+                      ],
+                      "headline-lg-mobile": [
+                              "Space Grotesk"
+                      ],
+                      "body-lg": [
+                              "Inter"
+                      ],
+                      "body-md": [
+                              "Inter"
+                      ],
+                      "quiz-option": [
+                              "Space Grotesk"
+                      ]
+              },
+              "fontSize": {
+                      "headline-md": [
+                              "32px",
+                              {
+                                      "lineHeight": "1.2",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "headline-lg": [
+                              "48px",
+                              {
+                                      "lineHeight": "1.1",
+                                      "letterSpacing": "-0.02em",
+                                      "fontWeight": "700"
+                              }
+                      ],
+                      "label-bold": [
+                              "14px",
+                              {
+                                      "lineHeight": "1",
+                                      "letterSpacing": "0.05em",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "headline-lg-mobile": [
+                              "32px",
+                              {
+                                      "lineHeight": "1.2",
+                                      "fontWeight": "700"
+                              }
+                      ],
+                      "body-lg": [
+                              "18px",
+                              {
+                                      "lineHeight": "1.6",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "body-md": [
+                              "16px",
+                              {
+                                      "lineHeight": "1.5",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "quiz-option": [
+                              "20px",
+                              {
+                                      "lineHeight": "1.4",
+                                      "fontWeight": "500"
+                              }
+                      ]
+              }
+      },
+          },
+        }
+      </script>
+<style>
+        .scanner-line {
+            animation: scan 2s linear infinite;
+        }
+        @keyframes scan {
+            0% { top: 10%; }
+            50% { top: 90%; }
+            100% { top: 10%; }
+        }
+        .mesh-gradient-btn {
+            background: linear-gradient(90deg, #0052FF, #FF00E5, #0052FF);
+            background-size: 200% auto;
+            animation: gradient-shift 3s ease infinite;
+        }
+        @keyframes gradient-shift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        .floating-shape {
+            animation: float 6s ease-in-out infinite;
+        }
+        @keyframes float {
+            0% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(10deg); }
+            100% { transform: translateY(0px) rotate(0deg); }
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+</head>
+<body class="bg-background text-on-background min-h-screen relative overflow-hidden flex flex-col font-body-md">
+<!-- Background Shapes -->
+<div class="absolute inset-0 pointer-events-none z-0 overflow-hidden">
+<div class="absolute top-20 left-10 w-32 h-32 bg-primary-fixed rounded-full mix-blend-multiply filter blur-3xl opacity-50 floating-shape"></div>
+<div class="absolute bottom-40 right-20 w-48 h-48 bg-secondary-fixed rounded-full mix-blend-multiply filter blur-3xl opacity-50 floating-shape" style="animation-delay: -2s;"></div>
+<div class="absolute top-1/2 left-1/3 w-24 h-24 bg-tertiary-fixed rounded-full mix-blend-multiply filter blur-2xl opacity-40 floating-shape" style="animation-delay: -4s;"></div>
+</div>
+<!-- Main Content Canvas -->
+<main class="flex-1 flex flex-col items-center justify-center p-margin-mobile md:p-margin-desktop z-10 w-full max-w-lg mx-auto">
+<!-- Header -->
+<div class="text-center mb-8">
+<h1 class="font-headline-lg-mobile text-headline-lg-mobile md:font-headline-lg md:text-headline-lg text-deep-obsidian mb-2">
+                Kuisseru
+            </h1>
+<h2 class="font-headline-md text-headline-md text-electric-blue">
+                Siap Beraksi?
+            </h2>
+</div>
+<!-- Scanner Area -->
+<div class="w-full aspect-square max-w-sm relative bg-surface-container-low rounded-[2rem] border-4 border-deep-obsidian p-4 mb-8 shadow-[0_0_40px_rgba(0,82,255,0.1)] overflow-hidden">
+<div class="absolute inset-0 m-8 border-4 border-dashed border-outline-variant rounded-xl opacity-50"></div>
+<!-- Scanning Animation -->
+<div class="absolute left-8 right-8 h-1 bg-cyber-lime rounded-full scanner-line shadow-[0_0_15px_#CCFF00] z-20"></div>
+<!-- Placeholder for camera view -->
+<div class="w-full h-full rounded-xl bg-surface-container-highest flex items-center justify-center relative overflow-hidden">
+<span class="material-symbols-outlined text-outline text-6xl opacity-30" style="font-variation-settings: 'FILL' 1;">
+                    qr_code_scanner
+                </span>
+<!-- Decorative scan targets -->
+<div class="absolute top-4 left-4 w-6 h-6 border-t-4 border-l-4 border-electric-blue rounded-tl-lg"></div>
+<div class="absolute top-4 right-4 w-6 h-6 border-t-4 border-r-4 border-electric-blue rounded-tr-lg"></div>
+<div class="absolute bottom-4 left-4 w-6 h-6 border-b-4 border-l-4 border-electric-blue rounded-bl-lg"></div>
+<div class="absolute bottom-4 right-4 w-6 h-6 border-b-4 border-r-4 border-electric-blue rounded-br-lg"></div>
+</div>
+<div class="absolute bottom-4 left-0 right-0 text-center">
+<p class="font-label-bold text-label-bold text-on-surface-variant bg-surface-container/80 backdrop-blur inline-block px-4 py-2 rounded-full border-2 border-deep-obsidian">Arahkan kamera ke QR Code di layar guru</p>
+</div>
+</div>
+<!-- Divider -->
+<div class="flex items-center w-full max-w-sm mb-8 opacity-50">
+<div class="flex-1 h-[2px] bg-outline-variant"></div>
+<span class="px-4 font-label-bold text-label-bold text-outline uppercase">ATAU MASUKKAN PIN</span>
+<div class="flex-1 h-[2px] bg-outline-variant"></div>
+</div>
+<!-- Manual Entry Form -->
+<form class="w-full max-w-sm flex flex-col gap-4">
+<div class="flex flex-col gap-2 mb-2"><label class="font-label-bold text-label-bold text-on-surface-variant px-2 uppercase tracking-wide">PIN Game (6 Digit)</label><div class="flex justify-between gap-2"><input class="w-full aspect-square text-center font-headline-md text-headline-md bg-surface-container-lowest border-2 border-deep-obsidian rounded-xl focus:border-electric-blue focus:ring-4 focus:ring-primary-fixed transition-all" maxlength="1" placeholder="•" type="text"/><input class="w-full aspect-square text-center font-headline-md text-headline-md bg-surface-container-lowest border-2 border-deep-obsidian rounded-xl focus:border-electric-blue focus:ring-4 focus:ring-primary-fixed transition-all" maxlength="1" placeholder="•" type="text"/><input class="w-full aspect-square text-center font-headline-md text-headline-md bg-surface-container-lowest border-2 border-deep-obsidian rounded-xl focus:border-electric-blue focus:ring-4 focus:ring-primary-fixed transition-all" maxlength="1" placeholder="•" type="text"/><input class="w-full aspect-square text-center font-headline-md text-headline-md bg-surface-container-lowest border-2 border-deep-obsidian rounded-xl focus:border-electric-blue focus:ring-4 focus:ring-primary-fixed transition-all" maxlength="1" placeholder="•" type="text"/><input class="w-full aspect-square text-center font-headline-md text-headline-md bg-surface-container-lowest border-2 border-deep-obsidian rounded-xl focus:border-electric-blue focus:ring-4 focus:ring-primary-fixed transition-all" maxlength="1" placeholder="•" type="text"/><input class="w-full aspect-square text-center font-headline-md text-headline-md bg-surface-container-lowest border-2 border-deep-obsidian rounded-xl focus:border-electric-blue focus:ring-4 focus:ring-primary-fixed transition-all" maxlength="1" placeholder="•" type="text"/></div></div><div class="relative group"><label class="font-label-bold text-label-bold text-on-surface-variant px-2 mb-2 block uppercase tracking-wide">Nama Kamu</label>
+<input class="w-full bg-surface-container-lowest border-2 border-deep-obsidian rounded-full px-6 py-4 font-headline-md text-quiz-option text-on-surface placeholder:text-outline focus:outline-none focus:border-electric-blue focus:ring-4 focus:ring-primary-fixed transition-all duration-300" id="nickname" placeholder="Nama Panggilan / Nickname" type="text"/>
+<span class="material-symbols-outlined absolute right-6 top-1/2 -translate-y-1/2 text-outline group-focus-within:text-electric-blue transition-colors">
+                    badge
+                </span>
+</div>
+<button class="w-full mt-2 group relative rounded-full border-2 border-deep-obsidian p-1 overflow-hidden transition-transform duration-200 hover:scale-[1.02] active:scale-95 shadow-[0_0_20px_rgba(0,82,255,0.3)]" type="button">
+<div class="absolute inset-0 mesh-gradient-btn opacity-80 group-hover:opacity-100 transition-opacity"></div>
+<div class="relative bg-transparent px-8 py-4 rounded-full flex items-center justify-center gap-2">
+<span class="font-headline-md text-quiz-option text-on-primary font-bold tracking-wide shadow-sm">
+                        Join Quiz
+                    </span>
+<span class="material-symbols-outlined text-on-primary" style="font-variation-settings: 'FILL' 1;">
+                        rocket_launch
+                    </span>
+</div>
+</button>
+</form>
+</main>
+<script>
+        // Simple input focus enhancement script
+        document.getElementById('nickname').addEventListener('focus', function() {
+            this.parentElement.classList.add('shadow-[0_0_15px_rgba(0,82,255,0.2)]');
+        });
+        document.getElementById('nickname').addEventListener('blur', function() {
+            this.parentElement.classList.remove('shadow-[0_0_15px_rgba(0,82,255,0.2)]');
+        });
+    </script>
+</body></html>

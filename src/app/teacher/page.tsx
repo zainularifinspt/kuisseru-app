@@ -255,13 +255,13 @@ export default function TeacherPortal() {
                   <Sparkles className="w-7 h-7" />
                 </div>
                 <div>
-                  <h1 className="text-2xl font-medium text-white tracking-tight flex items-center gap-2 flex-wrap drop-shadow-sm">
-                    <span>Halo, <span className="font-extrabold text-cyan-400">{user?.name}</span></span>
-                    <span className={`text-xs font-bold uppercase tracking-wider px-3 py-1 rounded-full border ${user?.role === 'admin' ? 'bg-amber-900/30 text-amber-400 border-amber-500/30' : 'bg-blue-900/30 text-blue-400 border-blue-500/30'}`}>
+                  <h1 className="text-2xl font-medium text-slate-800 dark:text-white tracking-tight flex items-center gap-2 flex-wrap drop-shadow-sm">
+                    <span>Halo, <span className="font-extrabold text-blue-600 dark:text-cyan-400">{user?.name}</span></span>
+                    <span className={`text-xs font-bold uppercase tracking-wider px-3 py-1 rounded-full border ${user?.role === 'admin' ? 'bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400 border-amber-300 dark:border-amber-500/30' : 'bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 border-blue-300 dark:border-blue-500/30'}`}>
                       {user?.role === 'admin' ? 'Admin' : 'Guru'}
                     </span>
                   </h1>
-                  <p className="text-slate-400 text-sm mt-1">Dashboard Utama KuisSeru</p>
+                  <p className="text-slate-500 dark:text-slate-400 text-sm mt-1">Dashboard Utama KuisSeru</p>
                 </div>
               </div>
               
@@ -271,7 +271,7 @@ export default function TeacherPortal() {
                   <Button 
                     variant="outline" 
                     onClick={() => router.push('/admin')}
-                    className="rounded-xl text-cyan-400 hover:text-white hover:bg-cyan-600/20 border-cyan-500/30 bg-cyan-900/20 shadow-[0_0_15px_rgba(34,211,238,0.2)]"
+                    className="rounded-xl text-cyan-700 dark:text-cyan-400 hover:text-cyan-800 dark:hover:text-white hover:bg-cyan-100 dark:hover:bg-cyan-600/20 border-cyan-300 dark:border-cyan-500/30 bg-cyan-50 dark:bg-cyan-900/20 shadow-sm dark:shadow-[0_0_15px_rgba(34,211,238,0.2)] transition-colors"
                   >
                     <Shield className="w-4 h-4 mr-2" />
                     Panel Admin
@@ -280,7 +280,7 @@ export default function TeacherPortal() {
                 <Button 
                   variant="outline" 
                   onClick={() => setIsEditProfileOpen(true)}
-                  className="rounded-xl text-slate-300 hover:text-white hover:bg-white/10 border-white/10 bg-white/5"
+                  className="rounded-xl text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/10 border-slate-300 dark:border-white/10 bg-white dark:bg-white/5 transition-colors"
                 >
                   <Settings className="w-4 h-4 mr-2" />
                   Profil
@@ -288,7 +288,7 @@ export default function TeacherPortal() {
                 <Button 
                   variant="ghost" 
                   onClick={handleLogout}
-                  className="rounded-xl text-slate-400 hover:text-red-400 hover:bg-red-900/20"
+                  className="rounded-xl text-slate-600 dark:text-slate-400 hover:text-red-600 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors"
                 >
                   <LogOut className="w-4 h-4 mr-2" />
                   Keluar

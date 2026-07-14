@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>EduPulse - Manage Teachers</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&amp;family=Inter:wght@400;500&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "deep-obsidian": "#0A0A0A",
+                      "secondary-fixed-dim": "#d0bcff",
+                      "secondary-fixed": "#e9ddff",
+                      "on-error": "#ffffff",
+                      "on-secondary-fixed-variant": "#5516be",
+                      "tertiary-fixed": "#c3f400",
+                      "surface-container": "#ededfb",
+                      "mesh-pink": "#FF00E5",
+                      "surface-dim": "#d9d9e7",
+                      "inverse-surface": "#2e303a",
+                      "surface-variant": "#e1e1ef",
+                      "inverse-primary": "#b7c4ff",
+                      "on-secondary-container": "#fffbff",
+                      "on-tertiary-fixed-variant": "#3c4d00",
+                      "on-tertiary-fixed": "#161e00",
+                      "cyber-lime": "#CCFF00",
+                      "surface-container-highest": "#e1e1ef",
+                      "tertiary-fixed-dim": "#abd600",
+                      "outline": "#737688",
+                      "surface": "#fbf8ff",
+                      "soft-violet": "#8B5CF6",
+                      "primary-fixed": "#dde1ff",
+                      "surface-bright": "#fbf8ff",
+                      "secondary-container": "#8455ef",
+                      "primary-container": "#0052ff",
+                      "surface-container-lowest": "#ffffff",
+                      "on-secondary-fixed": "#23005c",
+                      "on-secondary": "#ffffff",
+                      "electric-blue": "#0052FF",
+                      "on-primary": "#ffffff",
+                      "on-surface-variant": "#434656",
+                      "on-error-container": "#93000a",
+                      "inverse-on-surface": "#f0effe",
+                      "primary-fixed-dim": "#b7c4ff",
+                      "outline-variant": "#c3c5d9",
+                      "error": "#ba1a1a",
+                      "surface-container-high": "#e7e7f5",
+                      "tertiary": "#425400",
+                      "secondary": "#6b38d4",
+                      "on-surface": "#191b25",
+                      "surface-tint": "#004ced",
+                      "on-tertiary-container": "#c5f600",
+                      "on-primary-fixed-variant": "#0038b6",
+                      "surface-container-low": "#f3f2ff",
+                      "background": "#fbf8ff",
+                      "primary": "#003ec7",
+                      "on-primary-fixed": "#001452",
+                      "on-tertiary": "#ffffff",
+                      "on-primary-container": "#dfe3ff",
+                      "error-container": "#ffdad6",
+                      "tertiary-container": "#576e00",
+                      "on-background": "#191b25"
+              },
+              "borderRadius": {
+                      "DEFAULT": "1rem",
+                      "lg": "2rem",
+                      "xl": "3rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "margin-mobile": "16px",
+                      "gutter": "24px",
+                      "container-max": "1200px",
+                      "unit": "8px",
+                      "margin-desktop": "40px"
+              },
+              "fontFamily": {
+                      "headline-lg": [
+                              "Space Grotesk"
+                      ],
+                      "quiz-option": [
+                              "Space Grotesk"
+                      ],
+                      "body-lg": [
+                              "Inter"
+                      ],
+                      "body-md": [
+                              "Inter"
+                      ],
+                      "label-bold": [
+                              "Space Grotesk"
+                      ],
+                      "headline-lg-mobile": [
+                              "Space Grotesk"
+                      ],
+                      "headline-md": [
+                              "Space Grotesk"
+                      ]
+              },
+              "fontSize": {
+                      "headline-lg": [
+                              "48px",
+                              {
+                                      "lineHeight": "1.1",
+                                      "letterSpacing": "-0.02em",
+                                      "fontWeight": "700"
+                              }
+                      ],
+                      "quiz-option": [
+                              "20px",
+                              {
+                                      "lineHeight": "1.4",
+                                      "fontWeight": "500"
+                              }
+                      ],
+                      "body-lg": [
+                              "18px",
+                              {
+                                      "lineHeight": "1.6",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "body-md": [
+                              "16px",
+                              {
+                                      "lineHeight": "1.5",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "label-bold": [
+                              "14px",
+                              {
+                                      "lineHeight": "1",
+                                      "letterSpacing": "0.05em",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "headline-lg-mobile": [
+                              "32px",
+                              {
+                                      "lineHeight": "1.2",
+                                      "fontWeight": "700"
+                              }
+                      ],
+                      "headline-md": [
+                              "32px",
+                              {
+                                      "lineHeight": "1.2",
+                                      "fontWeight": "600"
+                              }
+                      ]
+              }
+      },
+          },
+        }
+    </script>
+<style>
+        .mesh-bg {
+            background-image: 
+                radial-gradient(at 40% 20%, hsla(280,100%,74%,0.15) 0px, transparent 50%),
+                radial-gradient(at 80% 0%, hsla(189,100%,56%,0.15) 0px, transparent 50%),
+                radial-gradient(at 0% 50%, hsla(355,100%,93%,0.1) 0px, transparent 50%);
+        }
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+        }
+        .ethereal-glow {
+            box-shadow: inset 0 0 20px rgba(0, 82, 255, 0.05);
+        }
+        .active-row-glow {
+            box-shadow: inset 2px 0 0px #0052FF;
+        }
+    </style>
+</head>
+<body class="bg-surface text-on-surface font-body-md text-body-md antialiased mesh-bg min-h-screen flex">
+<!-- SideNavBar -->
+<nav class="h-screen w-64 fixed left-0 top-0 bg-deep-obsidian dark:bg-deep-obsidian border-r-2 border-deep-obsidian flat no shadows flex flex-col h-full py-8 px-4 z-50">
+<div class="mb-12 px-4 flex items-center gap-3">
+<div class="w-10 h-10 rounded-lg bg-cyber-lime flex items-center justify-center font-headline-md text-headline-md font-bold text-deep-obsidian">E</div>
+<div>
+<h1 class="font-headline-md text-headline-md font-bold text-cyber-lime text-xl">EduPulse</h1>
+<p class="font-body-md text-body-md text-surface-variant/70 text-xs mt-1">Admin Console</p>
+</div>
+</div>
+<div class="flex-1 space-y-2">
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-surface-variant/70 font-medium hover:text-surface-variant hover:bg-white/5 transition-colors duration-200 scale-105 transition-transform duration-200 font-label-bold text-label-bold" href="#">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+                Dashboard
+            </a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-surface-variant/70 font-medium hover:text-surface-variant hover:bg-white/5 transition-colors duration-200 scale-105 transition-transform duration-200 font-label-bold text-label-bold" href="#">
+<span class="material-symbols-outlined" data-icon="quiz">quiz</span>
+                Quizzes
+            </a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-cyber-lime font-bold border-l-4 border-cyber-lime bg-white/10 hover:bg-white/5 transition-colors duration-200 scale-105 transition-transform duration-200 font-label-bold text-label-bold" href="#">
+<span class="material-symbols-outlined" data-icon="group">group</span>
+                Users
+            </a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-surface-variant/70 font-medium hover:text-surface-variant hover:bg-white/5 transition-colors duration-200 scale-105 transition-transform duration-200 font-label-bold text-label-bold" href="#">
+<span class="material-symbols-outlined" data-icon="assessment">assessment</span>
+                Reports
+            </a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-surface-variant/70 font-medium hover:text-surface-variant hover:bg-white/5 transition-colors duration-200 scale-105 transition-transform duration-200 font-label-bold text-label-bold" href="#">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+                Settings
+            </a>
+</div>
+<div class="mt-auto px-4">
+<div class="flex items-center gap-3 py-3 text-surface-variant/70">
+<img alt="Educational Platform Logo" class="w-8 h-8 rounded-full border border-surface-variant/30 object-cover" data-alt="A small circular avatar placeholder image showing a minimalistic abstract geometric shape in bright neon colors against a dark background, representing an administrator profile in a futuristic educational dashboard setting. High contrast, sharp edges, modern UI aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuB99tdzuJ8lLZQnGHpqIi64w05hxRBCfduG6mW7a1K33zHUPjWcVfC4SGK8hyLvmt6Pu-YgGbCk6Rds4jko3FePaadT0cF1HPqpgyy8k6KH9cqeozpH8_KLhk3-8Q96CXdkNIsVtShjBu3CFlW5iYzFGCj1NPWd4i9VHPSoovaVFN_T2xVFoxsqT3omSadLNps_oTyFMo8Ju4LLTz8zKGMXxKl9YSwwQYcNaQCSRdKlfMfszw10NOw"/>
+<span class="font-label-bold text-label-bold">Admin User</span>
+</div>
+</div>
+</nav>
+<!-- Main Content Area -->
+<div class="ml-64 flex-1 flex flex-col min-h-screen">
+<!-- TopNavBar -->
+<header class="bg-surface/80 dark:bg-deep-obsidian/80 text-electric-blue dark:text-electric-blue docked full-width top-0 sticky border-b-2 border-deep-obsidian backdrop-blur-md flat no shadows flex justify-between items-center px-8 h-20 z-40">
+<div class="flex items-center gap-6">
+<h2 class="font-headline-md text-headline-md text-deep-obsidian dark:text-surface text-2xl font-bold tracking-tight">EduPulse Dashboard</h2>
+<div class="relative hidden lg:block">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline-variant">search</span>
+<input class="pl-10 pr-4 py-2 bg-surface-container-high border-2 border-deep-obsidian rounded-full font-body-md text-body-md text-on-surface focus:outline-none focus:border-electric-blue focus:ring-1 focus:ring-electric-blue transition-all w-64 placeholder:text-outline" placeholder="Search..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<button class="p-2 text-on-surface-variant hover:text-electric-blue transition-colors Active: scale-95 transition-all rounded-full hover:bg-surface-container-high">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+</button>
+<button class="p-2 text-on-surface-variant hover:text-electric-blue transition-colors Active: scale-95 transition-all rounded-full hover:bg-surface-container-high">
+<span class="material-symbols-outlined" data-icon="help">help</span>
+</button>
+<div class="w-10 h-10 rounded-full border-2 border-deep-obsidian overflow-hidden ml-2">
+<img alt="Administrator Profile" class="w-full h-full object-cover" data-alt="A portrait of a professional administrator in a clean, brightly lit modern office environment. The person is smiling subtly, wearing a smart-casual dark blazer over a light shirt. The background is a soft, blurry mix of white walls and subtle pastel colors, fitting a high-tech educational platform aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCfzrXI6PRkPgh_Il9lPDVtMbMVxSRlTgTpwolOGWVgqkyeQE_gCQcm989xgu_thypn_VN7k69vUra0gxWMOkqilW9LhnYsfc8Cr9UuSqTcFpTFxLHYwULMY7eW5HcQx2pUpMl7UelQEi3hYpdmcH28gBRmg6rk_U2MDCdCQm34yduoj-Ofmo_1w4NPXt4XonxOn6eW_KP9FSgILhGW4a2OBQUXGVm_tgCcH__xxvqtqbsJYcWqkn4"/>
+</div>
+</div>
+</header>
+<!-- Canvas -->
+<main class="flex-1 p-gutter lg:p-margin-desktop space-y-8 max-w-container-max mx-auto w-full">
+<!-- Page Header & Actions -->
+<div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+<div>
+<h1 class="font-headline-lg text-headline-lg text-deep-obsidian">Manage Teachers</h1>
+<p class="font-body-md text-body-md text-on-surface-variant mt-2">View, edit, and onboard educators across the platform.</p>
+</div>
+<button class="bg-electric-blue text-on-primary font-label-bold text-label-bold px-6 py-3 rounded-full flex items-center gap-2 hover:scale-105 transition-transform duration-200 border-2 border-deep-obsidian shadow-[4px_4px_0px_0px_rgba(10,10,10,1)] hover:shadow-[2px_2px_0px_0px_rgba(10,10,10,1)] hover:translate-y-[2px] hover:translate-x-[2px] active:shadow-none active:translate-y-[4px] active:translate-x-[4px]">
+<span class="material-symbols-outlined text-lg">person_add</span>
+                    Add New Teacher
+                </button>
+</div>
+<!-- Stats Bento Grid -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+<!-- Stat Card 1 -->
+<div class="glass-panel border-2 border-deep-obsidian rounded-xl p-6 relative overflow-hidden group">
+<div class="absolute -right-6 -top-6 w-24 h-24 bg-cyber-lime/20 rounded-full blur-2xl group-hover:bg-cyber-lime/40 transition-colors duration-500"></div>
+<div class="flex justify-between items-start mb-4">
+<div class="p-3 bg-surface-container-high rounded-xl border-2 border-deep-obsidian">
+<span class="material-symbols-outlined text-electric-blue">school</span>
+</div>
+<span class="font-label-bold text-label-bold text-secondary bg-secondary-fixed-dim/30 px-3 py-1 rounded-full border border-secondary-fixed">+12%</span>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant mb-1">Total Teachers</p>
+<h3 class="font-headline-lg text-headline-lg text-deep-obsidian">248</h3>
+</div>
+<!-- Stat Card 2 -->
+<div class="glass-panel border-2 border-deep-obsidian rounded-xl p-6 relative overflow-hidden group">
+<div class="absolute -right-6 -top-6 w-24 h-24 bg-mesh-pink/20 rounded-full blur-2xl group-hover:bg-mesh-pink/40 transition-colors duration-500"></div>
+<div class="flex justify-between items-start mb-4">
+<div class="p-3 bg-surface-container-high rounded-xl border-2 border-deep-obsidian">
+<span class="material-symbols-outlined text-mesh-pink">local_fire_department</span>
+</div>
+<span class="font-label-bold text-label-bold text-tertiary bg-tertiary-fixed-dim/30 px-3 py-1 rounded-full border border-tertiary-fixed">+5%</span>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant mb-1">Active Quizzes</p>
+<h3 class="font-headline-lg text-headline-lg text-deep-obsidian">1,842</h3>
+</div>
+<!-- Stat Card 3 -->
+<div class="glass-panel border-2 border-deep-obsidian rounded-xl p-6 relative overflow-hidden group">
+<div class="absolute -right-6 -top-6 w-24 h-24 bg-electric-blue/20 rounded-full blur-2xl group-hover:bg-electric-blue/40 transition-colors duration-500"></div>
+<div class="flex justify-between items-start mb-4">
+<div class="p-3 bg-surface-container-high rounded-xl border-2 border-deep-obsidian">
+<span class="material-symbols-outlined text-soft-violet">groups</span>
+</div>
+<span class="font-label-bold text-label-bold text-outline bg-surface-variant px-3 py-1 rounded-full border border-outline-variant">--</span>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant mb-1">Total Students</p>
+<h3 class="font-headline-lg text-headline-lg text-deep-obsidian">12.4k</h3>
+</div>
+</div>
+<!-- Data Table Section -->
+<div class="glass-panel border-2 border-deep-obsidian rounded-xl overflow-hidden ethereal-glow">
+<!-- Table Header / Filters -->
+<div class="p-6 border-b-2 border-deep-obsidian bg-surface/50 flex flex-col sm:flex-row justify-between items-center gap-4">
+<h3 class="font-headline-md text-headline-md text-deep-obsidian text-xl">Directory</h3>
+<div class="flex items-center gap-3 w-full sm:w-auto">
+<div class="relative flex-1 sm:w-64">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline-variant text-sm">search</span>
+<input class="w-full pl-9 pr-4 py-2 bg-surface border-2 border-deep-obsidian rounded-full font-body-md text-body-md text-on-surface focus:outline-none focus:border-electric-blue focus:ring-1 focus:ring-electric-blue transition-all placeholder:text-outline text-sm" placeholder="Search teachers..." type="text"/>
+</div>
+<button class="p-2 border-2 border-deep-obsidian rounded-full bg-surface hover:bg-surface-container-high transition-colors flex items-center justify-center">
+<span class="material-symbols-outlined">filter_list</span>
+</button>
+</div>
+</div>
+<!-- Table -->
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="border-b-2 border-deep-obsidian bg-surface-container-lowest/50 font-label-bold text-label-bold text-on-surface-variant uppercase tracking-wider text-xs">
+<th class="p-4 pl-6">Teacher</th>
+<th class="p-4">Department</th>
+<th class="p-4">Status</th>
+<th class="p-4">Last Active</th>
+<th class="p-4 text-right pr-6">Actions</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-deep-obsidian/20 font-body-md text-body-md">
+<!-- Row 1 -->
+<tr class="hover:bg-surface-container-lowest/50 transition-colors active-row-glow bg-white/40">
+<td class="p-4 pl-6 flex items-center gap-3">
+<img alt="Sarah Jenkins" class="w-10 h-10 rounded-full border border-deep-obsidian object-cover" data-alt="A small, circular profile picture of a young female teacher with glasses, smiling warmly. She is in a well-lit, minimalist classroom setting with a soft depth of field. High quality, modern educational aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAy2zuO-mfiKtLaUt3ZerCixmnkNaOMBvRzdvnTr6OEr5Fep5oZsptEuSM51cDxnHP0m6hhsWjJs0nRSY3tAWL314faT6VTBj3dsJDNqjOf0aRZ_5Z2JgGXX-2MyBuPyLtEYrcIyNf9kVrT8a0o55-Uwygy2HghbSYvZ2tZ9uiUBe62udfNp-KffZXrKTP4y3-Q7hmzqV6PrT_tpKtS7kOKQ_8ie91nooIFs9gCmpN6jL2ihA8IcnA"/>
+<div>
+<p class="font-bold text-deep-obsidian">Sarah Jenkins</p>
+<p class="text-sm text-on-surface-variant">sarah.j@school.edu</p>
+</div>
+</td>
+<td class="p-4">Mathematics</td>
+<td class="p-4">
+<span class="inline-flex items-center gap-1.5 py-1 px-3 rounded-full text-xs font-label-bold text-label-bold bg-deep-obsidian text-cyber-lime border border-deep-obsidian">
+<span class="w-1.5 h-1.5 rounded-full bg-cyber-lime"></span> Active
+                                    </span>
+</td>
+<td class="p-4 text-on-surface-variant text-sm">2 hours ago</td>
+<td class="p-4 text-right pr-6">
+<div class="flex items-center justify-end gap-2">
+<button class="p-1.5 text-on-surface-variant hover:text-electric-blue transition-colors rounded-lg hover:bg-surface-container-high" title="Edit">
+<span class="material-symbols-outlined text-sm">edit</span>
+</button>
+<button class="p-1.5 text-on-surface-variant hover:text-error transition-colors rounded-lg hover:bg-error-container/50" title="Deactivate">
+<span class="material-symbols-outlined text-sm">block</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Row 2 -->
+<tr class="hover:bg-surface-container-lowest/50 transition-colors bg-white/20">
+<td class="p-4 pl-6 flex items-center gap-3">
+<img alt="David Chen" class="w-10 h-10 rounded-full border border-deep-obsidian object-cover" data-alt="A small, circular profile picture of a middle-aged male teacher with a neat beard, looking directly at the camera with a neutral, professional expression. He is wearing a simple dark shirt. The background is a stark white studio style. Crisp, high resolution." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDsUYxwGuIRYgCSiyUXgrKEe3SdQi2ATsEwDmFgVgu2wcRlK7Kz9xyKbBwNW6VLdPU99azOBHiPAd0lMdX5KUialERs1MdYbvpB8ovfZCLycYFdwZmKUhv6cnzVtCqdvUhfX8xPg9lGbi7XIldGI-JOr6-eCh8_bg9tS6QBAMJVZT6LI8Tww4fCCArFfFjmgp0q--y1L7wgdnSowH61zfpeTqxyCJle0MsT5gI6HIEifVvkmB4BdCg"/>
+<div>
+<p class="font-bold text-deep-obsidian">David Chen</p>
+<p class="text-sm text-on-surface-variant">d.chen@school.edu</p>
+</div>
+</td>
+<td class="p-4">Science</td>
+<td class="p-4">
+<span class="inline-flex items-center gap-1.5 py-1 px-3 rounded-full text-xs font-label-bold text-label-bold bg-deep-obsidian text-cyber-lime border border-deep-obsidian">
+<span class="w-1.5 h-1.5 rounded-full bg-cyber-lime"></span> Active
+                                    </span>
+</td>
+<td class="p-4 text-on-surface-variant text-sm">1 day ago</td>
+<td class="p-4 text-right pr-6">
+<div class="flex items-center justify-end gap-2">
+<button class="p-1.5 text-on-surface-variant hover:text-electric-blue transition-colors rounded-lg hover:bg-surface-container-high" title="Edit">
+<span class="material-symbols-outlined text-sm">edit</span>
+</button>
+<button class="p-1.5 text-on-surface-variant hover:text-error transition-colors rounded-lg hover:bg-error-container/50" title="Deactivate">
+<span class="material-symbols-outlined text-sm">block</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Row 3 -->
+<tr class="hover:bg-surface-container-lowest/50 transition-colors bg-white/20">
+<td class="p-4 pl-6 flex items-center gap-3">
+<div class="w-10 h-10 rounded-full border border-deep-obsidian bg-surface-variant flex items-center justify-center font-bold text-deep-obsidian">
+                                        MR
+                                    </div>
+<div>
+<p class="font-bold text-deep-obsidian">Maria Rodriguez</p>
+<p class="text-sm text-on-surface-variant">m.rodriguez@school.edu</p>
+</div>
+</td>
+<td class="p-4">Languages</td>
+<td class="p-4">
+<span class="inline-flex items-center gap-1.5 py-1 px-3 rounded-full text-xs font-label-bold text-label-bold bg-surface-variant text-on-surface-variant border border-outline-variant">
+<span class="w-1.5 h-1.5 rounded-full bg-outline"></span> Offline
+                                    </span>
+</td>
+<td class="p-4 text-on-surface-variant text-sm">5 days ago</td>
+<td class="p-4 text-right pr-6">
+<div class="flex items-center justify-end gap-2">
+<button class="p-1.5 text-on-surface-variant hover:text-electric-blue transition-colors rounded-lg hover:bg-surface-container-high" title="Edit">
+<span class="material-symbols-outlined text-sm">edit</span>
+</button>
+<button class="p-1.5 text-on-surface-variant hover:text-error transition-colors rounded-lg hover:bg-error-container/50" title="Deactivate">
+<span class="material-symbols-outlined text-sm">block</span>
+</button>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- Pagination -->
+<div class="p-4 border-t-2 border-deep-obsidian bg-surface/50 flex items-center justify-between text-sm">
+<span class="text-on-surface-variant font-body-md text-body-md">Showing 1 to 3 of 248 entries</span>
+<div class="flex gap-2">
+<button class="p-1.5 rounded-lg border-2 border-deep-obsidian text-on-surface-variant disabled:opacity-50 disabled:cursor-not-allowed hover:bg-surface-container-high transition-colors">
+<span class="material-symbols-outlined text-sm">chevron_left</span>
+</button>
+<button class="p-1.5 rounded-lg border-2 border-deep-obsidian text-on-surface hover:bg-surface-container-high transition-colors">
+<span class="material-symbols-outlined text-sm">chevron_right</span>
+</button>
+</div>
+</div>
+</div>
+</main>
+</div>
+</body></html>

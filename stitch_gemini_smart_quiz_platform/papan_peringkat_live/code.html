@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+
+<html lang="id"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Peringkat Terkini - Kuisseru</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "error-container": "#ffdad6",
+                        "on-tertiary": "#ffffff",
+                        "soft-violet": "#8B5CF6",
+                        "on-error": "#ffffff",
+                        "electric-blue": "#0052FF",
+                        "inverse-on-surface": "#f0effe",
+                        "background": "#fbf8ff",
+                        "surface-variant": "#e1e1ef",
+                        "on-tertiary-container": "#c5f600",
+                        "on-primary": "#ffffff",
+                        "cyber-lime": "#CCFF00",
+                        "surface-container-low": "#f3f2ff",
+                        "surface": "#fbf8ff",
+                        "mesh-pink": "#FF00E5",
+                        "on-primary-fixed-variant": "#0038b6",
+                        "outline-variant": "#c3c5d9",
+                        "primary-fixed-dim": "#b7c4ff",
+                        "primary-fixed": "#dde1ff",
+                        "secondary-fixed-dim": "#d0bcff",
+                        "primary-container": "#0052ff",
+                        "on-background": "#191b25",
+                        "tertiary-container": "#576e00",
+                        "on-surface": "#191b25",
+                        "on-secondary-fixed": "#23005c",
+                        "error": "#ba1a1a",
+                        "surface-tint": "#004ced",
+                        "on-surface-variant": "#434656",
+                        "surface-container-highest": "#e1e1ef",
+                        "on-tertiary-fixed": "#161e00",
+                        "inverse-primary": "#b7c4ff",
+                        "on-secondary-container": "#fffbff",
+                        "inverse-surface": "#2e303a",
+                        "surface-bright": "#fbf8ff",
+                        "secondary-fixed": "#e9ddff",
+                        "on-secondary": "#ffffff",
+                        "on-primary-fixed": "#001452",
+                        "secondary-container": "#8455ef",
+                        "on-tertiary-fixed-variant": "#3c4d00",
+                        "surface-container-high": "#e7e7f5",
+                        "surface-container": "#ededfb",
+                        "deep-obsidian": "#0A0A0A",
+                        "tertiary": "#425400",
+                        "surface-dim": "#d9d9e7",
+                        "on-primary-container": "#dfe3ff",
+                        "primary": "#003ec7",
+                        "secondary": "#6b38d4",
+                        "tertiary-fixed-dim": "#abd600",
+                        "on-error-container": "#93000a",
+                        "on-secondary-fixed-variant": "#5516be",
+                        "tertiary-fixed": "#c3f400",
+                        "outline": "#737688",
+                        "surface-container-lowest": "#ffffff"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "1rem",
+                        "lg": "2rem",
+                        "xl": "3rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "gutter": "24px",
+                        "margin-desktop": "40px",
+                        "container-max": "1200px",
+                        "margin-mobile": "16px",
+                        "unit": "8px"
+                    },
+                    "fontFamily": {
+                        "headline-md": ["Space Grotesk"],
+                        "headline-lg": ["Space Grotesk"],
+                        "label-bold": ["Space Grotesk"],
+                        "headline-lg-mobile": ["Space Grotesk"],
+                        "body-lg": ["Inter"],
+                        "body-md": ["Inter"],
+                        "quiz-option": ["Space Grotesk"]
+                    },
+                    "fontSize": {
+                        "headline-md": ["32px", { "lineHeight": "1.2", "fontWeight": "600" }],
+                        "headline-lg": ["48px", { "lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "label-bold": ["14px", { "lineHeight": "1", "letterSpacing": "0.05em", "fontWeight": "600" }],
+                        "headline-lg-mobile": ["32px", { "lineHeight": "1.2", "fontWeight": "700" }],
+                        "body-lg": ["18px", { "lineHeight": "1.6", "fontWeight": "400" }],
+                        "body-md": ["16px", { "lineHeight": "1.5", "fontWeight": "400" }],
+                        "quiz-option": ["20px", { "lineHeight": "1.4", "fontWeight": "500" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        body { background-color: #0A0A0A; color: #ffffff; } /* Forced dark theme for the arena feel */
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .gold-glow { box-shadow: 0 0 30px rgba(255, 215, 0, 0.4); border-color: rgba(255, 215, 0, 0.8); }
+        .silver-glow { box-shadow: 0 0 20px rgba(192, 192, 192, 0.3); border-color: rgba(192, 192, 192, 0.6); }
+        .bronze-glow { box-shadow: 0 0 20px rgba(205, 127, 50, 0.3); border-color: rgba(205, 127, 50, 0.6); }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="min-h-screen flex flex-col font-body-md overflow-x-hidden">
+<!-- TopAppBar -->
+<header class="w-full top-0 sticky z-40 bg-deep-obsidian/80 backdrop-blur-xl border-b-2 border-outline-variant flat no shadows">
+<div class="flex justify-between items-center px-margin-mobile md:px-margin-desktop py-4 w-full max-w-container-max mx-auto">
+<div class="flex items-center gap-3 hover:scale-105 transition-transform duration-200">
+<img class="w-10 h-10 rounded-full border-2 border-electric-blue object-cover" data-alt="A futuristic geometric avatar of a student in a sci-fi gaming arena setting, high contrast, neon accents against a dark background." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCcI-pISL1kTplFGMF5_glWoq0xYDuRC6I44jvtBYexdfV062VJe0dHTIEKfXx_gsfqqwv1-Sr98LcaTG7mkGt7Ls8abolHdnWKDA8XWYOrx5L_CSTwFtZ79QRtWCxULBAZlqFH0dKhz6mI2th2R0npqtKqyxjX_in5qey05Pnt38piHR30U30EXtjDIuR_hM_78kHhDxp7jRUuc1Ee5qZOPYoLeZimmbCFamyrVOtwTdKzBAG6Ma8"/>
+<h1 class="font-headline-md text-headline-md font-bold text-electric-blue bg-clip-text bg-gradient-to-r from-mesh-pink to-electric-blue">Kuisseru</h1>
+</div>
+<div class="px-4 py-2 rounded-full bg-surface-container/10 border border-outline/30 flex items-center gap-2 hover:scale-105 transition-transform duration-200 cursor-pointer">
+<span class="material-symbols-outlined text-cyber-lime" data-weight="fill" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="font-label-bold text-label-bold text-on-primary">XP: 1250</span>
+</div>
+</div>
+</header>
+<main class="flex-grow w-full max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop py-8 pb-32">
+<!-- Header -->
+<div class="text-center mb-12 relative">
+<div class="absolute inset-0 bg-gradient-to-r from-electric-blue via-mesh-pink to-electric-blue opacity-20 blur-3xl z-0"></div>
+<h2 class="font-headline-lg-mobile md:font-headline-lg text-headline-lg-mobile md:text-headline-lg text-on-primary relative z-10 drop-shadow-[0_0_15px_rgba(0,82,255,0.8)]">Peringkat Terkini</h2>
+<p class="font-body-lg text-body-lg text-outline-variant mt-2 relative z-10">Arena Fisika Kuantum - Sesi Aktif</p>
+</div>
+<!-- Top 3 Podium (Bento Grid Style) -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12 items-end">
+<!-- Rank 2: Silver -->
+<div class="glass-panel rounded-xl p-6 flex flex-col items-center justify-center silver-glow order-2 md:order-1 relative transform hover:-translate-y-2 transition-transform duration-300">
+<div class="absolute -top-4 -left-4 w-10 h-10 bg-gradient-to-br from-gray-200 to-gray-500 rounded-full flex items-center justify-center font-headline-md text-headline-md text-deep-obsidian border-2 border-deep-obsidian">2</div>
+<img class="w-24 h-24 rounded-full border-4 border-gray-300 object-cover mb-4" data-alt="A stylized portrait of a female student gamer with silver neon accents, intense focus, dark arena background, glowing elements." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBs_ave53z2_x9v6QZyo0aty6vk6sBpptbeNCnZqZLRUmxpQuO-SPlHyO2w2sTqHtzGvSaz1zpZmE9sEPTRc6Tejd-_HuLn007fs7vB1URsYpwGIuC7wZBoW8atZWWIMlmNWYx8PYXYLTsKrLDyw03Mh3yakH3fT-Xx44OZx5IhrxH2ptC0vOKU7LNjz5GkUDwGfL2s26Itac6SBTgpBtkwC0tAMq0dp_1F4CsbPPhDo2Uh0_6gJZc"/>
+<h3 class="font-headline-md text-quiz-option text-on-primary text-center">BudiS3r1ng</h3>
+<div class="mt-3 px-4 py-1 rounded-full bg-black/50 border border-gray-400 text-gray-200 font-label-bold text-label-bold flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px]">bolt</span> 8,420 XP
+                </div>
+</div>
+<!-- Rank 1: Gold -->
+<div class="glass-panel rounded-[2rem] p-8 flex flex-col items-center justify-center gold-glow order-1 md:order-2 relative z-10 transform scale-105 md:scale-110 hover:-translate-y-3 transition-transform duration-300 bg-gradient-to-b from-[rgba(255,215,0,0.1)] to-transparent">
+<div class="absolute -top-5 -left-5 w-12 h-12 bg-gradient-to-br from-yellow-300 to-yellow-600 rounded-full flex items-center justify-center font-headline-md text-[24px] font-bold text-deep-obsidian border-2 border-deep-obsidian shadow-[0_0_20px_rgba(255,215,0,0.6)]">1</div>
+<div class="relative">
+<img class="w-32 h-32 rounded-full border-4 border-yellow-400 object-cover mb-4 relative z-10" data-alt="A highly stylized, triumphant portrait of a male student gamer, bathed in golden neon light, futuristic headset, dark arena background." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBdHAj9qbPWQ3GEz_kmbZeJZ8JgzICrl5awnbZvguN6QpeVs5wn0XDn_K5PP67M4VC8RdPPyf-EMQ_D9rV2OuJld1wk1ZkA9EVg9beOCaO6ZMYvKSB1ReIrKRO8ncidOvn3C5Sknqx0t9ZOq7yzJR6riHR8oTLqVfTGzxWHKgllBMocENpWCUJrw-Z4xkcvqsu5lTbbGA0vzTccGTJhWfmm6BphREVWuyRa67ezvJd-FLD64tP6UYI"/>
+<div class="absolute inset-0 rounded-full bg-yellow-400 animate-pulse opacity-30 blur-xl"></div>
+</div>
+<h3 class="font-headline-md text-[28px] font-bold text-yellow-400 text-center drop-shadow-md">RinaM4x</h3>
+<div class="mt-3 px-6 py-2 rounded-full bg-black/60 border border-yellow-500 text-yellow-300 font-label-bold text-label-bold flex items-center gap-2">
+<span class="material-symbols-outlined">local_fire_department</span> 9,150 XP
+                </div>
+</div>
+<!-- Rank 3: Bronze -->
+<div class="glass-panel rounded-xl p-6 flex flex-col items-center justify-center bronze-glow order-3 relative transform hover:-translate-y-2 transition-transform duration-300">
+<div class="absolute -top-4 -left-4 w-10 h-10 bg-gradient-to-br from-orange-300 to-orange-700 rounded-full flex items-center justify-center font-headline-md text-headline-md text-deep-obsidian border-2 border-deep-obsidian">3</div>
+<img class="w-24 h-24 rounded-full border-4 border-orange-500 object-cover mb-4" data-alt="A stylized portrait of a male student gamer with copper/bronze neon accents, determined expression, dark sci-fi background." src="https://lh3.googleusercontent.com/aida-public/AB6AXuA16dn-Z3Mk0WjZQQsxjNUHlAGtYtV40EchzZJKDnYhSZWB0S2IUHOjrlugmrxRKGL9_JH-08piguJXAOqIuxC1vwnb5NhpnttkKUrhLGEWrN5J7MYk5lQ_rMgdkLUkj-ds923RvYWU7oKE5BM4gPPTmAMiblmJRsBL1S5iXg73bpedRLGMs2B2g9uRSm0ulIsHaAenEMzVkOGRvNwumwJ-x2k7JwIpyOt-1MOwiAQQJ6xmfIl2-aY"/>
+<h3 class="font-headline-md text-quiz-option text-on-primary text-center">JokoP1nt4r</h3>
+<div class="mt-3 px-4 py-1 rounded-full bg-black/50 border border-orange-600 text-orange-300 font-label-bold text-label-bold flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px]">bolt</span> 7,890 XP
+                </div>
+</div>
+</div>
+<!-- Scrolling List -->
+<div class="flex flex-col gap-3">
+<!-- List Item 4 -->
+<div class="glass-panel rounded-lg p-4 flex items-center gap-4 hover:bg-white/10 transition-colors border-l-4 border-l-electric-blue">
+<div class="w-8 text-center font-headline-md text-quiz-option text-outline-variant font-bold">4</div>
+<img class="w-12 h-12 rounded-full object-cover" data-alt="Small circular avatar of a student, neon cyan accents, dark background." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCXAuHsKMfSOtz8VVibAGMLTig2xgdMDMr6EGp_vgKk6SSGSQkcfs9xZCqrUKr1BQjJMlGwXvR-RB22f5FLeLecjuBtcrX1xScnGH569B8BVzw420g44X6jwcl2gHrbZ0QAM0Xd6H1H2-7t1FalC40jTq3nJKUQfSBhZILAmwOPHyeLquID81gkXHRqkiuUM97b1kK769Fms-_u4YK8aQy2aZjVLVnqgAYLdMk3spv_6ViuDqxObxM"/>
+<div class="flex-grow">
+<h4 class="font-headline-md text-quiz-option text-on-primary">SitiC3p4t</h4>
+</div>
+<div class="font-label-bold text-label-bold text-electric-blue bg-electric-blue/10 px-3 py-1 rounded-full">
+                    7,120 XP
+                </div>
+</div>
+<!-- List Item 5 -->
+<div class="glass-panel rounded-lg p-4 flex items-center gap-4 hover:bg-white/10 transition-colors border-l-4 border-l-mesh-pink">
+<div class="w-8 text-center font-headline-md text-quiz-option text-outline-variant font-bold">5</div>
+<img class="w-12 h-12 rounded-full object-cover" data-alt="Small circular avatar of a student, neon pink accents, dark background." src="https://lh3.googleusercontent.com/aida-public/AB6AXuB9ZeqjoLCBJ31nnUjvMiJhe8DX9636IJ3frzqnSgD6HUnHEB-FMTxlp9WbWPKo5UjhKQDd4a4-g1F4F1NmspQgk8RDJTvVoDD5PhBT-4PSVteujOW9OXAApP-N8By5h4k4HYSkoa-nK8n-VqkC5hldpCfnRQpiJiwMk9cfQulsLRf5dG8XumDcDVY8MFJB34zrPC_XIDEevP55k5swZMNagiSA7JiduYmFNTCuy_BRSvoDvPU7CDc"/>
+<div class="flex-grow">
+<h4 class="font-headline-md text-quiz-option text-on-primary">AhmadG3nius</h4>
+</div>
+<div class="font-label-bold text-label-bold text-mesh-pink bg-mesh-pink/10 px-3 py-1 rounded-full">
+                    6,850 XP
+                </div>
+</div>
+<!-- List Item 6 -->
+<div class="glass-panel rounded-lg p-4 flex items-center gap-4 hover:bg-white/10 transition-colors border-l-4 border-l-cyber-lime">
+<div class="w-8 text-center font-headline-md text-quiz-option text-outline-variant font-bold">6</div>
+<img class="w-12 h-12 rounded-full object-cover" data-alt="Small circular avatar of a student, neon lime accents, dark background." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDSrSmh3liQ2u2BDBJj2Ha-CCtoqmXJehWrJb989pqXpc0GXZzmSen-PAd6jAWZKCLbrxgZs-F5TXxGpRp3oPyNX-kRiYguCC2bfhccbyeiYIqGJfB-LktJt7ZI2sDKg5yYPqJbi59-f2sLECtaNZpYIbuE8KXzJHvPnUUIA5UfMZadfRBNNnLNWmlHkIZlXgphO3L79pAUWrQsebIolr1b7EDuDZWkIrZA96KdKp7the9ILwErJPs"/>
+<div class="flex-grow">
+<h4 class="font-headline-md text-quiz-option text-on-primary">DinaT3pat</h4>
+</div>
+<div class="font-label-bold text-label-bold text-cyber-lime bg-cyber-lime/10 px-3 py-1 rounded-full">
+                    6,400 XP
+                </div>
+</div>
+</div>
+</main>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-4 pb-6 pt-2 bg-deep-obsidian/90 backdrop-blur-md border-t-4 border-outline md:hidden shadow-lg rounded-t-lg">
+<a class="flex flex-col items-center justify-center text-outline-variant p-2 hover:bg-surface-container-highest transition-colors rounded-lg group" href="#">
+<span class="material-symbols-outlined group-hover:scale-110 transition-transform duration-300">sports_esports</span>
+<span class="font-label-bold text-label-bold mt-1">Arena</span>
+</a>
+<a class="flex flex-col items-center justify-center bg-electric-blue text-on-primary rounded-full px-6 py-2 shadow-[0_0_15px_rgba(0,82,255,0.4)] transform scale-110 duration-300 ease-out" href="#">
+<span class="material-symbols-outlined" data-weight="fill" style="font-variation-settings: 'FILL' 1;">leaderboard</span>
+<span class="font-label-bold text-label-bold mt-1">Rankings</span>
+</a>
+<a class="flex flex-col items-center justify-center text-outline-variant p-2 hover:bg-surface-container-highest transition-colors rounded-lg group" href="#">
+<span class="material-symbols-outlined group-hover:scale-110 transition-transform duration-300">auto_awesome</span>
+<span class="font-label-bold text-label-bold mt-1">Quests</span>
+</a>
+<a class="flex flex-col items-center justify-center text-outline-variant p-2 hover:bg-surface-container-highest transition-colors rounded-lg group" href="#">
+<span class="material-symbols-outlined group-hover:scale-110 transition-transform duration-300">person</span>
+<span class="font-label-bold text-label-bold mt-1">Profile</span>
+</a>
+</nav>
+</body></html>
