@@ -13,6 +13,11 @@ export async function GET(
     const sessionParticipants = await db.query.participants.findMany({
       where: eq(participants.quizSessionId, sessionId),
       orderBy: (participants, { desc }) => [desc(participants.joinedAt)],
+      with: {
+        answers: {
+          columns: { id: true }
+        }
+      }
     });
 
     return NextResponse.json({ participants: sessionParticipants });

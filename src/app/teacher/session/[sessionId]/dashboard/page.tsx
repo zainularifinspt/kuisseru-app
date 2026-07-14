@@ -10,6 +10,7 @@ type Player = {
   nickname: string;
   score: number;
   joinedAt: string;
+  answersCount?: number;
 };
 
 const AVATAR_EMOJIS = ["🦄","🦊","🐸","🐙","🦖","🦋","🐯","🐶","🐱","🦁","🐼","🐧"];
@@ -53,7 +54,7 @@ export default function TeacherDashboard() {
         const partRes = await fetch(`/api/quiz-sessions/${sessionId}/participants`);
         if (partRes.ok) {
           const partData = await partRes.json();
-          setPlayers(partData.participants);
+          setPlayers(partData.participants.map((p: any) => ({ ...p, answersCount: p.answers?.length || 0 })));
         }
       } catch (error) {
         console.error(error);
@@ -81,7 +82,7 @@ export default function TeacherDashboard() {
         setPlayers((prev) => 
           prev.map(p => 
             p.id === data.participantId 
-              ? { ...p, score: data.score }
+              ? { ...p, score: data.score, answersCount: (p.answersCount || 0) + 1 }
               : p
           )
         );
@@ -264,6 +265,7 @@ export default function TeacherDashboard() {
                     {sortedPlayers.map((player, idx) => {
                       const { emoji, color } = getPlayerAvatar(player.id, idx);
                       const isTop3 = idx < 3;
+                      const isFinished = totalQuestions > 0 && player.answersCount === totalQuestions;
                       return (
                         <div 
                           key={player.id} 
@@ -276,9 +278,16 @@ export default function TeacherDashboard() {
                             <div className={`w-10 h-10 rounded-full ${color} border-2 border-deep-obsidian flex items-center justify-center text-xl shadow-[2px_2px_0px_rgba(10,10,10,1)]`}>
                               {emoji}
                             </div>
-                            <span className="font-heading font-bold text-sm text-deep-obsidian">
-                              {player.nickname}
-                            </span>
+                            <div className="flex flex-col">
+                              <span className="font-heading font-bold text-sm text-deep-obsidian flex items-center gap-2">
+                                {player.nickname}
+                                {quizStatus === 'berjalan' && (
+                                  <span className={`text-[9px] px-2 py-0.5 rounded-full border ${isFinished ? 'bg-[#4CAF50] text-white border-[#4CAF50]' : 'bg-surface-variant text-on-surface-variant border-outline'}`}>
+                                    {isFinished ? 'SELESAI' : 'MENGERJAKAN'}
+                                  </span>
+                                )}
+                              </span>
+                            </div>
                           </div>
                           <div className="bg-deep-obsidian text-cyber-lime px-3 py-1.5 rounded-full font-heading font-bold text-sm border border-cyber-lime/30">
                             {player.score || 0} pts
