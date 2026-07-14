@@ -4,6 +4,10 @@ import Link from "next/link";
 import { useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { Loader2 } from "lucide-react";
+import dynamic from 'next/dynamic';
+
+const QRScanner = dynamic(() => import('@/components/quiz/QRScanner'), { ssr: false });
+
 
 export default function Home() {
   const [joinCode, setJoinCode] = useState("");
@@ -96,6 +100,28 @@ export default function Home() {
     }
   };
 
+  const handleScanSuccess = (decodedText: string) => {
+    try {
+      // Expecting URL format like http://.../join/SESSION_ID or just SESSION_ID
+      // If it contains /join/, we'll extract the part after it.
+      if (decodedText.includes('/join/')) {
+        const urlParts = decodedText.split('/join/');
+        const sessionId = urlParts[1];
+        if (sessionId) {
+          if (nickname.trim()) {
+            localStorage.setItem("pendingNickname", nickname.trim());
+          }
+          router.push(`/join/${sessionId}`);
+        }
+      } else {
+        // Just try joining with what we have assuming it's a code
+        setJoinCode(decodedText.slice(0,6));
+      }
+    } catch (e) {
+      console.error('Invalid QR Code content', e);
+    }
+  };
+
   return (
     <div className="bg-background text-on-background min-h-[100dvh] relative overflow-hidden flex flex-col font-sans">
       {/* Background Shapes */}
@@ -120,20 +146,14 @@ export default function Home() {
 
         {/* Scanner Area */}
         <div className="w-full aspect-square max-w-sm relative bg-surface-container-low rounded-[2rem] border-4 border-deep-obsidian p-4 mb-8 shadow-[0_0_40px_rgba(0,82,255,0.1)] overflow-hidden">
-          <div className="absolute inset-0 m-8 border-4 border-dashed border-outline-variant rounded-xl opacity-50"></div>
+          <div className="absolute inset-0 m-8 border-4 border-dashed border-outline-variant rounded-xl opacity-50 pointer-events-none z-10"></div>
           {/* Scanning Animation */}
-          <div className="absolute left-8 right-8 h-1 bg-cyber-lime rounded-full shadow-[0_0_15px_#CCFF00] z-20 animate-scan"></div>
-          {/* Placeholder for camera view */}
+          <div className="absolute left-8 right-8 h-1 bg-cyber-lime rounded-full shadow-[0_0_15px_#CCFF00] z-20 animate-scan pointer-events-none"></div>
+          {/* Camera View */}
           <div className="w-full h-full rounded-xl bg-surface-container-highest flex items-center justify-center relative overflow-hidden">
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-16 w-16 text-outline opacity-30" viewBox="0 0 24 24" fill="currentColor">
-               <path d="M4 4h4v4H4V4zm0 12h4v4H4v-4zm12-12h4v4h-4V4zm0 12h4v4h-4v-4z" />
-            </svg>
-            <div className="absolute top-4 left-4 w-6 h-6 border-t-4 border-l-4 border-electric-blue rounded-tl-lg"></div>
-            <div className="absolute top-4 right-4 w-6 h-6 border-t-4 border-r-4 border-electric-blue rounded-tr-lg"></div>
-            <div className="absolute bottom-4 left-4 w-6 h-6 border-b-4 border-l-4 border-electric-blue rounded-bl-lg"></div>
-            <div className="absolute bottom-4 right-4 w-6 h-6 border-b-4 border-r-4 border-electric-blue rounded-br-lg"></div>
+            <QRScanner onScanSuccess={handleScanSuccess} />
           </div>
-          <div className="absolute bottom-4 left-0 right-0 text-center">
+          <div className="absolute bottom-4 left-0 right-0 text-center pointer-events-none z-20">
             <p className="font-heading font-semibold text-sm text-on-surface-variant bg-surface-container/80 backdrop-blur inline-block px-4 py-2 rounded-full border-2 border-deep-obsidian">Arahkan kamera ke QR Code di layar guru</p>
           </div>
         </div>
