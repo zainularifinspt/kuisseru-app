@@ -306,8 +306,8 @@ export default function TeacherPortal() {
                       <div className="w-24 h-24 rounded-[2rem] bg-gradient-to-br from-blue-900/50 to-purple-900/50 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-500 border border-blue-400/30 shadow-[0_0_20px_rgba(59,130,246,0.4)]">
                         <Sparkles className="w-10 h-10 text-cyan-400 animate-pulse" />
                       </div>
-                      <h2 className="text-2xl font-bold text-white mb-3 tracking-tight drop-shadow-md">Kuis Cerdas Baru</h2>
-                      <p className="text-slate-400 mb-8 font-light leading-relaxed">
+                      <h2 className="text-2xl font-bold text-slate-800 dark:text-white mb-3 tracking-tight drop-shadow-sm dark:drop-shadow-md">Kuis Cerdas Baru</h2>
+                      <p className="text-slate-600 dark:text-slate-400 mb-8 font-light leading-relaxed">
                         Bangkitkan semangat belajar dengan kuis interaktif yang dirancang khusus.
                       </p>
                       
@@ -357,7 +357,7 @@ export default function TeacherPortal() {
                           initial={{ opacity: 0, y: 10 }}
                           animate={{ opacity: 1, y: 0 }}
                           key={session.id} 
-                          className="group bg-[#1e293b]/60 hover:bg-blue-900/30 border border-white/10 hover:border-cyan-500/50 rounded-[1.5rem] p-6 flex flex-col sm:flex-row sm:items-center justify-between gap-5 transition-all duration-300 hover:shadow-[0_0_20px_rgba(34,211,238,0.15)]"
+                          className="group bg-slate-50 dark:bg-[#1e293b]/60 hover:bg-slate-100 dark:hover:bg-blue-900/30 border border-slate-200 dark:border-white/10 hover:border-blue-400 dark:hover:border-cyan-500/50 rounded-[1.5rem] p-6 flex flex-col sm:flex-row sm:items-center justify-between gap-5 transition-all duration-300 hover:shadow-[0_0_20px_rgba(59,130,246,0.15)] dark:hover:shadow-[0_0_20px_rgba(34,211,238,0.15)]"
                         >
                           <div 
                             className="flex items-center gap-5 cursor-pointer flex-1"
@@ -369,15 +369,15 @@ export default function TeacherPortal() {
                               }
                             }}
                           >
-                            <div className="w-14 h-14 rounded-2xl bg-slate-800 flex items-center justify-center group-hover:bg-cyan-500 group-hover:shadow-[0_0_15px_rgba(34,211,238,0.6)] transition-all duration-300 border border-slate-700 group-hover:border-cyan-400">
-                              <Play className="w-6 h-6 text-slate-400 group-hover:text-white ml-1 transition-colors" />
+                            <div className="w-14 h-14 rounded-2xl bg-slate-200 dark:bg-slate-800 flex items-center justify-center group-hover:bg-blue-500 dark:group-hover:bg-cyan-500 group-hover:shadow-[0_0_15px_rgba(59,130,246,0.4)] dark:group-hover:shadow-[0_0_15px_rgba(34,211,238,0.6)] transition-all duration-300 border border-slate-300 dark:border-slate-700 group-hover:border-blue-400 dark:group-hover:border-cyan-400">
+                              <Play className="w-6 h-6 text-slate-500 dark:text-slate-400 group-hover:text-white ml-1 transition-colors" />
                             </div>
                             <div>
-                              <h3 className="font-bold text-slate-200 group-hover:text-cyan-400 transition-colors text-lg md:text-xl mb-1 tracking-tight">
+                              <h3 className="font-bold text-slate-800 dark:text-slate-200 group-hover:text-blue-600 dark:group-hover:text-cyan-400 transition-colors text-lg md:text-xl mb-1 tracking-tight">
                                 {session.title}
                               </h3>
-                              <p className="text-sm text-slate-500 font-light">
-                                ID Sesi: <span className="font-semibold text-slate-400">{session.id.split('-')[0].toUpperCase()}</span> • <span className="text-slate-400">{new Date(session.createdAt).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })}</span>
+                              <p className="text-sm text-slate-500 dark:text-slate-500 font-light">
+                                ID Sesi: <span className="font-semibold text-slate-700 dark:text-slate-400">{session.id.split('-')[0].toUpperCase()}</span> • <span className="text-slate-600 dark:text-slate-400">{new Date(session.createdAt).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })}</span>
                               </p>
                             </div>
                           </div>
@@ -393,7 +393,7 @@ export default function TeacherPortal() {
                                   e.stopPropagation();
                                   router.push(`/teacher/session/${session.id}/grading`);
                                 }}
-                                className="rounded-xl border-cyan-500/30 text-cyan-400 hover:bg-cyan-500/20 hover:text-cyan-300 ml-2 shadow-[0_0_10px_rgba(34,211,238,0.1)] bg-transparent"
+                                className="rounded-xl border-blue-500/30 dark:border-cyan-500/30 text-blue-600 dark:text-cyan-400 hover:bg-blue-500/10 dark:hover:bg-cyan-500/20 hover:text-blue-700 dark:hover:text-cyan-300 ml-2 shadow-[0_0_10px_rgba(59,130,246,0.1)] dark:shadow-[0_0_10px_rgba(34,211,238,0.1)] bg-transparent"
                               >
                                 <FileText className="w-4 h-4 mr-2" />
                                 Penilaian
@@ -401,7 +401,7 @@ export default function TeacherPortal() {
                             )}
                             
                             <div 
-                              className="w-12 h-12 rounded-xl bg-slate-800 flex items-center justify-center text-slate-400 group-hover:text-white group-hover:bg-blue-600 transition-all duration-300 cursor-pointer border border-slate-700 group-hover:border-blue-500"
+                              className="w-12 h-12 rounded-xl bg-slate-200 dark:bg-slate-800 flex items-center justify-center text-slate-500 dark:text-slate-400 group-hover:text-white group-hover:bg-blue-600 transition-all duration-300 cursor-pointer border border-slate-300 dark:border-slate-700 group-hover:border-blue-500"
                               onClick={() => {
                                 if (session.status === 'draft') {
                                   router.push(`/teacher/session/${session.id}/edit`);

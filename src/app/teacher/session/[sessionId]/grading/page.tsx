@@ -9,6 +9,8 @@ import { Button } from "@/components/ui/button";
 import { ArrowLeft, Trophy, Medal, Award, FileText } from "lucide-react";
 import Link from "next/link";
 import { ThemeToggle } from "@/components/ThemeToggle";
+import Latex from 'react-latex-next';
+import 'katex/dist/katex.min.css';
 
 export default async function GradingPage(props: { params: Promise<{ sessionId: string }> }) {
   const params = await props.params;
@@ -168,7 +170,7 @@ export default async function GradingPage(props: { params: Promise<{ sessionId: 
                         <div className="flex-1">
                           <h3 className="text-lg font-bold text-slate-800 dark:text-slate-200 mb-2">
                             <span className="text-blue-600 dark:text-cyan-400 mr-2">Soal {idx + 1}.</span>
-                            {q.content}
+                            <Latex>{q.content}</Latex>
                           </h3>
                         </div>
                         <div className="flex flex-col items-center justify-center bg-slate-100 dark:bg-[#0f172a] p-4 rounded-2xl border border-slate-200 dark:border-slate-700 min-w-[120px]">
