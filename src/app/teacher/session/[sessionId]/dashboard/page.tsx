@@ -77,6 +77,16 @@ export default function TeacherDashboard() {
         });
       });
 
+      channel.bind('answer-submitted', (data: { participantId: string, score: number }) => {
+        setPlayers((prev) => 
+          prev.map(p => 
+            p.id === data.participantId 
+              ? { ...p, score: data.score }
+              : p
+          )
+        );
+      });
+
       return () => {
         pusherClient.unsubscribe(`session-${sessionId}`);
       };
