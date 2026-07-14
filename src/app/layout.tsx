@@ -15,6 +15,9 @@ const spaceGrotesk = Space_Grotesk({
 export const metadata: Metadata = {
   title: "ASTHAQUIZZ",
   description: "Platform Kuis Interaktif",
+  icons: {
+    icon: "/logo.png",
+  },
 };
 
 export default function RootLayout({
