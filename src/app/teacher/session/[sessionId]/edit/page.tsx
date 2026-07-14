@@ -448,7 +448,7 @@ export default function EditQuizSession({ params }: { params: Promise<{ sessionI
               {/* Action Bar */}
               <div className="flex flex-col-reverse md:flex-row justify-end gap-4 mt-4 mb-12">
                 <button 
-                  onClick={() => router.push(`/teacher/session/${sessionId}/dashboard`)}
+                  onClick={() => router.push(`/teacher`)}
                   className="px-8 py-4 rounded-full border-2 border-deep-obsidian font-heading font-bold hover:bg-surface-variant transition-colors text-center"
                 >
                   Kembali ke Dashboard
