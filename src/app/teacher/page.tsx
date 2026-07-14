@@ -346,7 +346,7 @@ export default function TeacherPortal() {
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-12 gap-6 pt-6 md:pt-0">
           <div>
             <h2 className="font-heading text-3xl md:text-4xl font-bold text-deep-obsidian mb-2 flex items-center gap-3">
-              Halo, {user?.name?.split(' ')[0]}. 
+              Halo, {user?.name} 
               <Hand className="w-8 h-8 md:w-10 md:h-10 text-[#FFB02E] origin-bottom-right animate-[wave_2.5s_infinite]" />
             </h2>
             <p className="font-sans text-on-surface-variant text-lg">
