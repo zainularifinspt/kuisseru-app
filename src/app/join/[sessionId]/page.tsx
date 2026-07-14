@@ -139,12 +139,27 @@ export default function JoinSessionPage() {
           </h2>
         </div>
 
-        {/* Decorative Glyph */}
-        <div className="w-full aspect-[2/1] max-w-sm relative bg-surface-container-low rounded-[2rem] border-4 border-deep-obsidian p-4 mb-8 flex items-center justify-center shadow-[0_0_40px_rgba(0,82,255,0.1)]">
-          <div className="absolute inset-0 m-4 border-4 border-dashed border-outline-variant rounded-xl opacity-50"></div>
-          <svg xmlns="http://www.w3.org/2000/svg" className="h-16 w-16 text-deep-obsidian animate-bounce" viewBox="0 0 24 24" fill="currentColor">
-            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 14.5v-9l6 4.5-6 4.5z"/>
-          </svg>
+        {/* Decorative Animated Graphic */}
+        <div className="w-full max-w-sm relative bg-[rgba(255,255,255,0.7)] backdrop-blur-xl rounded-[2.5rem] border-4 border-deep-obsidian p-8 mb-8 flex flex-col items-center justify-center shadow-[0_10px_40px_rgba(0,0,0,0.1)] overflow-hidden group">
+          {/* Animated Background Rays */}
+          <div className="absolute inset-0 opacity-30 group-hover:opacity-50 transition-opacity duration-500">
+             <div className="absolute top-1/2 left-1/2 w-[200%] h-[200%] -translate-x-1/2 -translate-y-1/2 animate-[spin_10s_linear_infinite]" 
+                  style={{ background: 'conic-gradient(from 0deg, transparent 0deg, var(--color-cyber-lime) 45deg, transparent 90deg, var(--color-electric-blue) 135deg, transparent 180deg, var(--color-mesh-pink) 225deg, transparent 270deg, var(--color-cyber-lime) 315deg, transparent 360deg)' }}>
+             </div>
+          </div>
+          
+          <div className="relative z-10 w-24 h-24 bg-electric-blue rounded-3xl rotate-12 flex items-center justify-center shadow-[8px_8px_0px_rgba(10,10,10,1)] animate-float border-4 border-deep-obsidian group-hover:rotate-[24deg] transition-transform duration-500">
+            {/* Rocket SVG */}
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-12 w-12 text-white -rotate-45" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M13.13 22.19L11.5 18.36C10.07 15.01 7.21 12.14 3.86 10.71L.03 9.08C-.25 8.97-.25 8.59.03 8.47L22.1 0l-8.47 22.07c-.12.28-.5.28-.6.12z"/>
+            </svg>
+            
+            {/* Engine fire */}
+            <div className="absolute -bottom-6 -left-6 w-12 h-12 bg-gradient-to-tr from-error to-[#FFB02E] rounded-full filter blur-md animate-pulse opacity-80 -z-10"></div>
+          </div>
+          <div className="relative z-10 mt-6 font-heading font-bold text-xl text-deep-obsidian text-center uppercase tracking-widest bg-white/80 px-4 py-1 rounded-full border-2 border-deep-obsidian">
+            Bersiap!
+          </div>
         </div>
 
         {/* Manual Entry Form */}

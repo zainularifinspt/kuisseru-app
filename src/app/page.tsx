@@ -65,9 +65,7 @@ export default function Home() {
     
     // If nickname is provided, we might want to pass it as a query param or localStorage
     // since the current flow is join-by-code -> redirect to /join/[sessionId]
-    if (nickname.trim()) {
-      localStorage.setItem("pendingNickname", nickname.trim());
-    }
+
 
     setIsLoading(true);
     setError("");
@@ -82,9 +80,33 @@ export default function Home() {
       const data = await res.json();
 
       if (res.ok && data.sessionId) {
-        // Redirect to the session join page where they will actually join
-        // If nickname was entered, it can be auto-filled there.
-        router.push(`/join/${data.sessionId}`);
+        if (nickname.trim()) {
+          const joinRes = await fetch(`/api/quiz-sessions/${data.sessionId}/join`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ nickname: nickname.trim() }),
+          });
+
+          if (!joinRes.ok) {
+            const errData = await joinRes.json().catch(() => null);
+            setError(errData?.error || "Gagal bergabung ke sesi");
+            setIsLoading(false);
+            return;
+          }
+
+          const joinData = await joinRes.json();
+          localStorage.setItem("participantId", joinData.participant.id);
+          localStorage.setItem("nickname", joinData.participant.nickname);
+          localStorage.setItem("sessionId", data.sessionId);
+          
+          if (joinData.sessionStatus === 'active') {
+            router.push(`/quiz?sessionId=${data.sessionId}&participantId=${joinData.participant.id}`);
+          } else {
+            router.push(`/waiting-room?sessionId=${data.sessionId}&participantId=${joinData.participant.id}`);
+          }
+        } else {
+          router.push(`/join/${data.sessionId}`);
+        }
       } else {
         setError(data.error || "Gagal bergabung");
       }
