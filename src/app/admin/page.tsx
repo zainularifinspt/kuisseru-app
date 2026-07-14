@@ -508,6 +508,76 @@ export default function AdminPortal() {
             </div>
           )}
         </div>
+
+        {/* Sessions Table */}
+        <div className="bg-[rgba(255,255,255,0.7)] backdrop-blur-xl border-2 border-deep-obsidian rounded-xl overflow-hidden shadow-[0_4px_30px_rgba(0,0,0,0.1)] mt-8">
+          <div className="bg-surface-container-high border-b-2 border-deep-obsidian p-6">
+            <h2 className="font-heading text-xl font-bold text-deep-obsidian">Daftar Sesi Kuis</h2>
+          </div>
+          
+          {isDataLoading ? (
+            <div className="p-16 flex justify-center">
+              <Loader2 className="w-10 h-10 animate-spin text-electric-blue" />
+            </div>
+          ) : sessions.length === 0 ? (
+            <div className="p-16 text-center">
+              <p className="font-heading font-bold text-on-surface-variant">Belum ada sesi kuis yang dibuat.</p>
+            </div>
+          ) : (
+            <div className="overflow-x-auto">
+              <table className="w-full text-left border-collapse">
+                <thead>
+                  <tr className="bg-surface-container border-b-2 border-deep-obsidian">
+                    <th className="py-4 px-6 font-heading font-bold text-on-surface-variant text-xs uppercase tracking-wider">Sesi Kuis</th>
+                    <th className="py-4 px-6 font-heading font-bold text-on-surface-variant text-xs uppercase tracking-wider">Kode</th>
+                    <th className="py-4 px-6 font-heading font-bold text-on-surface-variant text-xs uppercase tracking-wider">Pembuat</th>
+                    <th className="py-4 px-6 font-heading font-bold text-on-surface-variant text-xs uppercase tracking-wider">Status</th>
+                    <th className="py-4 px-6 font-heading font-bold text-on-surface-variant text-xs uppercase tracking-wider text-right">Aksi</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {sessions.map((s) => (
+                    <tr key={s.id} className="border-b border-outline-variant hover:bg-surface-container-low transition-colors group">
+                      <td className="py-4 px-6">
+                        <p className="font-heading font-bold text-deep-obsidian group-hover:text-electric-blue transition-colors">{s.title}</p>
+                        <p className="text-xs text-on-surface-variant font-sans mt-1">{new Date(s.createdAt).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })}</p>
+                      </td>
+                      <td className="py-4 px-6">
+                        <span className="font-heading font-bold text-cyber-lime bg-deep-obsidian px-3 py-1 rounded-full text-sm border-2 border-deep-obsidian">{s.joinCode || '-'}</span>
+                      </td>
+                      <td className="py-4 px-6 font-sans text-on-surface-variant text-sm font-medium">
+                        {s.teacher?.name || <span className="italic text-outline">Tanpa Nama</span>}
+                      </td>
+                      <td className="py-4 px-6">
+                        <span className={`px-3 py-1 rounded-full text-[10px] font-heading font-bold uppercase tracking-wider border-2 border-deep-obsidian ${
+                          s.status === 'active' ? "bg-[#4CAF50] text-white" : s.status === 'finished' ? "bg-outline text-white" : "bg-[#FF9800] text-white"
+                        }`}>
+                          {s.status === 'active' ? 'Berjalan' : s.status === 'finished' ? 'Selesai' : s.status}
+                        </span>
+                      </td>
+                      <td className="py-4 px-6 text-right">
+                        <div className="flex justify-end gap-2">
+                          <Link 
+                            href={`/teacher/session/${s.id}/dashboard`}
+                            className="bg-electric-blue/10 text-electric-blue hover:bg-electric-blue hover:text-white px-3 py-2 rounded-lg font-heading font-bold text-xs transition-colors border border-electric-blue/30 hover:border-electric-blue"
+                          >
+                            Dashboard
+                          </Link>
+                          <Link 
+                            href={`/teacher/session/${s.id}/grading`}
+                            className="bg-mesh-pink/10 text-mesh-pink hover:bg-mesh-pink hover:text-white px-3 py-2 rounded-lg font-heading font-bold text-xs transition-colors border border-mesh-pink/30 hover:border-mesh-pink"
+                          >
+                            Penilaian
+                          </Link>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </div>
         </div>
       </main>
 
