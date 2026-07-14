@@ -85,7 +85,6 @@ export default async function GradingPage(props: { params: Promise<{ sessionId: 
               </div>
               {quizSession.title}
             </h1>
-          </div>
           
           <div className="md:text-right bg-slate-50 dark:bg-[#0f172a]/60 p-4 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-inner min-w-[160px]">
             <p className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1">Total Peserta</p>
