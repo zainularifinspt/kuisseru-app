@@ -8,6 +8,8 @@ import Link from "next/link";
 import Latex from 'react-latex-next';
 import 'katex/dist/katex.min.css';
 
+import { TeacherSidebar } from "@/components/teacher/TeacherSidebar";
+
 export default async function GradingPage(props: { params: Promise<{ sessionId: string }> }) {
   const params = await props.params;
   const session = await auth.api.getSession({
@@ -49,7 +51,10 @@ export default async function GradingPage(props: { params: Promise<{ sessionId: 
   });
 
   return (
-    <div className="min-h-[100dvh] bg-background text-on-background p-4 md:p-8 font-sans relative overflow-hidden">
+    <div className="min-h-[100dvh] bg-background text-on-background font-sans antialiased overflow-x-hidden">
+      <TeacherSidebar user={session.user} />
+      
+      <div className="md:ml-64 flex flex-col min-h-[100dvh] p-4 md:p-8 relative overflow-hidden">
       
       {/* Background Effects */}
       <div className="absolute inset-0 pointer-events-none -z-10 overflow-hidden">
@@ -57,7 +62,7 @@ export default async function GradingPage(props: { params: Promise<{ sessionId: 
         <div className="absolute bottom-40 left-20 w-80 h-80 bg-secondary-fixed rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-float" style={{ animationDelay: '-3s' }}></div>
       </div>
 
-      <div className="max-w-5xl mx-auto space-y-8 relative z-10">
+      <div className="max-w-5xl w-full mx-auto space-y-8 relative z-10">
         {/* Header */}
         <header className="bg-[rgba(255,255,255,0.7)] backdrop-blur-xl p-6 md:p-8 rounded-xl border-2 border-deep-obsidian shadow-[0_4px_30px_rgba(0,0,0,0.1)] relative overflow-hidden">
           <div className="h-1 absolute top-0 left-0 right-0 bg-[linear-gradient(90deg,#0052FF,#FF00E5,#0052FF)] bg-[length:200%_auto] animate-gradient-shift"></div>
@@ -205,6 +210,7 @@ export default async function GradingPage(props: { params: Promise<{ sessionId: 
               })}
             </div>
           )}
+        </div>
         </div>
       </div>
     </div>

@@ -540,22 +540,7 @@ export default function TeacherPortal() {
           </div>
         )}
 
-        {/* Drafts Quick Create */}
-        <div className="mt-12">
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-            <button
-              onClick={handleCreateSession}
-              disabled={isLoading}
-              className="bg-surface-container border-2 border-dashed border-outline p-6 rounded-xl flex flex-col items-center justify-center text-center min-h-[200px] hover:border-electric-blue hover:bg-surface-container-highest transition-colors cursor-pointer group disabled:opacity-50"
-            >
-              <div className="w-12 h-12 rounded-full bg-deep-obsidian flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-surface" viewBox="0 0 24 24" fill="currentColor"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>
-              </div>
-              <h4 className="font-heading text-base font-bold text-deep-obsidian mb-1">Kuis Baru</h4>
-              <p className="font-sans text-xs text-on-surface-variant">Mulai dari awal</p>
-            </button>
-          </div>
-        </div>
+
         </div>
       </main>
 
