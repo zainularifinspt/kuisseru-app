@@ -262,27 +262,27 @@ export default function TeacherPortal() {
 
         <ul className="flex flex-col gap-2 flex-grow">
           <li>
-            <Link href="/teacher" className="flex items-center gap-4 px-4 py-3 rounded-lg text-cyber-lime font-heading font-bold text-sm border-l-4 border-cyber-lime bg-white/10 transition-colors duration-200">
+            <Link href="/teacher" className="flex items-center gap-4 px-4 py-3 rounded-lg text-cyber-lime font-heading font-bold text-sm border-l-4 border-cyber-lime bg-white/10 transition-colors duration-200 cursor-pointer">
               <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 24 24" fill="currentColor"><path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z"/></svg>
               Dashboard
             </Link>
           </li>
           <li>
-            <button onClick={handleCreateSession} disabled={isLoading} className="flex items-center gap-4 px-4 py-3 rounded-lg text-surface-variant/70 font-heading font-bold text-sm hover:bg-white/5 hover:text-surface-variant transition-colors duration-200 w-full text-left">
+            <button onClick={handleCreateSession} disabled={isLoading} className="flex items-center gap-4 px-4 py-3 rounded-lg text-surface-variant/70 font-heading font-bold text-sm hover:bg-white/5 hover:text-surface-variant transition-colors duration-200 w-full text-left cursor-pointer">
               <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 24 24" fill="currentColor"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>
               Kuis Baru
             </button>
           </li>
           {user?.role === 'admin' && (
             <li>
-              <Link href="/admin" className="flex items-center gap-4 px-4 py-3 rounded-lg text-surface-variant/70 font-heading font-bold text-sm hover:bg-white/5 hover:text-surface-variant transition-colors duration-200">
+              <Link href="/admin" className="flex items-center gap-4 px-4 py-3 rounded-lg text-surface-variant/70 font-heading font-bold text-sm hover:bg-white/5 hover:text-surface-variant transition-colors duration-200 cursor-pointer">
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 24 24" fill="currentColor"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm0 10.99h7c-.53 4.12-3.28 7.79-7 8.94V12H5V6.3l7-3.11v8.8z"/></svg>
                 Panel Admin
               </Link>
             </li>
           )}
           <li>
-            <button onClick={() => setIsEditProfileOpen(true)} className="flex items-center gap-4 px-4 py-3 rounded-lg text-surface-variant/70 font-heading font-bold text-sm hover:bg-white/5 hover:text-surface-variant transition-colors duration-200 w-full text-left">
+            <button onClick={() => setIsEditProfileOpen(true)} className="flex items-center gap-4 px-4 py-3 rounded-lg text-surface-variant/70 font-heading font-bold text-sm hover:bg-white/5 hover:text-surface-variant transition-colors duration-200 w-full text-left cursor-pointer">
               <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 24 24" fill="currentColor"><path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58a.49.49 0 00.12-.61l-1.92-3.32a.488.488 0 00-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.07.62-.07.94s.02.64.07.94l-2.03 1.58a.49.49 0 00-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/></svg>
               Pengaturan
             </button>
@@ -301,42 +301,46 @@ export default function TeacherPortal() {
               </div>
             </div>
           </div>
-          <button onClick={handleLogout} className="flex items-center gap-3 px-4 py-3 mt-3 rounded-lg text-error/80 font-heading font-bold text-sm hover:bg-error/10 transition-colors duration-200 w-full">
+          <button onClick={handleLogout} className="flex items-center gap-3 px-4 py-3 mt-3 rounded-lg text-red-400 bg-red-400/10 font-heading font-bold text-sm hover:bg-red-500 hover:text-white transition-colors duration-200 w-full cursor-pointer">
             <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 24 24" fill="currentColor"><path d="M17 7l-1.41 1.41L18.17 11H8v2h10.17l-2.58 2.58L17 17l5-5zM4 5h8V3H4c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h8v-2H4V5z"/></svg>
             Keluar
           </button>
         </div>
       </nav>
 
-      {/* TopNavBar */}
-      <header className="hidden md:flex justify-between items-center ml-64 px-8 h-20 w-[calc(100%-16rem)] bg-surface/80 backdrop-blur-md border-b-2 border-deep-obsidian sticky top-0 z-40">
-        <div className="flex items-center gap-4">
-          <h2 className="font-heading text-xl font-bold text-deep-obsidian">KuisSeru Dashboard</h2>
-        </div>
-        <div className="flex items-center gap-6">
-          <span className="font-heading font-bold text-sm text-on-surface-variant flex items-center gap-1.5">
-            {user?.role === 'admin' ? (
-              <><Shield className="w-4 h-4 text-electric-blue" /> Admin</>
-            ) : (
-              <><GraduationCap className="w-4 h-4 text-electric-blue" /> Guru</>
-            )}
-          </span>
-        </div>
-      </header>
+      {/* Main Content Area Wrapper */}
+      <div className="md:ml-64 flex flex-col min-h-[100dvh]">
+        
+        {/* TopNavBar */}
+        <header className="hidden md:flex justify-between items-center px-8 h-20 bg-surface/80 backdrop-blur-md border-b-2 border-deep-obsidian sticky top-0 z-40">
+          <div className="flex items-center gap-4">
+            <h2 className="font-heading text-xl font-bold text-deep-obsidian">KuisSeru Dashboard</h2>
+          </div>
+          <div className="flex items-center gap-6">
+            <span className="font-heading font-bold text-sm text-on-surface-variant flex items-center gap-1.5">
+              {user?.role === 'admin' ? (
+                <><Shield className="w-4 h-4 text-electric-blue" /> Admin</>
+              ) : (
+                <><GraduationCap className="w-4 h-4 text-electric-blue" /> Guru</>
+              )}
+            </span>
+          </div>
+        </header>
 
-      {/* Mobile Top Bar */}
-      <header className="md:hidden flex justify-between items-center px-4 h-16 bg-surface/90 backdrop-blur-md border-b-2 border-deep-obsidian sticky top-0 z-40">
-        <button onClick={() => setIsMobileSidebarOpen(true)} className="p-2">
-          <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-deep-obsidian" viewBox="0 0 24 24" fill="currentColor"><path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/></svg>
-        </button>
-        <span className="font-heading font-bold text-deep-obsidian">KuisSeru</span>
-        <div className="w-8 h-8 rounded-full bg-electric-blue flex items-center justify-center text-white font-heading font-bold text-sm">
-          {user?.name?.substring(0,1).toUpperCase()}
-        </div>
-      </header>
+        {/* Mobile Top Bar */}
+        <header className="md:hidden flex justify-between items-center px-4 h-16 bg-surface/90 backdrop-blur-md border-b-2 border-deep-obsidian sticky top-0 z-40">
+          <button onClick={() => setIsMobileSidebarOpen(true)} className="p-2 cursor-pointer">
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-deep-obsidian" viewBox="0 0 24 24" fill="currentColor"><path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/></svg>
+          </button>
+          <span className="font-heading font-bold text-deep-obsidian">KuisSeru</span>
+          <div className="w-8 h-8 rounded-full bg-electric-blue flex items-center justify-center text-white font-heading font-bold text-sm">
+            {user?.name?.substring(0,1).toUpperCase()}
+          </div>
+        </header>
 
-      {/* Main Content */}
-      <main className="md:ml-64 p-4 md:p-6 max-w-7xl mx-auto min-h-screen pb-32 md:pb-6">
+        {/* Main Content */}
+        <main className="flex-1 p-4 md:p-6 pb-32 md:pb-6">
+          <div className="max-w-7xl mx-auto w-full">
         
         {/* Header Section */}
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-12 gap-6 pt-6 md:pt-0">
@@ -552,6 +556,7 @@ export default function TeacherPortal() {
             </button>
           </div>
         </div>
+        </div>
       </main>
 
       {/* BottomNavBar (Mobile Only) */}
@@ -569,6 +574,7 @@ export default function TeacherPortal() {
           <span className="font-heading font-bold text-[10px]">Profil</span>
         </button>
       </nav>
+      </div>
     </div>
   );
 }

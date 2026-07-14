@@ -320,19 +320,19 @@ export default function AdminPortal() {
 
         <ul className="flex flex-col gap-2 flex-grow">
           <li>
-            <Link href="/admin" className="flex items-center gap-4 px-4 py-3 rounded-lg text-cyber-lime font-heading font-bold text-sm border-l-4 border-cyber-lime bg-white/10 transition-colors duration-200">
+            <Link href="/admin" className="flex items-center gap-4 px-4 py-3 rounded-lg text-cyber-lime font-heading font-bold text-sm border-l-4 border-cyber-lime bg-white/10 transition-colors duration-200 cursor-pointer">
               <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 24 24" fill="currentColor"><path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z"/></svg>
               Dashboard
             </Link>
           </li>
           <li>
-            <button onClick={() => setIsCreateTeacherOpen(true)} className="flex items-center gap-4 px-4 py-3 rounded-lg text-surface-variant/70 font-heading font-bold text-sm hover:bg-white/5 hover:text-surface-variant transition-colors duration-200 w-full text-left">
+            <button onClick={() => setIsCreateTeacherOpen(true)} className="flex items-center gap-4 px-4 py-3 rounded-lg text-surface-variant/70 font-heading font-bold text-sm hover:bg-white/5 hover:text-surface-variant transition-colors duration-200 w-full text-left cursor-pointer">
               <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 24 24" fill="currentColor"><path d="M15 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm-9-2V7H4v3H1v2h3v3h2v-3h3v-2H6zm9 4c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
               Tambah Guru
             </button>
           </li>
           <li>
-            <button onClick={() => setIsEditProfileOpen(true)} className="flex items-center gap-4 px-4 py-3 rounded-lg text-surface-variant/70 font-heading font-bold text-sm hover:bg-white/5 hover:text-surface-variant transition-colors duration-200 w-full text-left">
+            <button onClick={() => setIsEditProfileOpen(true)} className="flex items-center gap-4 px-4 py-3 rounded-lg text-surface-variant/70 font-heading font-bold text-sm hover:bg-white/5 hover:text-surface-variant transition-colors duration-200 w-full text-left cursor-pointer">
               <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 24 24" fill="currentColor"><path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58a.49.49 0 00.12-.61l-1.92-3.32a.488.488 0 00-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.07.62-.07.94s.02.64.07.94l-2.03 1.58a.49.49 0 00-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/></svg>
               Pengaturan Admin
             </button>
@@ -351,16 +351,19 @@ export default function AdminPortal() {
               </div>
             </div>
           </div>
-          <button onClick={handleLogout} className="flex items-center gap-3 px-4 py-3 mt-3 rounded-lg text-error/80 font-heading font-bold text-sm hover:bg-error/10 transition-colors duration-200 w-full cursor-pointer">
+          <button onClick={handleLogout} className="flex items-center gap-3 px-4 py-3 mt-3 rounded-lg text-red-400 bg-red-400/10 font-heading font-bold text-sm hover:bg-red-500 hover:text-white transition-colors duration-200 w-full cursor-pointer">
             <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 24 24" fill="currentColor"><path d="M17 7l-1.41 1.41L18.17 11H8v2h10.17l-2.58 2.58L17 17l5-5zM4 5h8V3H4c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h8v-2H4V5z"/></svg>
             Keluar
           </button>
         </div>
       </nav>
 
-      {/* TopNavBar */}
-      <header className="hidden md:flex justify-between items-center ml-64 px-8 h-20 w-[calc(100%-16rem)] bg-surface/80 backdrop-blur-md border-b-2 border-deep-obsidian sticky top-0 z-40">
-        <div className="flex items-center gap-4">
+      {/* Main Content Area Wrapper */}
+      <div className="md:ml-64 flex flex-col min-h-[100dvh]">
+        
+        {/* TopNavBar */}
+        <header className="hidden md:flex justify-between items-center px-8 h-20 bg-surface/80 backdrop-blur-md border-b-2 border-deep-obsidian sticky top-0 z-40">
+          <div className="flex items-center gap-4">
           <h2 className="font-heading text-2xl font-bold text-deep-obsidian">Manajemen Portal Admin</h2>
         </div>
         <div className="flex items-center gap-6">
@@ -383,7 +386,8 @@ export default function AdminPortal() {
       </header>
 
       {/* Main Content */}
-      <main className="md:ml-64 p-4 md:p-8 max-w-6xl mx-auto min-h-screen pb-32 md:pb-8">
+      <main className="flex-1 p-4 md:p-8 pb-32 md:pb-8">
+        <div className="max-w-6xl mx-auto w-full">
         
         {/* Header Section */}
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-6 pt-4 md:pt-0">
@@ -506,6 +510,7 @@ export default function AdminPortal() {
             </div>
           )}
         </div>
+        </div>
       </main>
 
       {/* BottomNavBar (Mobile Only) */}
@@ -523,6 +528,7 @@ export default function AdminPortal() {
           <span className="font-heading font-bold text-[10px]">Profil</span>
         </button>
       </nav>
+      </div>
     </div>
   );
 }
