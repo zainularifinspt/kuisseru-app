@@ -198,8 +198,11 @@ function WaitingRoomShell() {
             </div>
             <span className="font-heading font-bold text-sm pr-3">Kamu</span>
           </div>
-          <div className="font-heading font-bold text-xl md:text-2xl text-transparent bg-clip-text bg-gradient-to-r from-mesh-pink to-electric-blue">
-            ASTHAQUIZZ
+          <div className="flex items-center gap-2">
+            <img src="/logo.png" alt="AsthaQuizz Logo" className="w-8 h-8 md:w-10 md:h-10 object-contain drop-shadow-md" />
+            <div className="font-heading font-bold text-xl md:text-2xl text-transparent bg-clip-text bg-gradient-to-r from-mesh-pink to-electric-blue">
+              ASTHAQUIZZ
+            </div>
           </div>
           <div className="font-heading font-bold text-xs md:text-sm bg-deep-obsidian text-cyber-lime px-3 py-2 md:px-4 rounded-full border-2 border-deep-obsidian">
             ID: {sessionId.substring(0,6).toUpperCase()}

@@ -204,9 +204,7 @@ export default function EditQuizSession({ params }: { params: Promise<{ sessionI
       {/* SideNavBar */}
       <nav className={`${isMobileSidebarOpen ? 'translate-x-0' : '-translate-x-full'} md:translate-x-0 fixed left-0 top-0 h-screen w-64 bg-deep-obsidian border-r-2 border-deep-obsidian py-8 px-4 z-[56] transition-transform duration-300 flex flex-col`}>
         <div className="mb-12 flex items-center gap-3 px-2">
-          <div className="w-10 h-10 rounded-full bg-cyber-lime flex items-center justify-center border-2 border-deep-obsidian">
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-deep-obsidian" viewBox="0 0 24 24" fill="currentColor"><path d="M5 13.18v4L12 21l7-3.82v-4L12 17l-7-3.82zM12 3L1 9l11 6 9-4.91V17h2V9L12 3z"/></svg>
-          </div>
+          <img src="/logo.png" alt="AsthaQuizz Logo" className="w-10 h-10 object-contain drop-shadow-md" />
           <div>
             <h1 className="font-heading font-bold text-cyber-lime text-xl leading-tight">ASTHAQUIZZ</h1>
             <p className="font-heading font-bold text-surface-variant/70 text-xs">Teacher Console</p>

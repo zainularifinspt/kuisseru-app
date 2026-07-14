@@ -130,7 +130,8 @@ export default function JoinSessionPage() {
       <main className="flex-1 flex flex-col items-center justify-center p-4 md:p-10 z-10 w-full max-w-lg mx-auto py-8">
         
         {/* Header */}
-        <div className="text-center mb-8">
+        <div className="text-center mb-8 flex flex-col items-center">
+          <img src="/logo.png" alt="AsthaQuizz Logo" className="w-24 h-24 md:w-32 md:h-32 mb-4 object-contain drop-shadow-xl" />
           <h1 className="font-heading text-4xl md:text-5xl font-bold text-deep-obsidian mb-2 tracking-tight">
             ASTHAQUIZZ
           </h1>
