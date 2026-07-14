@@ -174,7 +174,7 @@ export default function AdminPortal() {
                       type="email"
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
-                      placeholder="admin@kuisseru.com"
+                      placeholder="admin@asthaquizz.com"
                       required
                       className="w-full bg-surface-container-lowest border-2 border-deep-obsidian rounded-xl px-4 py-3 font-heading text-base font-medium text-on-surface placeholder:text-outline focus:outline-none focus:border-electric-blue focus:ring-4 focus:ring-primary-fixed transition-all"
                     />
@@ -313,7 +313,7 @@ export default function AdminPortal() {
             A
           </div>
           <div>
-            <h1 className="font-heading font-bold text-cyber-lime text-xl">KuisSeru</h1>
+            <h1 className="font-heading font-bold text-cyber-lime text-xl">ASTHAQUIZZ</h1>
             <p className="font-sans text-surface-variant/70 text-xs mt-1">Admin Console</p>
           </div>
         </div>
@@ -379,7 +379,7 @@ export default function AdminPortal() {
         <button onClick={() => setIsMobileSidebarOpen(true)} className="p-2">
           <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-deep-obsidian" viewBox="0 0 24 24" fill="currentColor"><path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/></svg>
         </button>
-        <span className="font-heading font-bold text-deep-obsidian">KuisSeru Admin</span>
+        <span className="font-heading font-bold text-deep-obsidian">ASTHAQUIZZ Admin</span>
         <div className="w-8 h-8 rounded-xl bg-mesh-pink flex items-center justify-center text-white font-heading font-bold text-sm border-2 border-deep-obsidian">
           {user?.name?.substring(0,1).toUpperCase()}
         </div>

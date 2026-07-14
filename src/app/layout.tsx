@@ -13,7 +13,7 @@ const spaceGrotesk = Space_Grotesk({
 });
 
 export const metadata: Metadata = {
-  title: "KuisSeru",
+  title: "ASTHAQUIZZ",
   description: "Platform Kuis Interaktif",
 };
 

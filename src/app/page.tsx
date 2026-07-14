@@ -110,7 +110,7 @@ export default function Home() {
         {/* Header */}
         <div className="text-center mb-8">
           <h1 className="font-heading text-4xl md:text-5xl font-bold text-deep-obsidian mb-2 tracking-tight">
-            Kuisseru
+            ASTHAQUIZZ
           </h1>
           <h2 className="font-heading text-3xl font-semibold text-electric-blue">
             Siap Beraksi?

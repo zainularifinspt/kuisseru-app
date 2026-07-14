@@ -148,7 +148,7 @@ export default function TeacherPortal() {
               <GraduationCap className="w-8 h-8 text-cyber-lime" strokeWidth={2.5} />
             </div>
             <h1 className="font-heading text-3xl md:text-4xl font-bold text-deep-obsidian tracking-tight">
-              Masuk ke <span className="text-electric-blue">KuisSeru</span>
+              Masuk ke <span className="text-electric-blue">ASTHAQUIZZ</span>
             </h1>
             <p className="text-on-surface-variant mt-3 text-lg font-sans">Sistem Cerdas Manajemen Pembelajaran</p>
           </div>
@@ -255,7 +255,7 @@ export default function TeacherPortal() {
             K
           </div>
           <div>
-            <h1 className="font-heading font-bold text-cyber-lime text-xl">KuisSeru</h1>
+            <h1 className="font-heading font-bold text-cyber-lime text-xl">ASTHAQUIZZ</h1>
             <p className="font-sans text-surface-variant/70 text-xs">Dashboard Guru</p>
           </div>
         </div>
@@ -314,7 +314,7 @@ export default function TeacherPortal() {
         {/* TopNavBar */}
         <header className="hidden md:flex justify-between items-center px-8 h-20 bg-surface/80 backdrop-blur-md border-b-2 border-deep-obsidian sticky top-0 z-40">
           <div className="flex items-center gap-4">
-            <h2 className="font-heading text-xl font-bold text-deep-obsidian">KuisSeru Dashboard</h2>
+            <h2 className="font-heading text-xl font-bold text-deep-obsidian">ASTHAQUIZZ Dashboard</h2>
           </div>
           <div className="flex items-center gap-6">
             <span className="font-heading font-bold text-sm text-on-surface-variant flex items-center gap-1.5">
@@ -332,7 +332,7 @@ export default function TeacherPortal() {
           <button onClick={() => setIsMobileSidebarOpen(true)} className="p-2 cursor-pointer">
             <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-deep-obsidian" viewBox="0 0 24 24" fill="currentColor"><path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/></svg>
           </button>
-          <span className="font-heading font-bold text-deep-obsidian">KuisSeru</span>
+          <span className="font-heading font-bold text-deep-obsidian">ASTHAQUIZZ</span>
           <div className="w-8 h-8 rounded-full bg-electric-blue flex items-center justify-center text-white font-heading font-bold text-sm">
             {user?.name?.substring(0,1).toUpperCase()}
           </div>

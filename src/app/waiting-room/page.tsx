@@ -199,7 +199,7 @@ function WaitingRoomShell() {
             <span className="font-heading font-bold text-sm pr-3">Kamu</span>
           </div>
           <div className="font-heading font-bold text-xl md:text-2xl text-transparent bg-clip-text bg-gradient-to-r from-mesh-pink to-electric-blue">
-            Kuisseru
+            ASTHAQUIZZ
           </div>
           <div className="font-heading font-bold text-xs md:text-sm bg-deep-obsidian text-cyber-lime px-3 py-2 md:px-4 rounded-full border-2 border-deep-obsidian">
             ID: {sessionId.substring(0,6).toUpperCase()}

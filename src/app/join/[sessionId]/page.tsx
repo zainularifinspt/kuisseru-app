@@ -30,7 +30,7 @@ export default function JoinSessionPage() {
         if (res.ok) {
           const data = await res.json();
           setIsValidSession(true);
-          setSessionTitle(data.title || "KuisSeru Session");
+          setSessionTitle(data.title || "ASTHAQUIZZ Session");
         } else {
           setIsValidSession(false);
         }
@@ -132,7 +132,7 @@ export default function JoinSessionPage() {
         {/* Header */}
         <div className="text-center mb-8">
           <h1 className="font-heading text-4xl md:text-5xl font-bold text-deep-obsidian mb-2 tracking-tight">
-            Kuisseru
+            ASTHAQUIZZ
           </h1>
           <h2 className="font-heading text-xl md:text-2xl font-semibold text-electric-blue">
             {sessionTitle}

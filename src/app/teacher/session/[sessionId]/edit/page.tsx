@@ -208,7 +208,7 @@ export default function EditQuizSession({ params }: { params: Promise<{ sessionI
             <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-deep-obsidian" viewBox="0 0 24 24" fill="currentColor"><path d="M5 13.18v4L12 21l7-3.82v-4L12 17l-7-3.82zM12 3L1 9l11 6 9-4.91V17h2V9L12 3z"/></svg>
           </div>
           <div>
-            <h1 className="font-heading font-bold text-cyber-lime text-xl leading-tight">KuisSeru</h1>
+            <h1 className="font-heading font-bold text-cyber-lime text-xl leading-tight">ASTHAQUIZZ</h1>
             <p className="font-heading font-bold text-surface-variant/70 text-xs">Teacher Console</p>
           </div>
         </div>
