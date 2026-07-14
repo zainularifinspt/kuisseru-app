@@ -2,15 +2,28 @@
 
 import { useState, useEffect, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { Users, Hourglass, Gamepad2, Loader2 } from "lucide-react";
+import { Loader2 } from "lucide-react";
 import { getPusherClient } from "@/lib/pusherClient";
-import { ThemeToggle } from "@/components/ThemeToggle";
 
 type Player = {
   id: string;
   nickname: string;
+};
+
+// Array of random fun icons for avatars
+const AVATAR_ICONS = ["cruelty_free", "pets", "bug_report", "emoji_nature", "rocket_launch", "smart_toy", "face", "star"];
+const AVATAR_COLORS = ["bg-cyber-lime", "bg-mesh-pink", "bg-electric-blue", "bg-primary-fixed", "bg-secondary-fixed"];
+
+// Get a deterministic avatar style based on player ID
+const getAvatarStyle = (id: string) => {
+  let hash = 0;
+  for (let i = 0; i < id.length; i++) {
+    hash = id.charCodeAt(i) + ((hash << 5) - hash);
+  }
+  hash = Math.abs(hash);
+  const icon = AVATAR_ICONS[hash % AVATAR_ICONS.length];
+  const color = AVATAR_COLORS[hash % AVATAR_COLORS.length];
+  return { icon, color };
 };
 
 function WaitingRoomContent() {
@@ -30,7 +43,6 @@ function WaitingRoomContent() {
 
     async function checkSessionAndFetchParticipants() {
       try {
-        // Fetch session status first
         const sessionRes = await fetch(`/api/quiz-sessions/${sessionId}`);
         if (sessionRes.ok) {
           const sessionData = await sessionRes.json();
@@ -77,96 +89,149 @@ function WaitingRoomContent() {
 
   if (isLoading) {
     return (
-      <div className="flex flex-col items-center justify-center h-64 text-slate-500 dark:text-slate-500">
-        <Loader2 className="w-12 h-12 animate-spin mb-4 text-blue-500 dark:text-indigo-500" />
-        <p>Memuat data peserta...</p>
+      <div className="flex flex-col items-center justify-center py-12">
+        <Loader2 className="w-12 h-12 animate-spin mb-4 text-electric-blue" />
+        <p className="font-heading font-semibold text-deep-obsidian">Memuat data peserta...</p>
       </div>
     );
   }
 
   return (
-    <>
-      <div className="flex items-center justify-between mb-6 border-b border-slate-200 dark:border-white/10 pb-4">
-        <h3 className="text-lg font-bold text-slate-800 dark:text-slate-200 flex items-center drop-shadow-sm dark:drop-shadow-md">
-          <Users className="w-5 h-5 mr-2 text-blue-600 dark:text-cyan-400" />
-          Peserta Bergabung
-        </h3>
-        <span className="bg-blue-100 dark:bg-blue-500/20 text-blue-600 dark:text-cyan-400 border border-blue-200 dark:border-cyan-400/30 font-black px-4 py-1 rounded-full shadow-[0_0_15px_rgba(59,130,246,0.2)] dark:shadow-[0_0_15px_rgba(34,211,238,0.4)] animate-pulse transition-all">
-          {players.length}
-        </span>
-      </div>
-      
-      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
-        {players.map((player) => (
-          <div 
-            key={player.id} 
-            className={`animate-in fade-in zoom-in slide-in-from-bottom-4 duration-500 ${player.id === participantId ? 'bg-indigo-100 dark:bg-indigo-600/40 border-blue-400 dark:border-cyan-400 shadow-[0_0_15px_rgba(59,130,246,0.3)] dark:shadow-[0_0_15px_rgba(34,211,238,0.5)]' : 'bg-slate-50 dark:bg-[#1e293b]/50 border-slate-200 dark:border-white/10 hover:bg-blue-50 dark:hover:bg-blue-900/40 hover:border-blue-300 dark:hover:border-blue-400/50'} border rounded-xl p-4 flex flex-col items-center justify-center transition-all hover:scale-110 hover:-translate-y-1 hover:shadow-[0_0_20px_rgba(59,130,246,0.2)] dark:hover:shadow-[0_0_20px_rgba(59,130,246,0.5)] cursor-default group backdrop-blur-sm`}
-          >
-            <Avatar className="h-14 w-14 border-2 border-white shadow-sm dark:border-white/20 dark:shadow-[0_0_10px_rgba(255,255,255,0.1)] mb-3 group-hover:border-blue-400 dark:group-hover:border-cyan-400 group-hover:shadow-[0_0_15px_rgba(59,130,246,0.3)] dark:group-hover:shadow-[0_0_15px_rgba(34,211,238,0.8)] transition-all duration-300">
-              <AvatarFallback className="bg-gradient-to-br from-blue-100 to-indigo-200 dark:from-blue-500 dark:to-purple-600 text-blue-700 dark:text-white font-bold text-xl">
-                {player.nickname.substring(0, 2).toUpperCase()}
-              </AvatarFallback>
-            </Avatar>
-            <span className="font-bold text-slate-800 dark:text-slate-200 truncate w-full text-center drop-shadow-sm dark:drop-shadow-md">
-              {player.nickname} {player.id === participantId && <span className="text-blue-600 dark:text-cyan-400 block text-xs mt-1">(Kamu)</span>}
-            </span>
-          </div>
-        ))}
-      </div>
-      
-      {players.length === 0 && (
-        <div className="text-center py-12 text-slate-500 dark:text-slate-400">
-          <div className="inline-block p-4 rounded-full bg-slate-100 dark:bg-white/5 mb-4 border border-slate-200 dark:border-white/10">
-            <Hourglass className="w-8 h-8 text-slate-400 dark:text-slate-500 animate-pulse" />
-          </div>
-          <p>Belum ada peserta yang bergabung.</p>
+    <div className="w-full flex flex-col items-center">
+      {/* Student Grid Bento Box */}
+      <div className="bg-[rgba(251,248,255,0.7)] backdrop-blur-xl border-2 border-deep-obsidian w-full max-w-5xl rounded-xl p-6 md:p-8 mb-8 shadow-[0_0_15px_rgba(204,255,0,0.4)] relative">
+        <div className="flex justify-between items-center mb-6 border-b-2 border-deep-obsidian pb-4">
+          <h2 className="font-heading text-xl md:text-2xl font-bold text-deep-obsidian">Peserta Bergabung</h2>
+          <span className="bg-electric-blue text-on-primary font-heading font-bold px-3 py-1 rounded-full border-2 border-deep-obsidian">
+            {players.length}
+          </span>
         </div>
-      )}
-      
-      <div className="mt-12 flex justify-center">
-        <div className="flex items-center gap-2 text-slate-700 dark:text-slate-300 bg-slate-100 dark:bg-[#0f172a]/60 px-6 py-3 rounded-full text-sm font-bold border border-slate-200 dark:border-white/10 shadow-inner dark:shadow-[inset_0_0_20px_rgba(0,0,0,0.5)]">
-          <Gamepad2 className="w-5 h-5 animate-pulse text-blue-500 dark:text-cyan-400 drop-shadow-sm dark:drop-shadow-[0_0_5px_rgba(34,211,238,0.8)]" />
-          Bersiap-siap...
+
+        <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8 gap-4 justify-items-center">
+          {players.map((player) => {
+            const { icon, color } = getAvatarStyle(player.id);
+            const isMe = player.id === participantId;
+            return (
+              <div key={player.id} className="flex flex-col items-center gap-2 hover:scale-105 transition-transform duration-200">
+                <div className={`w-16 h-16 rounded-full ${color} border-2 border-deep-obsidian flex items-center justify-center shadow-[4px_4px_0px_rgba(10,10,10,1)] ${isMe ? 'ring-4 ring-electric-blue' : ''} text-on-primary`}>
+                  {/* Using an emoji fallback if material icons aren't loaded everywhere, though in a real app we'd map this properly. We'll just use a fun emoji based on hash */}
+                  <span className="text-3xl">
+                    {["🦄","🦊","🐸","🐙","🦖","🦋","🐯","🐶"][players.indexOf(player) % 8]}
+                  </span>
+                </div>
+                <span className="font-heading text-sm font-bold truncate w-full text-center text-deep-obsidian">
+                  {player.nickname} {isMe && <span className="block text-[10px] text-electric-blue">(Kamu)</span>}
+                </span>
+              </div>
+            );
+          })}
+
+          {/* Shimmer placeholder for incoming student */}
+          <div className="flex flex-col items-center gap-2 opacity-50 animate-pulse">
+            <div className="w-16 h-16 rounded-full bg-surface-variant border-2 border-dashed border-deep-obsidian flex items-center justify-center text-deep-obsidian">
+              <Loader2 className="w-6 h-6 animate-spin" />
+            </div>
+            <span className="bg-surface-variant rounded w-12 h-4"></span>
+          </div>
+        </div>
+
+        {players.length === 0 && (
+          <div className="text-center py-8 text-on-surface-variant">
+            <p className="font-heading">Belum ada peserta yang bergabung.</p>
+          </div>
+        )}
+      </div>
+
+      {/* Fun Fact Card */}
+      <div className="bg-[rgba(251,248,255,0.7)] backdrop-blur-xl border-2 border-deep-obsidian w-full max-w-md rounded-lg p-6 relative overflow-hidden group hover:scale-[1.02] transition-transform duration-300">
+        <div className="absolute -right-4 -top-4 w-24 h-24 bg-cyber-lime rounded-full opacity-20 blur-xl group-hover:opacity-40 transition-opacity"></div>
+        <div className="flex items-start gap-4 relative z-10">
+          <div className="bg-deep-obsidian text-cyber-lime p-2 rounded-full flex-shrink-0 border-2 border-deep-obsidian">
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M12 2C8.14 2 5 5.14 5 9c0 2.38 1.19 4.47 3 5.74V17c0 .55.45 1 1 1h6c.55 0 1-.45 1-1v-2.26c1.81-1.27 3-3.36 3-5.74 0-3.86-3.14-7-7-7zm2.85 11.1l-.85.6V16h-4v-2.3l-.85-.6A4.997 4.997 0 017 9c0-2.76 2.24-5 5-5s5 2.24 5 5c0 1.63-.8 3.16-2.15 4.1z"/>
+            </svg>
+          </div>
+          <div>
+            <h3 className="font-heading font-bold text-electric-blue mb-1">Tahukah Kamu?</h3>
+            <p className="font-sans text-sm text-on-surface">
+              Gurita memiliki tiga jantung! Dua memompa darah ke insang, dan satu memompa darah ke seluruh tubuhnya.
+            </p>
+          </div>
         </div>
       </div>
-    </>
+    </div>
+  );
+}
+
+function WaitingRoomShell() {
+  const searchParams = useSearchParams();
+  const sessionId = searchParams.get('sessionId') || '---';
+
+  return (
+    <div className="min-h-[100dvh] font-sans text-on-background flex flex-col relative overflow-x-hidden">
+      <style dangerouslySetInnerHTML={{__html: `
+        .mesh-bg {
+          background-image: 
+              radial-gradient(at 0% 0%, hsla(253,16%,7%,1) 0, transparent 50%), 
+              radial-gradient(at 50% 0%, hsla(225,39%,30%,1) 0, transparent 50%), 
+              radial-gradient(at 100% 0%, hsla(339,49%,30%,1) 0, transparent 50%);
+          animation: mesh-shift 15s ease infinite alternate;
+          background-size: 200% 200%;
+        }
+        @keyframes mesh-shift {
+          0% { background-position: 0% 50%; }
+          50% { background-position: 100% 50%; }
+          100% { background-position: 0% 50%; }
+        }
+      `}} />
+      
+      {/* Background container */}
+      <div className="absolute inset-0 mesh-bg -z-10"></div>
+
+      {/* Top App Bar */}
+      <header className="w-full top-0 sticky z-10 bg-surface/80 backdrop-blur-xl border-b-2 border-deep-obsidian">
+        <div className="flex justify-between items-center p-4 w-full max-w-7xl mx-auto">
+          <div className="flex items-center gap-2 border-2 border-deep-obsidian rounded-full p-1 bg-surface">
+            {/* Simple dummy avatar for current user in header */}
+            <div className="w-8 h-8 rounded-full border-2 border-deep-obsidian bg-cyber-lime flex items-center justify-center text-sm">
+              🦖
+            </div>
+            <span className="font-heading font-bold text-sm pr-3">Kamu</span>
+          </div>
+          <div className="font-heading font-bold text-xl md:text-2xl text-transparent bg-clip-text bg-gradient-to-r from-mesh-pink to-electric-blue">
+            Kuisseru
+          </div>
+          <div className="font-heading font-bold text-xs md:text-sm bg-deep-obsidian text-cyber-lime px-3 py-2 md:px-4 rounded-full border-2 border-deep-obsidian">
+            ID: {sessionId.substring(0,6).toUpperCase()}
+          </div>
+        </div>
+      </header>
+
+      {/* Main Content */}
+      <main className="flex-grow flex flex-col items-center justify-center p-4 md:p-10 z-0">
+        
+        {/* Status Indicator */}
+        <div className="text-center mb-8 animate-pulse">
+          <h1 className="font-heading text-3xl md:text-5xl font-bold text-on-secondary mb-2 drop-shadow-md">
+            Menunggu Guru...
+          </h1>
+          <p className="font-sans text-lg text-on-secondary opacity-80">
+            Siapkan dirimu, kuis akan segera dimulai!
+          </p>
+        </div>
+
+        <WaitingRoomContent />
+        
+      </main>
+    </div>
   );
 }
 
 export default function WaitingRoomPage() {
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-[#0B0F19] p-4 md:p-8 flex flex-col font-sans items-center justify-center overflow-x-hidden relative transition-colors duration-300">
-      <div className="absolute top-4 right-4 z-50">
-        <ThemeToggle />
-      </div>
-      
-      <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/stardust.png')] opacity-20 pointer-events-none animate-pulse"></div>
-      <div className="fixed top-20 left-20 w-80 h-80 bg-blue-400/20 dark:bg-blue-600/20 rounded-full blur-[120px] pointer-events-none animate-pulse" style={{ animationDuration: '6s' }}></div>
-      <div className="fixed bottom-20 right-20 w-96 h-96 bg-purple-400/20 dark:bg-purple-600/20 rounded-full blur-[150px] pointer-events-none animate-pulse" style={{ animationDuration: '8s' }}></div>
-      <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-indigo-400/20 dark:bg-indigo-900/20 rounded-full blur-[100px] pointer-events-none"></div>
-
-      <Card className="w-full max-w-4xl border border-slate-200 dark:border-white/10 shadow-[0_0_50px_rgba(59,130,246,0.1)] dark:shadow-[0_0_50px_rgba(59,130,246,0.15)] bg-white/90 dark:bg-white/5 backdrop-blur-2xl rounded-[2rem] overflow-hidden relative z-10">
-        <div className="h-2 bg-gradient-to-r from-blue-400 via-indigo-500 to-purple-500 dark:from-cyan-400 dark:via-blue-500 dark:to-purple-500 w-full animate-gradient-x" />
-        
-        <CardHeader className="bg-slate-50 dark:bg-black/20 border-b border-slate-200 dark:border-white/5 pb-8 pt-10 flex flex-col items-center justify-center text-center">
-          <div className="bg-gradient-to-br from-blue-100 to-indigo-100 dark:from-blue-900/60 dark:to-purple-900/60 p-5 rounded-3xl mb-6 animate-bounce shadow-[0_0_30px_rgba(59,130,246,0.2)] dark:shadow-[0_0_30px_rgba(59,130,246,0.4)] border border-blue-200 dark:border-blue-400/30" style={{ animationDuration: '3s' }}>
-            <Hourglass className="w-14 h-14 text-blue-500 dark:text-cyan-400" />
-          </div>
-          <CardTitle className="text-3xl md:text-5xl font-black text-slate-900 dark:text-white tracking-tight mb-3 drop-shadow-sm dark:drop-shadow-lg">
-            Ruang Tunggu
-          </CardTitle>
-          <p className="text-slate-600 dark:text-slate-300 text-lg md:text-xl font-medium max-w-lg">
-            Kuis akan segera dimulai. Tunggu aba-aba dari guru ya! 🚀
-          </p>
-        </CardHeader>
-        
-        <CardContent className="p-6 md:p-10 min-h-[400px]">
-          <Suspense fallback={<div className="flex justify-center p-10"><Loader2 className="w-10 h-10 animate-spin text-cyan-400" /></div>}>
-            <WaitingRoomContent />
-          </Suspense>
-        </CardContent>
-      </Card>
-      
-    </div>
+    <Suspense fallback={<div className="min-h-[100dvh] flex items-center justify-center"><Loader2 className="w-12 h-12 animate-spin text-electric-blue" /></div>}>
+      <WaitingRoomShell />
+    </Suspense>
   );
 }
+

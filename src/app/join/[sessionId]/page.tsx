@@ -2,10 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
-import { Loader2, User, ArrowRight } from "lucide-react";
-import { ThemeToggle } from "@/components/ThemeToggle";
+import { Loader2 } from "lucide-react";
 
 export default function JoinSessionPage() {
   const params = useParams();
@@ -18,8 +15,14 @@ export default function JoinSessionPage() {
   const [isValidSession, setIsValidSession] = useState(false);
   const [sessionTitle, setSessionTitle] = useState("");
 
-  // Check if session is valid when page loads
   useEffect(() => {
+    // If nickname is in localStorage (from page.tsx), auto-fill it
+    const pendingNickname = localStorage.getItem("pendingNickname");
+    if (pendingNickname) {
+      setNickname(pendingNickname);
+      localStorage.removeItem("pendingNickname");
+    }
+
     async function checkSession() {
       try {
         setIsChecking(true);
@@ -55,9 +58,7 @@ export default function JoinSessionPage() {
       setIsJoining(true);
       const res = await fetch(`/api/quiz-sessions/${sessionId}/join`, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ nickname }),
       });
 
@@ -68,12 +69,10 @@ export default function JoinSessionPage() {
 
       const data = await res.json();
       
-      // Save to localStorage or similar if needed for next pages
       localStorage.setItem("participantId", data.participant.id);
       localStorage.setItem("nickname", data.participant.nickname);
       localStorage.setItem("sessionId", sessionId);
       
-      // Redirect to waiting room or quiz directly
       if (data.sessionStatus === 'active') {
         router.push(`/quiz?sessionId=${sessionId}&participantId=${data.participant.id}`);
       } else {
@@ -88,113 +87,105 @@ export default function JoinSessionPage() {
 
   if (isChecking) {
     return (
-      <div className="min-h-screen bg-slate-50 dark:bg-[#0B0F19] flex items-center justify-center p-4 transition-colors duration-300">
-        <div className="absolute top-4 right-4 z-50">
-          <ThemeToggle />
-        </div>
-        <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/stardust.png')] opacity-20 pointer-events-none animate-pulse"></div>
-        <div className="flex flex-col items-center text-slate-700 dark:text-slate-300 relative z-10">
-          <Loader2 className="h-12 w-12 animate-spin mb-4 text-blue-500 dark:text-cyan-400 drop-shadow-sm dark:drop-shadow-[0_0_10px_rgba(34,211,238,0.8)]" />
-          <p className="font-medium animate-pulse">Memeriksa kode kuis...</p>
-        </div>
+      <div className="min-h-[100dvh] bg-background text-on-background flex flex-col items-center justify-center p-4">
+        <Loader2 className="h-12 w-12 animate-spin mb-4 text-electric-blue" />
+        <p className="font-heading font-semibold animate-pulse">Memeriksa sesi kuis...</p>
       </div>
     );
   }
 
   if (!isValidSession) {
     return (
-      <div className="min-h-screen bg-slate-50 dark:bg-[#0B0F19] flex items-center justify-center p-4 relative overflow-hidden transition-colors duration-300">
-        <div className="absolute top-4 right-4 z-50">
-          <ThemeToggle />
+      <div className="min-h-[100dvh] bg-background text-on-background flex flex-col items-center justify-center p-4 relative overflow-hidden">
+        <div className="bg-surface-container-low rounded-[2rem] border-4 border-error p-8 max-w-md w-full text-center relative z-10 shadow-[0_0_40px_rgba(186,26,26,0.1)]">
+          <div className="w-16 h-16 bg-error-container rounded-full flex items-center justify-center mx-auto mb-4">
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-on-error-container" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
+            </svg>
+          </div>
+          <h2 className="font-heading text-2xl font-bold text-deep-obsidian mb-2">Sesi Tidak Ditemukan</h2>
+          <p className="font-sans text-on-surface-variant mb-6">
+            Kuis ini mungkin sudah berakhir, sedang berlangsung, atau URL tidak valid.
+          </p>
+          <button 
+            onClick={() => router.push("/")}
+            className="w-full bg-surface-variant text-on-surface-variant font-heading font-bold py-3 rounded-full border-2 border-deep-obsidian hover:bg-surface-container-highest transition-colors"
+          >
+            Kembali ke Beranda
+          </button>
         </div>
-        <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/stardust.png')] opacity-20 pointer-events-none animate-pulse"></div>
-        
-        <Card className="max-w-md w-full bg-white/90 dark:bg-[#111827]/80 backdrop-blur-xl border border-red-200 dark:border-red-500/30 shadow-[0_0_30px_rgba(239,68,68,0.1)] dark:shadow-[0_0_30px_rgba(239,68,68,0.2)] rounded-3xl overflow-hidden relative z-10">
-          <div className="h-3 bg-gradient-to-r from-red-500 to-rose-600 w-full" />
-          <CardHeader className="text-center pt-8">
-            <CardTitle className="text-2xl font-black text-slate-900 dark:text-white drop-shadow-sm dark:drop-shadow-md">Sesi Tidak Ditemukan</CardTitle>
-            <CardDescription className="text-base mt-2 text-slate-600 dark:text-slate-300">
-              Kuis ini mungkin sudah berakhir, sedang berlangsung, atau URL tidak valid.
-            </CardDescription>
-          </CardHeader>
-          <CardFooter className="pb-8 flex justify-center">
-            <Button onClick={() => router.push("/")} variant="outline" className="rounded-full border-red-200 dark:border-red-500/50 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-500 hover:text-red-700 dark:hover:text-white transition-colors bg-white dark:bg-transparent">
-              Kembali ke Beranda
-            </Button>
-          </CardFooter>
-        </Card>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-[#0B0F19] flex items-center justify-center p-4 relative overflow-hidden font-sans transition-colors duration-300">
-      <div className="absolute top-4 right-4 z-50">
-        <ThemeToggle />
+    <div className="bg-background text-on-background min-h-[100dvh] relative overflow-hidden flex flex-col font-sans">
+      {/* Background Shapes */}
+      <div className="absolute inset-0 pointer-events-none z-0 overflow-hidden">
+        <div className="absolute top-20 left-10 w-32 h-32 bg-primary-fixed rounded-full mix-blend-multiply filter blur-3xl opacity-50 animate-float"></div>
+        <div className="absolute bottom-40 right-20 w-48 h-48 bg-secondary-fixed rounded-full mix-blend-multiply filter blur-3xl opacity-50 animate-float" style={{ animationDelay: '-2s' }}></div>
+        <div className="absolute top-1/2 left-1/3 w-24 h-24 bg-tertiary-fixed rounded-full mix-blend-multiply filter blur-2xl opacity-40 animate-float" style={{ animationDelay: '-4s' }}></div>
       </div>
-      <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/stardust.png')] opacity-20 pointer-events-none animate-pulse"></div>
-      
-      <div className="absolute top-0 -left-32 w-[500px] h-[500px] bg-blue-400/20 dark:bg-blue-600/20 rounded-full blur-[120px] pointer-events-none animate-pulse" style={{ animationDuration: '5s' }} />
-      <div className="absolute bottom-0 -right-32 w-[500px] h-[500px] bg-purple-400/20 dark:bg-purple-600/20 rounded-full blur-[120px] pointer-events-none animate-pulse" style={{ animationDuration: '7s' }} />
 
-      <Card className="max-w-md w-full bg-white/90 dark:bg-white/10 backdrop-blur-2xl border border-slate-200 dark:border-white/20 shadow-[0_0_40px_rgba(59,130,246,0.1)] dark:shadow-[0_0_40px_rgba(59,130,246,0.3)] rounded-3xl overflow-hidden relative z-10">
-        <div className="h-4 bg-gradient-to-r from-blue-400 via-indigo-500 to-purple-500 dark:from-cyan-400 dark:via-blue-500 dark:to-purple-500 w-full animate-gradient-x" />
+      <main className="flex-1 flex flex-col items-center justify-center p-4 md:p-10 z-10 w-full max-w-lg mx-auto py-8">
         
-        <CardHeader className="text-center pt-8 pb-4">
-          <div className="w-20 h-20 bg-gradient-to-br from-blue-100 to-indigo-100 dark:from-blue-900/50 dark:to-purple-900/50 border border-blue-200 dark:border-blue-400/30 rounded-2xl flex items-center justify-center mx-auto mb-4 rotate-12 hover:rotate-0 transition-transform shadow-[0_0_20px_rgba(59,130,246,0.2)] dark:shadow-[0_0_20px_rgba(59,130,246,0.5)]">
-            <span className="text-4xl animate-bounce" style={{ animationDuration: '2s' }}>🎮</span>
-          </div>
-          <CardTitle className="text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight drop-shadow-sm dark:drop-shadow-md">
-            Siap Bermain?
-          </CardTitle>
-          <CardDescription className="text-base text-slate-600 dark:text-slate-300 mt-2">
-            Kamu akan bergabung ke: <br/>
-            <span className="font-bold text-blue-600 dark:text-cyan-400 text-lg">{sessionTitle}</span>
-          </CardDescription>
-        </CardHeader>
-        
-        <form onSubmit={handleJoin}>
-          <CardContent className="space-y-6 pt-2">
-            <div className="space-y-2">
-              <label htmlFor="nickname" className="text-sm font-bold text-slate-700 dark:text-slate-300 ml-1">
-                Masukkan Nama Kamu
-              </label>
-              <div className="relative group">
-                <User className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400 group-focus-within:text-blue-500 dark:group-focus-within:text-cyan-400 transition-colors" />
-                <input
-                  id="nickname"
-                  placeholder="Contoh: Budi Keren"
-                  value={nickname}
-                  onChange={(e) => setNickname(e.target.value)}
-                  className="w-full pl-12 h-14 rounded-2xl bg-slate-50 dark:bg-[#0f172a]/80 border border-slate-200 dark:border-slate-600 focus:bg-white dark:focus:bg-[#1e293b]/90 focus:outline-none focus:border-blue-500 dark:focus:border-cyan-400 focus:ring-2 focus:ring-blue-500/20 dark:focus:ring-cyan-400/50 text-slate-900 dark:text-white text-lg font-medium transition-all shadow-inner"
-                  autoComplete="off"
-                  maxLength={20}
-                  disabled={isJoining}
-                />
-              </div>
+        {/* Header */}
+        <div className="text-center mb-8">
+          <h1 className="font-heading text-4xl md:text-5xl font-bold text-deep-obsidian mb-2 tracking-tight">
+            Kuisseru
+          </h1>
+          <h2 className="font-heading text-xl md:text-2xl font-semibold text-electric-blue">
+            {sessionTitle}
+          </h2>
+        </div>
+
+        {/* Decorative Glyph */}
+        <div className="w-full aspect-[2/1] max-w-sm relative bg-surface-container-low rounded-[2rem] border-4 border-deep-obsidian p-4 mb-8 flex items-center justify-center shadow-[0_0_40px_rgba(0,82,255,0.1)]">
+          <div className="absolute inset-0 m-4 border-4 border-dashed border-outline-variant rounded-xl opacity-50"></div>
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-16 w-16 text-deep-obsidian animate-bounce" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 14.5v-9l6 4.5-6 4.5z"/>
+          </svg>
+        </div>
+
+        {/* Manual Entry Form */}
+        <form onSubmit={handleJoin} className="w-full max-w-sm flex flex-col gap-4">
+          <div className="relative group">
+            <label className="font-heading font-semibold text-sm text-on-surface-variant px-2 mb-2 block uppercase tracking-wide">Nama Kamu</label>
+            <div className="relative">
+              <input 
+                className="w-full bg-surface-container-lowest border-2 border-deep-obsidian rounded-full px-6 py-4 font-heading text-lg font-medium text-on-surface placeholder:text-outline focus:outline-none focus:border-electric-blue focus:ring-4 focus:ring-primary-fixed transition-all duration-300 peer" 
+                id="nickname" 
+                placeholder="Nama Panggilan" 
+                type="text"
+                value={nickname}
+                onChange={(e) => setNickname(e.target.value)}
+                disabled={isJoining}
+              />
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 absolute right-6 top-1/2 -translate-y-1/2 text-outline peer-focus:text-electric-blue transition-colors" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z"/>
+              </svg>
             </div>
-          </CardContent>
+          </div>
           
-          <CardFooter className="pb-8 pt-4">
-            <Button 
-              type="submit" 
-              disabled={!nickname.trim() || isJoining}
-              className="w-full h-14 rounded-2xl text-lg font-bold bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 shadow-[0_0_20px_rgba(59,130,246,0.6)] text-white border-0 transition-all hover:-translate-y-1 hover:scale-[1.02]"
-            >
-              {isJoining ? (
-                <>
-                  <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-                  Masuk...
-                </>
-              ) : (
-                <>
-                  Mulai Kuis <ArrowRight className="ml-2 h-5 w-5" />
-                </>
+          <button 
+            type="submit"
+            disabled={!nickname.trim() || isJoining}
+            className="w-full mt-4 group relative rounded-full border-2 border-deep-obsidian p-1 overflow-hidden transition-transform duration-200 hover:scale-[1.02] active:scale-95 shadow-[0_0_20px_rgba(0,82,255,0.3)] disabled:opacity-50 disabled:hover:scale-100 disabled:cursor-not-allowed cursor-pointer"
+          >
+            <div className="absolute inset-0 bg-[linear-gradient(90deg,#0052FF,#FF00E5,#0052FF)] bg-[length:200%_auto] animate-gradient-shift opacity-80 group-hover:opacity-100 transition-opacity"></div>
+            <div className="relative bg-transparent px-8 py-4 rounded-full flex items-center justify-center gap-2">
+              <span className="font-heading text-xl text-on-primary font-bold tracking-wide shadow-sm">
+                {isJoining ? <Loader2 className="w-6 h-6 animate-spin" /> : "Join Quiz"}
+              </span>
+              {!isJoining && (
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-on-primary" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M13.13 22.19L11.5 18.36C10.07 15.01 7.21 12.14 3.86 10.71L.03 9.08C-.25 8.97-.25 8.59.03 8.47L22.1 0l-8.47 22.07c-.12.28-.5.28-.6.12z"/>
+                </svg>
               )}
-            </Button>
-          </CardFooter>
+            </div>
+          </button>
         </form>
-      </Card>
+      </main>
     </div>
   );
 }

@@ -1,23 +1,73 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { useRouter } from "next/navigation";
-import { Button } from "@/components/ui/button";
-import { Sparkles, ArrowRight, Loader2, KeyRound } from "lucide-react";
-import { ThemeToggle } from "@/components/ThemeToggle";
+import { Loader2 } from "lucide-react";
 
 export default function Home() {
   const [joinCode, setJoinCode] = useState("");
+  const [nickname, setNickname] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
   const router = useRouter();
+
+  // Create refs for the 6 digit inputs
+  const inputRefs = [
+    useRef<HTMLInputElement>(null),
+    useRef<HTMLInputElement>(null),
+    useRef<HTMLInputElement>(null),
+    useRef<HTMLInputElement>(null),
+    useRef<HTMLInputElement>(null),
+    useRef<HTMLInputElement>(null),
+  ];
+
+  const handleDigitChange = (index: number, value: string) => {
+    // Only allow numbers
+    const digit = value.replace(/[^0-9]/g, "").slice(-1);
+    
+    // Update the joinCode string
+    const codeArray = joinCode.padEnd(6, ' ').split('');
+    codeArray[index] = digit || ' ';
+    const newCode = codeArray.join('').trim();
+    setJoinCode(newCode);
+    if (error) setError("");
+
+    // Move focus to next input if a digit was entered
+    if (digit && index < 5) {
+      inputRefs[index + 1].current?.focus();
+    }
+  };
+
+  const handleKeyDown = (index: number, e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Backspace" && !joinCode[index] && index > 0) {
+      inputRefs[index - 1].current?.focus();
+    }
+  };
+
+  const handlePaste = (e: React.ClipboardEvent<HTMLInputElement>) => {
+    e.preventDefault();
+    const pastedData = e.clipboardData.getData("text").replace(/[^0-9]/g, "").slice(0, 6);
+    setJoinCode(pastedData);
+    
+    // Focus the next empty input or the last one
+    if (pastedData.length > 0) {
+      const focusIndex = Math.min(pastedData.length, 5);
+      inputRefs[focusIndex].current?.focus();
+    }
+  };
 
   const handleJoin = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!joinCode || joinCode.length !== 6) {
       setError("Kode PIN harus 6 angka");
       return;
+    }
+    
+    // If nickname is provided, we might want to pass it as a query param or localStorage
+    // since the current flow is join-by-code -> redirect to /join/[sessionId]
+    if (nickname.trim()) {
+      localStorage.setItem("pendingNickname", nickname.trim());
     }
 
     setIsLoading(true);
@@ -26,15 +76,15 @@ export default function Home() {
     try {
       const res = await fetch("/api/quiz-sessions/join-by-code", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ joinCode: joinCode.toUpperCase() }),
       });
 
       const data = await res.json();
 
       if (res.ok && data.sessionId) {
+        // Redirect to the session join page where they will actually join
+        // If nickname was entered, it can be auto-filled there.
         router.push(`/join/${data.sessionId}`);
       } else {
         setError(data.error || "Gagal bergabung");
@@ -47,81 +97,120 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-[#0B0F19] flex flex-col items-center justify-center p-4 relative overflow-hidden font-sans text-slate-900 dark:text-slate-50 transition-colors duration-300">
-      
-      <div className="absolute top-4 right-4 z-50">
-        <ThemeToggle />
+    <div className="bg-background text-on-background min-h-[100dvh] relative overflow-hidden flex flex-col font-sans">
+      {/* Background Shapes */}
+      <div className="absolute inset-0 pointer-events-none z-0 overflow-hidden">
+        <div className="absolute top-20 left-10 w-32 h-32 bg-primary-fixed rounded-full mix-blend-multiply filter blur-3xl opacity-50 animate-float"></div>
+        <div className="absolute bottom-40 right-20 w-48 h-48 bg-secondary-fixed rounded-full mix-blend-multiply filter blur-3xl opacity-50 animate-float" style={{ animationDelay: '-2s' }}></div>
+        <div className="absolute top-1/2 left-1/3 w-24 h-24 bg-tertiary-fixed rounded-full mix-blend-multiply filter blur-2xl opacity-40 animate-float" style={{ animationDelay: '-4s' }}></div>
       </div>
 
-      {/* Animated Stars / Particles Background */}
-      <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/stardust.png')] opacity-10 dark:opacity-20 pointer-events-none animate-pulse"></div>
-      
-      {/* AI Background Glows */}
-      <div className="absolute top-1/4 -left-32 w-[600px] h-[600px] bg-blue-400/20 dark:bg-blue-600/30 rounded-full blur-[150px] pointer-events-none animate-pulse" style={{ animationDuration: '4s' }} />
-      <div className="absolute bottom-1/4 -right-32 w-[600px] h-[600px] bg-purple-400/20 dark:bg-purple-600/30 rounded-full blur-[150px] pointer-events-none animate-pulse" style={{ animationDuration: '6s' }} />
-
-      <div className="text-center max-w-lg w-full bg-white/90 dark:bg-[#111827]/80 backdrop-blur-2xl p-8 sm:p-10 rounded-[32px] shadow-[0_0_40px_rgba(59,130,246,0.1)] dark:shadow-[0_0_40px_rgba(59,130,246,0.3)] border border-slate-200 dark:border-white/10 relative z-10">
-        <div className="inline-flex items-center justify-center p-4 bg-gradient-to-br from-blue-100 to-purple-100 dark:from-blue-900/50 dark:to-purple-900/50 rounded-[2rem] shadow-[0_0_20px_rgba(99,102,241,0.2)] dark:shadow-[0_0_20px_rgba(99,102,241,0.5)] mb-6 border border-blue-200 dark:border-blue-400/20 relative group overflow-hidden">
-          <div className="absolute inset-0 bg-blue-400/10 dark:bg-blue-400/20 opacity-0 group-hover:opacity-100 transition-opacity blur-md"></div>
-          <Sparkles className="w-12 h-12 text-blue-600 dark:text-cyan-400 relative z-10 animate-bounce" style={{ animationDuration: '2s' }} />
+      {/* Main Content Canvas */}
+      <main className="flex-1 flex flex-col items-center justify-center p-4 md:p-10 z-10 w-full max-w-lg mx-auto py-8">
+        
+        {/* Header */}
+        <div className="text-center mb-8">
+          <h1 className="font-heading text-4xl md:text-5xl font-bold text-deep-obsidian mb-2 tracking-tight">
+            Kuisseru
+          </h1>
+          <h2 className="font-heading text-3xl font-semibold text-electric-blue">
+            Siap Beraksi?
+          </h2>
         </div>
-        
-        <h1 className="text-3xl sm:text-4xl font-extrabold text-slate-900 dark:text-white mb-3 tracking-tight drop-shadow-sm dark:drop-shadow-md">
-          Platform <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 via-indigo-500 to-purple-600 dark:from-cyan-400 dark:via-blue-500 dark:to-purple-500 animate-gradient-x">KuisSeru</span>
-        </h1>
-        
-        <p className="text-slate-600 dark:text-slate-300 mb-8 text-base sm:text-lg font-light leading-relaxed">
-          Bangkitkan antusiasme belajar siswa melalui pengalaman kuis interaktif yang cerdas dan real-time.
-        </p>
-        
-        <div className="space-y-6">
-          <form onSubmit={handleJoin} className="bg-slate-50 dark:bg-[#0f172a]/60 p-4 rounded-2xl border border-slate-200 dark:border-white/10 shadow-inner flex flex-col gap-3">
-            <div className="flex flex-col sm:flex-row gap-3">
-              <div className="relative flex-1">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <KeyRound className="h-5 w-5 text-slate-400" />
-                </div>
+
+        {/* Scanner Area */}
+        <div className="w-full aspect-square max-w-sm relative bg-surface-container-low rounded-[2rem] border-4 border-deep-obsidian p-4 mb-8 shadow-[0_0_40px_rgba(0,82,255,0.1)] overflow-hidden">
+          <div className="absolute inset-0 m-8 border-4 border-dashed border-outline-variant rounded-xl opacity-50"></div>
+          {/* Scanning Animation */}
+          <div className="absolute left-8 right-8 h-1 bg-cyber-lime rounded-full shadow-[0_0_15px_#CCFF00] z-20 animate-scan"></div>
+          {/* Placeholder for camera view */}
+          <div className="w-full h-full rounded-xl bg-surface-container-highest flex items-center justify-center relative overflow-hidden">
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-16 w-16 text-outline opacity-30" viewBox="0 0 24 24" fill="currentColor">
+               <path d="M4 4h4v4H4V4zm0 12h4v4H4v-4zm12-12h4v4h-4V4zm0 12h4v4h-4v-4z" />
+            </svg>
+            <div className="absolute top-4 left-4 w-6 h-6 border-t-4 border-l-4 border-electric-blue rounded-tl-lg"></div>
+            <div className="absolute top-4 right-4 w-6 h-6 border-t-4 border-r-4 border-electric-blue rounded-tr-lg"></div>
+            <div className="absolute bottom-4 left-4 w-6 h-6 border-b-4 border-l-4 border-electric-blue rounded-bl-lg"></div>
+            <div className="absolute bottom-4 right-4 w-6 h-6 border-b-4 border-r-4 border-electric-blue rounded-br-lg"></div>
+          </div>
+          <div className="absolute bottom-4 left-0 right-0 text-center">
+            <p className="font-heading font-semibold text-sm text-on-surface-variant bg-surface-container/80 backdrop-blur inline-block px-4 py-2 rounded-full border-2 border-deep-obsidian">Arahkan kamera ke QR Code di layar guru</p>
+          </div>
+        </div>
+
+        {/* Divider */}
+        <div className="flex items-center w-full max-w-sm mb-8 opacity-50">
+          <div className="flex-1 h-[2px] bg-outline-variant"></div>
+          <span className="px-4 font-heading font-semibold text-sm text-outline uppercase tracking-wider">ATAU MASUKKAN PIN</span>
+          <div className="flex-1 h-[2px] bg-outline-variant"></div>
+        </div>
+
+        {/* Manual Entry Form */}
+        <form onSubmit={handleJoin} className="w-full max-w-sm flex flex-col gap-4">
+          <div className="flex flex-col gap-2 mb-2">
+            <label className="font-heading font-semibold text-sm text-on-surface-variant px-2 uppercase tracking-wide">PIN Game (6 Digit)</label>
+            <div className="flex justify-between gap-2" onPaste={handlePaste}>
+              {[0, 1, 2, 3, 4, 5].map((index) => (
                 <input
+                  key={index}
+                  ref={inputRefs[index]}
                   type="text"
-                  maxLength={6}
-                  placeholder="Masukkan 6 Angka PIN"
-                  value={joinCode}
-                  onChange={(e) => {
-                    const val = e.target.value.replace(/[^0-9]/g, ''); // only allow digits
-                    setJoinCode(val);
-                    if (error) setError("");
-                  }}
-                  className="block w-full pl-10 pr-3 py-3 border border-slate-300 dark:border-slate-600 rounded-xl leading-5 bg-white dark:bg-[#1e293b] text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-cyan-500 focus:border-blue-500 dark:focus:border-cyan-500 sm:text-sm font-bold tracking-widest text-center transition-all shadow-inner"
-                  required
+                  maxLength={1}
+                  placeholder="•"
+                  value={joinCode[index] || ""}
+                  onChange={(e) => handleDigitChange(index, e.target.value)}
+                  onKeyDown={(e) => handleKeyDown(index, e)}
+                  className="w-full aspect-square text-center font-heading text-2xl font-bold bg-surface-container-lowest border-2 border-deep-obsidian rounded-xl focus:border-electric-blue focus:ring-4 focus:ring-primary-fixed transition-all outline-none"
                 />
-              </div>
-              <Button type="submit" disabled={isLoading || joinCode.length !== 6} className="h-[50px] w-full sm:w-auto bg-blue-600 hover:bg-blue-500 dark:bg-cyan-600 dark:hover:bg-cyan-500 text-white font-bold rounded-xl shadow-[0_0_15px_rgba(37,99,235,0.3)] dark:shadow-[0_0_15px_rgba(6,182,212,0.4)] transition-all">
-                {isLoading ? <Loader2 className="w-5 h-5 animate-spin" /> : "Masuk Kuis"}
-              </Button>
+              ))}
             </div>
-            {error && <p className="text-red-500 dark:text-red-400 text-sm font-bold animate-pulse">{error}</p>}
-          </form>
-
-          <div className="relative flex items-center py-2">
-            <div className="flex-grow border-t border-slate-200 dark:border-slate-700"></div>
-            <span className="flex-shrink-0 mx-4 text-slate-500 text-xs font-bold uppercase tracking-wider">Atau</span>
-            <div className="flex-grow border-t border-slate-200 dark:border-slate-700"></div>
           </div>
 
-          <Link href="/teacher" className="block">
-            <Button size="lg" className="w-full rounded-xl text-lg font-bold bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 dark:from-blue-600 dark:to-purple-600 dark:hover:from-blue-500 dark:hover:to-purple-500 border-0 h-[56px] shadow-[0_0_20px_rgba(37,99,235,0.3)] dark:shadow-[0_0_20px_rgba(59,130,246,0.5)] transition-all hover:scale-[1.03] active:scale-[0.98] group relative overflow-hidden text-white">
-              <span className="relative z-10 flex items-center justify-center">
-                Masuk sebagai Guru
-                <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-2 transition-transform" />
+          <div className="relative group">
+            <label className="font-heading font-semibold text-sm text-on-surface-variant px-2 mb-2 block uppercase tracking-wide">Nama Kamu</label>
+            <div className="relative">
+              <input 
+                className="w-full bg-surface-container-lowest border-2 border-deep-obsidian rounded-full px-6 py-4 font-heading text-lg font-medium text-on-surface placeholder:text-outline focus:outline-none focus:border-electric-blue focus:ring-4 focus:ring-primary-fixed transition-all duration-300 peer" 
+                id="nickname" 
+                placeholder="Nama Panggilan" 
+                type="text"
+                value={nickname}
+                onChange={(e) => setNickname(e.target.value)}
+              />
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 absolute right-6 top-1/2 -translate-y-1/2 text-outline peer-focus:text-electric-blue transition-colors" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z"/>
+              </svg>
+            </div>
+          </div>
+          
+          {error && <p className="text-error text-sm font-bold text-center animate-pulse mt-2">{error}</p>}
+
+          <button 
+            type="submit"
+            disabled={isLoading || joinCode.length !== 6}
+            className="w-full mt-4 group relative rounded-full border-2 border-deep-obsidian p-1 overflow-hidden transition-transform duration-200 hover:scale-[1.02] active:scale-95 shadow-[0_0_20px_rgba(0,82,255,0.3)] disabled:opacity-50 disabled:hover:scale-100 disabled:cursor-not-allowed cursor-pointer"
+          >
+            <div className="absolute inset-0 bg-[linear-gradient(90deg,#0052FF,#FF00E5,#0052FF)] bg-[length:200%_auto] animate-gradient-shift opacity-80 group-hover:opacity-100 transition-opacity"></div>
+            <div className="relative bg-transparent px-8 py-4 rounded-full flex items-center justify-center gap-2">
+              <span className="font-heading text-xl text-on-primary font-bold tracking-wide shadow-sm">
+                {isLoading ? <Loader2 className="w-6 h-6 animate-spin" /> : "Join Quiz"}
               </span>
-            </Button>
+              {!isLoading && (
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-on-primary" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M13.13 22.19L11.5 18.36C10.07 15.01 7.21 12.14 3.86 10.71L.03 9.08C-.25 8.97-.25 8.59.03 8.47L22.1 0l-8.47 22.07c-.12.28-.5.28-.6.12z"/>
+                </svg>
+              )}
+            </div>
+          </button>
+        </form>
+
+        <div className="mt-8 text-center">
+          <Link href="/teacher" className="font-heading font-semibold text-sm text-on-surface-variant hover:text-electric-blue transition-colors">
+            Atau masuk sebagai Guru
           </Link>
-          <div className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 font-medium flex items-center justify-center gap-2 pt-2">
-            <Sparkles className="w-4 h-4 text-blue-500 dark:text-cyan-400 animate-pulse" />
-            <span className="text-center">Siswa juga bisa memindai QR Code dari kelas</span>
-          </div>
         </div>
-      </div>
+
+      </main>
     </div>
   );
 }

@@ -2,16 +2,12 @@
 
 import { useState, useEffect, use } from 'react';
 import { useRouter } from 'next/navigation';
-import { Card, CardContent } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Sparkles, Plus, Save, Play, CheckCircle2, Circle, Clock, Check } from 'lucide-react';
 import { addQuestion, publishSession, getSessionQuestions } from '@/app/actions/question';
 import { updateSessionTitle } from '@/app/actions/session';
 import 'katex/dist/katex.min.css';
 import Latex from 'react-latex-next';
 import { Loader2 } from 'lucide-react';
-import { ThemeToggle } from '@/components/ThemeToggle';
+import Link from 'next/link';
 
 export default function EditQuizSession({ params }: { params: Promise<{ sessionId: string }> }) {
   const router = useRouter();
@@ -27,7 +23,7 @@ export default function EditQuizSession({ params }: { params: Promise<{ sessionI
 
   // Question state
   const [newQuestion, setNewQuestion] = useState('');
-  const [timeLimitMinutes, setTimeLimitMinutes] = useState('1'); // Default 1 minute
+  const [timeLimitMinutes, setTimeLimitMinutes] = useState('1');
   const [options, setOptions] = useState([
     { text: '', isCorrect: true },
     { text: '', isCorrect: false },
@@ -35,6 +31,9 @@ export default function EditQuizSession({ params }: { params: Promise<{ sessionI
     { text: '', isCorrect: false }
   ]);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  
+  // Mobile sidebar state
+  const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
 
   useEffect(() => {
     fetchSessionInfo();
@@ -79,9 +78,6 @@ export default function EditQuizSession({ params }: { params: Promise<{ sessionI
     if (!newQuestion.trim()) return;
     
     setIsSubmitting(true);
-    // Convert minutes to seconds for internal representation if needed, or just save as minutes.
-    // The user requested to use minutes, but internally we might want minutes or seconds.
-    // Our schema doesn't specify, we'll store minutes directly as requested by the user.
     const timeLimitVal = parseInt(timeLimitMinutes, 10) || 1;
     const res = await addQuestion(sessionId, newQuestion, options, timeLimitVal);
     
@@ -132,161 +128,221 @@ export default function EditQuizSession({ params }: { params: Promise<{ sessionI
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-[#0B0F19] text-slate-900 dark:text-slate-200 p-4 md:p-8 relative overflow-hidden font-sans transition-colors duration-300">
-      
-      <div className="absolute top-4 right-4 z-50">
-        <ThemeToggle />
+    <div className="min-h-[100dvh] bg-background text-on-background font-sans antialiased overflow-x-hidden">
+      {/* Background Shapes */}
+      <div className="fixed inset-0 pointer-events-none -z-10 overflow-hidden">
+        <div className="absolute top-20 right-10 w-64 h-64 bg-[hsla(28,100%,74%,0.15)] rounded-full mix-blend-multiply filter blur-3xl opacity-50 animate-float"></div>
+        <div className="absolute bottom-40 left-20 w-80 h-80 bg-[hsla(189,100%,56%,0.15)] rounded-full mix-blend-multiply filter blur-3xl opacity-50 animate-float" style={{ animationDelay: '-3s' }}></div>
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-[hsla(355,100%,93%,0.15)] rounded-full mix-blend-multiply filter blur-3xl opacity-50 animate-float" style={{ animationDelay: '-1s' }}></div>
       </div>
 
-      {/* Background Effects */}
-      <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/stardust.png')] opacity-10 pointer-events-none animate-pulse"></div>
-      <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none -z-10">
-        <div className="absolute top-[-10%] right-[-10%] w-[50vw] h-[50vw] bg-cyan-400/20 dark:bg-cyan-600/10 rounded-full blur-[100px] animate-pulse" style={{ animationDuration: '7s' }}></div>
-        <div className="absolute bottom-[-10%] left-[-10%] w-[50vw] h-[50vw] bg-blue-400/20 dark:bg-blue-600/10 rounded-full blur-[120px] animate-pulse" style={{ animationDuration: '9s' }}></div>
-      </div>
+      {/* Mobile Sidebar Overlay */}
+      {isMobileSidebarOpen && (
+        <div className="fixed inset-0 z-[55] bg-deep-obsidian/50 md:hidden" onClick={() => setIsMobileSidebarOpen(false)} />
+      )}
 
-      <div className="max-w-5xl mx-auto space-y-6 relative z-10">
-        <header className="flex flex-col md:flex-row md:items-center justify-between bg-white/90 dark:bg-white/5 backdrop-blur-2xl p-6 rounded-[2rem] shadow-[0_0_30px_rgba(59,130,246,0.05)] dark:shadow-[0_0_30px_rgba(59,130,246,0.15)] border border-slate-200 dark:border-white/10 gap-4">
-          <div className="flex-1 space-y-2">
-            <h1 className="text-sm font-bold text-blue-600 dark:text-cyan-400 uppercase tracking-wider">Editor Kuis</h1>
-            <div className="flex items-center gap-2 max-w-md">
-              <Input 
-                value={sessionTitle}
-                onChange={(e) => setSessionTitle(e.target.value)}
-                className="text-xl font-bold border-transparent hover:border-blue-300 dark:hover:border-cyan-500/50 focus:border-blue-500 dark:focus:border-cyan-400 bg-slate-100 dark:bg-[#0f172a]/60 text-slate-900 dark:text-white rounded-xl h-12 transition-all shadow-inner"
-                placeholder="Masukkan Judul Kuis"
-              />
-              <Button 
-                variant="outline" 
-                onClick={handleSaveTitle} 
-                disabled={isSavingTitle}
-                className="h-12 w-12 p-0 flex-shrink-0 rounded-xl border-slate-300 dark:border-white/20 text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-200 dark:hover:bg-white/10 hover:border-slate-400 dark:hover:border-white/30 bg-white dark:bg-white/5"
-              >
-                {isSavingTitle ? <Loader2 className="w-5 h-5 animate-spin" /> : isTitleSaved ? <Check className="w-5 h-5 text-emerald-500 dark:text-emerald-400" /> : <Save className="w-5 h-5" />}
-              </Button>
-            </div>
+      {/* SideNavBar */}
+      <nav className={`${isMobileSidebarOpen ? 'translate-x-0' : '-translate-x-full'} md:translate-x-0 fixed left-0 top-0 h-screen w-64 bg-deep-obsidian border-r-2 border-deep-obsidian py-8 px-4 z-[56] transition-transform duration-300 flex flex-col`}>
+        <div className="mb-12 flex items-center gap-3 px-2">
+          <div className="w-10 h-10 rounded-full bg-cyber-lime flex items-center justify-center border-2 border-deep-obsidian">
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-deep-obsidian" viewBox="0 0 24 24" fill="currentColor"><path d="M5 13.18v4L12 21l7-3.82v-4L12 17l-7-3.82zM12 3L1 9l11 6 9-4.91V17h2V9L12 3z"/></svg>
           </div>
-          <Button 
-            onClick={handlePublish}
-            disabled={isSubmitting || questions.length === 0}
-            className="rounded-xl bg-gradient-to-r from-blue-600 to-cyan-500 hover:from-blue-500 hover:to-cyan-400 text-white h-12 px-6 shadow-[0_0_20px_rgba(34,211,238,0.4)] border-0 transition-all hover:scale-[1.02] active:scale-[0.98]"
-          >
-            <Play className="w-5 h-5 mr-2 fill-current" />
-            Luncurkan Kuis
-          </Button>
+          <div>
+            <h1 className="font-heading font-bold text-cyber-lime text-xl leading-tight">KuisSeru</h1>
+            <p className="font-heading font-bold text-surface-variant/70 text-xs">Teacher Console</p>
+          </div>
+        </div>
+
+        <ul className="flex flex-col gap-2 flex-grow">
+          <li>
+            <Link href="/teacher" className="flex items-center gap-4 px-4 py-3 rounded-lg text-surface-variant/70 font-heading font-bold text-sm hover:bg-white/5 hover:text-surface-variant transition-colors duration-200">
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 24 24" fill="currentColor"><path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z"/></svg>
+              Dashboard
+            </Link>
+          </li>
+          <li>
+            <Link href="/teacher" className="flex items-center gap-4 px-4 py-3 rounded-lg text-cyber-lime font-heading font-bold text-sm border-l-4 border-cyber-lime bg-white/10 transition-colors duration-200 hover:bg-white/5 scale-105">
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 24 24" fill="currentColor"><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></svg>
+              Sesi Kuis
+            </Link>
+          </li>
+        </ul>
+      </nav>
+
+      {/* Main Content Area */}
+      <div className="md:ml-64 flex flex-col min-h-[100dvh]">
+        {/* TopNavBar */}
+        <header className="sticky top-0 z-40 bg-[rgba(255,255,255,0.7)] backdrop-blur-md border-b-2 border-deep-obsidian h-20 flex justify-between items-center px-4 md:px-8">
+          <div className="flex items-center gap-4">
+            <button onClick={() => setIsMobileSidebarOpen(true)} className="md:hidden p-2">
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-deep-obsidian" viewBox="0 0 24 24" fill="currentColor"><path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/></svg>
+            </button>
+            <h2 className="font-heading text-xl md:text-2xl font-bold text-deep-obsidian tracking-tight truncate hidden sm:block">Editor Kuis</h2>
+          </div>
         </header>
 
-        <div className="grid md:grid-cols-12 gap-8">
-          <div className="md:col-span-7 space-y-6">
-            <Card className="rounded-[2rem] border border-slate-200 dark:border-white/10 shadow-[0_0_40px_rgba(59,130,246,0.05)] dark:shadow-[0_0_40px_rgba(59,130,246,0.1)] bg-white/90 dark:bg-[#111827]/80 backdrop-blur-xl overflow-hidden relative">
-              <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-400 to-indigo-500 dark:from-blue-500 dark:to-purple-500" />
-              <CardContent className="p-6 md:p-8">
-                <h2 className="text-xl font-bold mb-6 text-slate-800 dark:text-white drop-shadow-sm">Buat Pertanyaan Baru</h2>
-                <form onSubmit={handleAddQuestion} className="space-y-6">
+        {/* Editor Canvas */}
+        <main className="flex-1 p-4 md:p-8">
+          <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-12 gap-8">
+            
+            {/* Left Sidebar: Question List */}
+            <aside className="md:col-span-4 lg:col-span-3 flex flex-col gap-4">
+              <div className="bg-[rgba(255,255,255,0.7)] backdrop-blur-xl p-6 rounded-xl border-2 border-deep-obsidian md:sticky md:top-28 shadow-[0_4px_30px_rgba(0,0,0,0.1)]">
+                <div className="flex justify-between items-center mb-6">
+                  <h3 className="font-heading text-xl md:text-2xl font-bold text-deep-obsidian">Soal</h3>
+                  <span className="bg-deep-obsidian text-cyber-lime font-heading font-bold text-xs px-3 py-1 rounded-full">{questions.length} Total</span>
+                </div>
+                
+                <div className="flex flex-col gap-3 max-h-[40vh] md:max-h-[60vh] overflow-y-auto pr-2 custom-scrollbar">
+                  {isFetching ? (
+                    <div className="flex justify-center p-4"><Loader2 className="w-6 h-6 animate-spin text-electric-blue" /></div>
+                  ) : questions.length === 0 ? (
+                    <div className="p-4 text-center text-on-surface-variant font-heading text-sm bg-surface-container rounded-lg border-2 border-dashed border-outline">
+                      Belum ada soal
+                    </div>
+                  ) : (
+                    questions.map((q, idx) => (
+                      <div key={q.id} className="p-3 rounded-lg border-2 border-outline-variant hover:border-deep-obsidian cursor-pointer flex items-center gap-3 transition-colors bg-white">
+                        <div className="w-8 h-8 rounded-full bg-surface-variant text-deep-obsidian flex items-center justify-center font-heading font-bold text-sm flex-shrink-0">{idx + 1}</div>
+                        <span className="font-sans text-sm truncate flex-1"><Latex>{q.content}</Latex></span>
+                      </div>
+                    ))
+                  )}
+                </div>
+              </div>
+            </aside>
+
+            {/* Main Editor Area */}
+            <div className="md:col-span-8 lg:col-span-9 flex flex-col gap-8">
+              
+              {/* Quiz Metadata Card */}
+              <div className="bg-[rgba(255,255,255,0.7)] backdrop-blur-xl p-6 md:p-8 rounded-2xl border-2 border-deep-obsidian shadow-[0_4px_30px_rgba(0,0,0,0.1)]">
+                <div className="flex flex-col gap-6">
                   <div>
-                    <label className="text-sm font-bold text-slate-700 dark:text-slate-300 mb-2 block">Pertanyaan (Mendukung LaTeX: $...$ atau $$...$$)</label>
+                    <label className="font-heading font-bold text-sm text-deep-obsidian mb-2 block uppercase tracking-wide">Judul Kuis</label>
+                    <div className="flex flex-col sm:flex-row gap-4">
+                      <input 
+                        type="text" 
+                        value={sessionTitle}
+                        onChange={(e) => setSessionTitle(e.target.value)}
+                        className="flex-1 bg-white rounded-full border-2 border-deep-obsidian px-6 py-4 font-heading text-xl md:text-2xl focus:border-electric-blue focus:ring-4 focus:ring-primary-fixed focus:outline-none shadow-[4px_4px_0px_0px_rgba(10,10,10,1)] transition-all" 
+                      />
+                      <button 
+                        onClick={handleSaveTitle}
+                        disabled={isSavingTitle}
+                        className="bg-deep-obsidian text-cyber-lime font-heading font-bold px-8 py-4 rounded-full hover:bg-inverse-surface transition-colors whitespace-nowrap border-2 border-deep-obsidian disabled:opacity-50"
+                      >
+                        {isSavingTitle ? <Loader2 className="w-5 h-5 animate-spin mx-auto" /> : isTitleSaved ? "Tersimpan!" : "Simpan Judul"}
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Add Question Form Card */}
+              <form onSubmit={handleAddQuestion} className="bg-[rgba(255,255,255,0.7)] backdrop-blur-xl p-6 md:p-8 rounded-2xl border-2 border-deep-obsidian relative overflow-hidden shadow-[0_4px_30px_rgba(0,0,0,0.1)]">
+                {/* Decorative blob */}
+                <div className="absolute -right-20 -top-20 w-64 h-64 bg-electric-blue/10 rounded-full blur-3xl z-0 pointer-events-none"></div>
+                
+                <div className="relative z-10 flex flex-col gap-6 md:gap-8">
+                  <div className="flex justify-between items-center">
+                    <h3 className="font-heading text-xl md:text-2xl font-bold flex items-center gap-3">
+                      <span className="w-10 h-10 rounded-full bg-electric-blue text-white flex items-center justify-center font-heading text-xl shadow-[2px_2px_0px_rgba(10,10,10,1)] border-2 border-deep-obsidian">+</span>
+                      Pertanyaan Baru
+                    </h3>
+                  </div>
+
+                  <div>
+                    <label className="font-heading font-bold text-sm text-deep-obsidian mb-2 block">Teks Pertanyaan (Mendukung LaTeX)</label>
                     <textarea 
                       value={newQuestion}
                       onChange={(e) => setNewQuestion(e.target.value)}
-                      className="w-full h-32 p-4 rounded-2xl bg-slate-50 dark:bg-[#0f172a] border border-slate-300 dark:border-slate-600 focus:border-blue-500 dark:focus:border-cyan-400 focus:ring-4 focus:ring-blue-500/20 dark:focus:ring-cyan-400/20 text-slate-900 dark:text-white outline-none resize-none transition-all shadow-inner"
-                      placeholder="Contoh: Berapakah hasil dari $\int x^2 dx$ ?"
                       required
-                    />
+                      className="w-full bg-white rounded-xl border-2 border-deep-obsidian p-6 font-sans text-lg focus:border-electric-blue focus:ring-4 focus:ring-primary-fixed focus:outline-none resize-none" 
+                      placeholder="Masukkan pertanyaan di sini... Mendukung LaTeX contoh: $$x^2 + y^2 = z^2$$" 
+                      rows={4}
+                    ></textarea>
                   </div>
-                  
+
                   <div>
-                    <label className="text-sm font-bold text-slate-700 dark:text-slate-300 mb-2 flex items-center gap-2">
-                      <Clock className="w-4 h-4 text-blue-600 dark:text-cyan-400" /> Waktu Pengerjaan (Menit)
-                    </label>
-                    <Input 
+                    <label className="font-heading font-bold text-sm text-deep-obsidian mb-2 block">Waktu Pengerjaan (Menit)</label>
+                    <input 
                       type="number"
                       min="1"
                       value={timeLimitMinutes}
                       onChange={(e) => setTimeLimitMinutes(e.target.value)}
-                      className="h-12 rounded-xl bg-slate-50 dark:bg-[#0f172a] border-slate-300 dark:border-slate-600 focus:border-blue-500 dark:focus:border-cyan-400 text-slate-900 dark:text-white w-full md:w-1/3 shadow-inner"
-                      placeholder="Menit"
                       required
+                      className="w-full md:w-1/3 bg-white rounded-full border-2 border-deep-obsidian px-6 py-3 font-sans focus:border-electric-blue focus:ring-4 focus:ring-primary-fixed focus:outline-none" 
                     />
                   </div>
-                  
-                  <div className="space-y-4 pt-2">
-                    <label className="text-sm font-bold text-slate-700 dark:text-slate-300 block">Pilihan Jawaban (Pilih satu yang benar)</label>
-                    {options.map((opt, idx) => (
-                      <div key={idx} className="flex items-center gap-3">
-                        <button 
-                          type="button"
-                          onClick={() => handleSetCorrect(idx)}
-                          className={`flex-shrink-0 transition-all duration-300 hover:scale-110 ${opt.isCorrect ? 'text-emerald-500 dark:text-emerald-400 drop-shadow-[0_0_10px_rgba(16,185,129,0.5)] dark:drop-shadow-[0_0_10px_rgba(52,211,153,0.8)]' : 'text-slate-400 dark:text-slate-500 hover:text-slate-600 dark:hover:text-slate-300'}`}
-                        >
-                          {opt.isCorrect ? <CheckCircle2 className="w-7 h-7 fill-emerald-100 dark:fill-emerald-900/50" /> : <Circle className="w-7 h-7" />}
-                        </button>
-                        <Input
-                          value={opt.text}
-                          onChange={(e) => handleOptionChange(idx, e.target.value)}
-                          placeholder={`Opsi ${String.fromCharCode(65 + idx)}`}
-                          className={`h-12 rounded-xl transition-all shadow-inner text-slate-900 dark:text-white ${opt.isCorrect ? 'bg-emerald-50 dark:bg-emerald-900/20 border-emerald-400 dark:border-emerald-500/50 focus:border-emerald-500 dark:focus:border-emerald-400 focus:ring-emerald-500/30 dark:focus:ring-emerald-400/30' : 'bg-slate-50 dark:bg-[#0f172a] border-slate-300 dark:border-slate-600 focus:border-blue-500 dark:focus:border-cyan-400'}`}
-                          required
-                        />
-                      </div>
-                    ))}
-                  </div>
 
-                  <Button type="submit" disabled={isSubmitting} className="w-full h-14 rounded-2xl bg-gradient-to-r from-blue-700 to-indigo-700 hover:from-blue-600 hover:to-indigo-600 text-white font-bold text-lg mt-8 shadow-[0_0_15px_rgba(59,130,246,0.3)] transition-all hover:-translate-y-1 border-0">
-                    {isSubmitting ? <Loader2 className="w-6 h-6 animate-spin" /> : <><Plus className="w-5 h-5 mr-2" /> Tambahkan Pertanyaan</>}
-                  </Button>
-                </form>
-              </CardContent>
-            </Card>
-          </div>
-
-          <div className="md:col-span-5 space-y-6">
-            <Card className="rounded-[2rem] border border-slate-200 dark:border-white/10 shadow-[0_0_40px_rgba(59,130,246,0.05)] dark:shadow-[0_0_40px_rgba(59,130,246,0.1)] bg-white/90 dark:bg-[#1e293b]/60 backdrop-blur-xl">
-              <CardContent className="p-6 md:p-8">
-                <h2 className="text-xl font-bold mb-6 flex items-center gap-2 text-slate-800 dark:text-white">
-                  <Sparkles className="w-6 h-6 text-blue-500 dark:text-cyan-400 animate-pulse" />
-                  Daftar Pertanyaan ({questions.length})
-                </h2>
-                
-                {isFetching ? (
-                  <div className="flex justify-center py-12"><Loader2 className="w-8 h-8 animate-spin text-blue-500 dark:text-cyan-400" /></div>
-                ) : questions.length === 0 ? (
-                  <div className="text-center py-16 px-4 bg-slate-50 dark:bg-white/5 rounded-2xl border border-dashed border-slate-300 dark:border-white/10 flex flex-col items-center">
-                    <div className="w-16 h-16 bg-slate-100 dark:bg-[#0f172a] rounded-full flex items-center justify-center mb-4 border border-slate-200 dark:border-slate-700">
-                      <Sparkles className="w-8 h-8 text-slate-400 dark:text-slate-500" />
-                    </div>
-                    <p className="text-slate-700 dark:text-slate-300 font-bold mb-1">Belum ada soal</p>
-                    <p className="text-sm text-slate-500">Silakan tambahkan soal di panel sebelah kiri.</p>
-                  </div>
-                ) : (
-                  <div className="space-y-4 max-h-[600px] overflow-y-auto pr-2 custom-scrollbar">
-                    {questions.map((q, idx) => (
-                      <div key={q.id} className="bg-slate-50 dark:bg-[#0f172a]/80 p-5 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 hover:border-blue-400/50 dark:hover:border-cyan-500/50 transition-colors">
-                        <div className="flex justify-between items-start mb-3">
-                          <div className="font-bold text-slate-800 dark:text-white text-base leading-relaxed">
-                            <span className="text-blue-600 dark:text-cyan-400 font-black mr-2 text-lg">{idx + 1}.</span>
-                            <Latex>{q.content}</Latex>
-                          </div>
-                          <span className="text-xs font-bold bg-blue-100 dark:bg-blue-900/50 text-blue-700 dark:text-cyan-300 px-2 py-1 rounded flex items-center gap-1 ml-4 whitespace-nowrap border border-blue-300 dark:border-blue-500/30">
-                            <Clock className="w-3 h-3" /> {q.timeLimit} mnt
-                          </span>
-                        </div>
-                        <div className="space-y-2 pl-7 mt-4">
-                          {q.options?.map((opt: any, oIdx: number) => (
-                            <div key={opt.id} className={`text-sm p-2 rounded-lg flex items-center ${opt.isCorrect ? 'bg-emerald-100 dark:bg-emerald-900/30 text-emerald-800 dark:text-emerald-300 font-bold border border-emerald-300 dark:border-emerald-500/30' : 'text-slate-600 dark:text-slate-400 bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-transparent'}`}>
-                              <span className="w-6 font-bold text-slate-500 dark:text-slate-300">{String.fromCharCode(65 + oIdx)}.</span> 
-                              <span className="flex-1"><Latex>{opt.text}</Latex></span>
-                              {opt.isCorrect && <CheckCircle2 className="w-4 h-4 text-emerald-500 dark:text-emerald-400 ml-2" />}
+                  <div className="space-y-4">
+                    <label className="font-heading font-bold text-sm text-deep-obsidian block">Pilihan Jawaban (Pilih satu yang benar dengan ceklis)</label>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
+                      {options.map((opt, idx) => (
+                        <div key={idx} className="relative group">
+                          {/* Glow effect for active/hover */}
+                          <div className={`absolute -inset-1 rounded-xl blur transition duration-300 ${opt.isCorrect ? 'bg-cyber-lime opacity-30' : 'bg-electric-blue opacity-0 group-hover:opacity-20'}`}></div>
+                          <div className={`relative flex items-center bg-white rounded-xl border-2 p-3 md:p-4 gap-3 md:gap-4 transition-all ${opt.isCorrect ? 'border-deep-obsidian shadow-[4px_4px_0px_0px_rgba(204,255,0,1)] border-[4px]' : 'border-deep-obsidian'}`}>
+                            <div className={`w-10 h-10 rounded-lg flex items-center justify-center font-heading text-xl flex-shrink-0 ${opt.isCorrect ? 'bg-cyber-lime text-deep-obsidian' : 'bg-deep-obsidian text-white'}`}>
+                              {String.fromCharCode(65 + idx)}
                             </div>
-                          ))}
+                            <input 
+                              type="text"
+                              value={opt.text}
+                              onChange={(e) => handleOptionChange(idx, e.target.value)}
+                              required
+                              className="flex-1 border-none bg-transparent focus:ring-0 font-heading p-0 text-base md:text-lg focus:outline-none"
+                              placeholder={`Opsi ${String.fromCharCode(65 + idx)}`}
+                            />
+                            <button 
+                              type="button"
+                              onClick={() => handleSetCorrect(idx)}
+                              className={`w-8 h-8 rounded-full flex items-center justify-center transition-colors flex-shrink-0 ${opt.isCorrect ? 'bg-cyber-lime border-2 border-deep-obsidian text-deep-obsidian' : 'border-2 border-surface-variant hover:border-deep-obsidian text-surface-variant hover:text-deep-obsidian'}`}
+                            >
+                              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 24 24" fill="currentColor"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
+                            </button>
+                          </div>
                         </div>
-                      </div>
-                    ))}
+                      ))}
+                    </div>
                   </div>
-                )}
-              </CardContent>
-            </Card>
+
+                  <div className="pt-4 flex justify-end">
+                    <button 
+                      type="submit"
+                      disabled={isSubmitting}
+                      className="w-full md:w-auto px-8 py-4 rounded-full bg-deep-obsidian text-white font-heading font-bold flex items-center justify-center gap-2 hover:bg-electric-blue transition-colors duration-300 border-2 border-deep-obsidian disabled:opacity-50"
+                    >
+                      {isSubmitting ? <Loader2 className="w-5 h-5 animate-spin" /> : (
+                        <><svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 24 24" fill="currentColor"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg> Tambah Soal</>
+                      )}
+                    </button>
+                  </div>
+                </div>
+              </form>
+
+              {/* Action Bar */}
+              <div className="flex flex-col-reverse md:flex-row justify-end gap-4 mt-4 mb-12">
+                <button 
+                  onClick={() => router.push(`/teacher/session/${sessionId}/dashboard`)}
+                  className="px-8 py-4 rounded-full border-2 border-deep-obsidian font-heading font-bold hover:bg-surface-variant transition-colors text-center"
+                >
+                  Kembali ke Dashboard
+                </button>
+                <button 
+                  onClick={handlePublish}
+                  disabled={isSubmitting || questions.length === 0}
+                  className="px-8 py-4 rounded-full bg-electric-blue text-white font-heading font-bold hover:scale-105 transition-transform duration-200 flex justify-center items-center gap-2 shadow-[4px_4px_0px_0px_rgba(10,10,10,1)] border-2 border-deep-obsidian disabled:opacity-50 disabled:hover:scale-100 disabled:shadow-none cursor-pointer"
+                >
+                  {isSubmitting ? <Loader2 className="w-5 h-5 animate-spin" /> : <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 24 24" fill="currentColor"><path d="M5 4v2h14V4H5zm0 10h4v6h6v-6h4l-7-7-7 7z"/></svg>}
+                  Luncurkan Kuis
+                </button>
+              </div>
+
+            </div>
           </div>
-        </div>
+        </main>
       </div>
     </div>
   );

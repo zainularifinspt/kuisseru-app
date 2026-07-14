@@ -2,13 +2,8 @@
 
 import { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { Users, Play, Settings, BarChart, Square, Activity, Trophy, Loader2, Sparkles, ArrowLeft } from "lucide-react";
+import { Loader2 } from "lucide-react";
 import { getPusherClient } from "@/lib/pusherClient";
-import { ThemeToggle } from "@/components/ThemeToggle";
-
 
 type Player = {
   id: string;
@@ -17,11 +12,20 @@ type Player = {
   joinedAt: string;
 };
 
+const AVATAR_EMOJIS = ["🦄","🦊","🐸","🐙","🦖","🦋","🐯","🐶","🐱","🦁","🐼","🐧"];
+const AVATAR_COLORS = ["bg-cyber-lime","bg-mesh-pink","bg-electric-blue","bg-soft-violet","bg-tertiary-fixed"];
+
+function getPlayerAvatar(id: string, idx: number) {
+  return {
+    emoji: AVATAR_EMOJIS[idx % AVATAR_EMOJIS.length],
+    color: AVATAR_COLORS[idx % AVATAR_COLORS.length],
+  };
+}
+
 export default function TeacherDashboard() {
   const params = useParams();
   const router = useRouter();
   const sessionId = params.sessionId as string;
-  // const { toast } = useToast();
 
   const [players, setPlayers] = useState<Player[]>([]);
   const [quizStatus, setQuizStatus] = useState<'menunggu' | 'berjalan' | 'selesai'>('menunggu');
@@ -29,10 +33,8 @@ export default function TeacherDashboard() {
   const [sessionTitle, setSessionTitle] = useState("");
   const [joinCode, setJoinCode] = useState("");
   const [totalQuestions, setTotalQuestions] = useState(0);
-  const questionIndex = 1; // Dummy for now, can be fetched if needed
 
   useEffect(() => {
-    // 1. Fetch Session Info
     async function fetchSession() {
       try {
         const res = await fetch(`/api/quiz-sessions/${sessionId}`);
@@ -48,7 +50,6 @@ export default function TeacherDashboard() {
         if (data.session.status === 'active') setQuizStatus('berjalan');
         else if (data.session.status === 'finished') setQuizStatus('selesai');
         
-        // 2. Fetch Participants
         const partRes = await fetch(`/api/quiz-sessions/${sessionId}/participants`);
         if (partRes.ok) {
           const partData = await partRes.json();
@@ -64,7 +65,6 @@ export default function TeacherDashboard() {
     if (sessionId) {
       fetchSession();
       
-      // 3. Subscribe to Pusher
       const pusherClient = getPusherClient();
       if (!pusherClient) return;
 
@@ -72,7 +72,6 @@ export default function TeacherDashboard() {
       
       channel.bind('player-joined', (data: { participant: Player }) => {
         setPlayers((prev) => {
-          // Check if already exists to prevent duplicates in strict mode
           if (prev.some(p => p.id === data.participant.id)) return prev;
           return [...prev, data.participant];
         });
@@ -122,208 +121,223 @@ export default function TeacherDashboard() {
   };
 
   if (isLoading) {
-    return <div className="min-h-screen flex items-center justify-center bg-slate-50">
-      <Loader2 className="h-8 w-8 animate-spin text-indigo-600" />
-    </div>;
+    return (
+      <div className="min-h-[100dvh] flex items-center justify-center bg-background">
+        <Loader2 className="h-8 w-8 animate-spin text-electric-blue" />
+      </div>
+    );
   }
 
+  const sortedPlayers = [...players].sort((a, b) => (b.score || 0) - (a.score || 0));
+
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-[#0B0F19] p-4 md:p-8 font-sans text-slate-900 dark:text-slate-200 relative overflow-hidden transition-colors duration-300">
+    <div className="min-h-[100dvh] bg-background p-4 md:p-8 font-sans text-on-background relative overflow-hidden">
       
       {/* Background Effects */}
-      <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/stardust.png')] opacity-10 pointer-events-none animate-pulse"></div>
-      <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none -z-10">
-        <div className="absolute top-[-10%] right-[-10%] w-[50vw] h-[50vw] bg-cyan-400/20 dark:bg-cyan-600/10 rounded-full blur-[100px] animate-pulse" style={{ animationDuration: '7s' }}></div>
-        <div className="absolute bottom-[-10%] left-[-10%] w-[50vw] h-[50vw] bg-blue-400/20 dark:bg-blue-600/10 rounded-full blur-[120px] animate-pulse" style={{ animationDuration: '9s' }}></div>
+      <div className="absolute inset-0 pointer-events-none -z-10 overflow-hidden">
+        <div className="absolute top-20 left-10 w-64 h-64 bg-primary-fixed rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-float"></div>
+        <div className="absolute bottom-40 right-20 w-80 h-80 bg-secondary-fixed rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-float" style={{ animationDelay: '-3s' }}></div>
       </div>
 
       <div className="max-w-6xl mx-auto space-y-6 relative z-10">
         
         {/* Header Section */}
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white/90 dark:bg-[#111827]/80 backdrop-blur-xl p-6 rounded-[2rem] shadow-[0_0_30px_rgba(59,130,246,0.05)] dark:shadow-[0_0_30px_rgba(59,130,246,0.15)] border border-slate-200 dark:border-white/10 relative overflow-hidden">
-          <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-400 to-purple-400 dark:from-blue-500 dark:to-purple-500" />
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-[rgba(255,255,255,0.7)] backdrop-blur-xl p-6 rounded-xl border-2 border-deep-obsidian shadow-[0_4px_30px_rgba(0,0,0,0.1)] relative overflow-hidden">
+          <div className="h-1 absolute top-0 left-0 right-0 bg-[linear-gradient(90deg,#0052FF,#FF00E5,#0052FF)] bg-[length:200%_auto] animate-gradient-shift"></div>
           <div>
-            <div className="flex items-center gap-3 mb-2">
-              <Button variant="outline" size="sm" onClick={() => router.push('/teacher')} className="h-8 rounded-lg border-slate-300 dark:border-white/10 bg-slate-100 dark:bg-white/5 text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-200 dark:hover:bg-white/10 shadow-sm transition-all">
-                <ArrowLeft className="w-4 h-4 mr-1" />
-                Kembali
-              </Button>
-            </div>
-            <h1 className="text-2xl font-black text-slate-800 dark:text-white tracking-tight flex items-center gap-2 drop-shadow-sm">
-              <Sparkles className="w-6 h-6 text-blue-500 dark:text-cyan-400" /> Dashboard Guru
+            <button onClick={() => router.push('/teacher')} className="flex items-center gap-2 mb-2 font-heading font-bold text-sm text-on-surface-variant hover:text-electric-blue transition-colors">
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 24 24" fill="currentColor"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg>
+              Kembali ke Dashboard
+            </button>
+            <h1 className="font-heading text-2xl font-bold text-deep-obsidian flex items-center gap-2">
+              ✨ Dashboard Guru
             </h1>
-            <p className="text-slate-500 dark:text-slate-400 mt-1">Mengelola sesi kuis: <span className="font-bold text-blue-600 dark:text-cyan-400">{sessionTitle || "..."}</span></p>
+            <p className="font-sans text-on-surface-variant mt-1">
+              Mengelola sesi: <span className="font-heading font-bold text-electric-blue">{sessionTitle || "..."}</span>
+            </p>
           </div>
           
           <div className="flex flex-wrap items-center gap-3">
-            <ThemeToggle />
-            <Button variant="outline" className="rounded-xl shadow-sm border-blue-200 dark:border-cyan-500/30 text-blue-600 dark:text-cyan-400 bg-blue-50 dark:bg-cyan-900/20 hover:bg-blue-100 dark:hover:bg-cyan-500/20 hover:text-blue-700 dark:hover:text-cyan-300" onClick={() => window.open(`/teacher/session/${sessionId}/qr`, '_blank')}>
-              Lihat QR Code
-            </Button>
+            <button 
+              onClick={() => window.open(`/teacher/session/${sessionId}/qr`, '_blank')}
+              className="bg-surface-container text-deep-obsidian font-heading font-bold py-2 px-4 rounded-full flex items-center justify-center gap-2 border-2 border-deep-obsidian hover:bg-surface-container-highest transition-all text-sm cursor-pointer"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 24 24" fill="currentColor"><path d="M3 11h8V3H3v8zm2-6h4v4H5V5zM3 21h8v-8H3v8zm2-6h4v4H5v-4zM13 3v8h8V3h-8zm6 6h-4V5h4v4zM13 13h2v2h-2zM15 15h2v2h-2zM13 17h2v2h-2zM17 17h2v2h-2zM19 19h2v2h-2zM15 19h2v2h-2zM17 13h2v2h-2zM19 15h2v2h-2z"/></svg>
+              QR Code
+            </button>
             
             {quizStatus === 'berjalan' && (
-              <Button 
-                variant="destructive"
-                className="rounded-xl shadow-[0_0_15px_rgba(239,68,68,0.4)] bg-red-600 hover:bg-red-700 text-white font-bold border-0"
+              <button 
                 onClick={handleEndQuiz}
+                className="bg-error text-on-error font-heading font-bold py-2 px-4 rounded-full flex items-center justify-center gap-2 border-2 border-deep-obsidian hover:shadow-[0_0_15px_rgba(186,26,26,0.4)] transition-all text-sm cursor-pointer"
               >
-                <Square className="w-4 h-4 mr-2 fill-current" />
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 24 24" fill="currentColor"><path d="M6 6h12v12H6z"/></svg>
                 Akhiri Kuis
-              </Button>
+              </button>
             )}
 
-            <Button 
-              className={`rounded-xl shadow-md transition-all font-bold border-0 ${
-                quizStatus !== 'menunggu'
-                  ? "bg-slate-800 text-slate-500 cursor-not-allowed opacity-50" 
-                  : "bg-gradient-to-r from-emerald-600 to-teal-500 hover:from-emerald-500 hover:to-teal-400 text-white shadow-[0_0_20px_rgba(16,185,129,0.4)] hover:-translate-y-1"
-              }`}
+            <button 
               onClick={handleStartQuiz}
               disabled={quizStatus !== 'menunggu'}
+              className={`font-heading font-bold py-3 px-6 rounded-full flex items-center justify-center gap-2 border-2 border-deep-obsidian transition-all text-sm cursor-pointer ${
+                quizStatus !== 'menunggu'
+                  ? "bg-surface-variant text-outline cursor-not-allowed opacity-50" 
+                  : "bg-deep-obsidian text-cyber-lime hover:shadow-[0_0_20px_rgba(204,255,0,0.4)] hover:scale-105"
+              }`}
             >
-              <Play className="w-5 h-5 mr-2 fill-current" />
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
               {quizStatus === 'berjalan' ? "Kuis Berjalan" : quizStatus === 'selesai' ? "Kuis Selesai" : "Mulai Kuis"}
-            </Button>
+            </button>
           </div>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {/* Waiting Room Panel */}
-          <Card className="md:col-span-2 border-slate-200 dark:border-white/10 shadow-[0_0_40px_rgba(59,130,246,0.05)] dark:shadow-[0_0_40px_rgba(59,130,246,0.1)] bg-white/90 dark:bg-[#111827]/80 backdrop-blur-xl rounded-[2rem] overflow-hidden">
+          {/* Waiting Room / Leaderboard Panel */}
+          <div className="md:col-span-2 bg-[rgba(255,255,255,0.7)] backdrop-blur-xl border-2 border-deep-obsidian rounded-xl overflow-hidden shadow-[0_4px_30px_rgba(0,0,0,0.1)]">
             {quizStatus === 'menunggu' ? (
               <>
-                <CardHeader className="bg-slate-50 dark:bg-[#0f172a]/60 border-b border-slate-200 dark:border-white/10 pb-4">
-                  <CardTitle className="flex items-center gap-2 text-xl text-slate-800 dark:text-white">
-                    <Users className="w-5 h-5 text-blue-600 dark:text-cyan-400" />
+                <div className="bg-surface-container-high border-b-2 border-deep-obsidian p-6">
+                  <h2 className="font-heading text-xl font-bold text-deep-obsidian flex items-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-electric-blue" viewBox="0 0 24 24" fill="currentColor"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>
                     Daftar Peserta (Ruang Tunggu)
-                  </CardTitle>
-                  <CardDescription className="text-slate-500 dark:text-slate-400">
+                  </h2>
+                  <p className="font-sans text-on-surface-variant text-sm mt-1">
                     Terdapat {players.length} siswa yang sudah masuk dan siap mengikuti kuis.
-                  </CardDescription>
-                </CardHeader>
-                <CardContent className="p-6 min-h-[300px]">
+                  </p>
+                </div>
+                <div className="p-6 min-h-[300px]">
                   {players.length === 0 ? (
-                    <div className="flex flex-col items-center justify-center h-full pt-12 text-slate-500 dark:text-slate-400">
-                      <Loader2 className="w-10 h-10 mb-4 animate-spin text-blue-500 dark:text-cyan-500 drop-shadow-sm dark:drop-shadow-[0_0_10px_rgba(34,211,238,0.5)]" />
-                      <p className="font-medium">Menunggu siswa memindai QR Code...</p>
+                    <div className="flex flex-col items-center justify-center h-full pt-12 text-on-surface-variant">
+                      <Loader2 className="w-10 h-10 mb-4 animate-spin text-electric-blue" />
+                      <p className="font-heading font-semibold">Menunggu siswa memindai QR Code...</p>
                     </div>
                   ) : (
-                    <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
-                      {players.map((player) => (
-                        <div 
-                          key={player.id} 
-                          className="animate-in fade-in zoom-in duration-500 bg-slate-50 dark:bg-[#1e293b]/80 border border-slate-200 dark:border-slate-700 rounded-xl p-3 flex items-center gap-3 shadow-inner hover:shadow-[0_0_15px_rgba(37,99,235,0.1)] dark:hover:shadow-[0_0_15px_rgba(34,211,238,0.2)] hover:border-blue-400/50 dark:hover:border-cyan-500/50 transition-all cursor-default"
-                        >
-                          <Avatar className="h-10 w-10 border-2 border-blue-300 dark:border-cyan-500/50 shadow-sm dark:shadow-[0_0_10px_rgba(34,211,238,0.3)]">
-                            <AvatarFallback className="bg-blue-100 dark:bg-blue-900 text-blue-600 dark:text-cyan-300 font-bold">
-                              {player.nickname.substring(0, 2).toUpperCase()}
-                            </AvatarFallback>
-                          </Avatar>
-                          <div className="flex flex-col">
-                            <span className="font-bold text-sm text-slate-800 dark:text-slate-200 truncate" title={player.nickname}>
-                              {player.nickname}
-                            </span>
-                            <span className="text-xs text-emerald-400 font-bold flex items-center gap-1">
-                              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span> Siap
+                    <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-4 justify-items-center">
+                      {players.map((player, idx) => {
+                        const { emoji, color } = getPlayerAvatar(player.id, idx);
+                        return (
+                          <div key={player.id} className="flex flex-col items-center gap-2 hover:scale-105 transition-transform duration-200">
+                            <div className={`w-14 h-14 rounded-full ${color} border-2 border-deep-obsidian flex items-center justify-center shadow-[4px_4px_0px_rgba(10,10,10,1)] text-2xl`}>
+                              {emoji}
+                            </div>
+                            <span className="font-heading font-bold text-xs truncate w-full text-center text-deep-obsidian">{player.nickname}</span>
+                            <span className="text-xs font-heading font-bold text-[#4CAF50] flex items-center gap-1">
+                              <span className="w-1.5 h-1.5 rounded-full bg-[#4CAF50] animate-pulse"></span> Siap
                             </span>
                           </div>
+                        );
+                      })}
+                      {/* Shimmer placeholder */}
+                      <div className="flex flex-col items-center gap-2 opacity-50 animate-pulse">
+                        <div className="w-14 h-14 rounded-full bg-surface-variant border-2 border-dashed border-deep-obsidian flex items-center justify-center">
+                          <Loader2 className="w-5 h-5 animate-spin text-outline" />
                         </div>
-                      ))}
+                        <span className="bg-surface-variant rounded w-10 h-3"></span>
+                      </div>
                     </div>
                   )}
-                </CardContent>
+                </div>
               </>
             ) : (
               <>
-                <CardHeader className="bg-slate-50 dark:bg-[#0f172a]/60 border-b border-slate-200 dark:border-white/10 pb-4">
-                  <CardTitle className="flex items-center gap-2 text-xl text-slate-800 dark:text-white">
-                    <Activity className="w-5 h-5 text-emerald-500 dark:text-emerald-400 animate-pulse" />
-                    Pemantauan Kuis Berjalan
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="p-6 min-h-[300px]">
+                <div className="bg-surface-container-high border-b-2 border-deep-obsidian p-6">
+                  <h2 className="font-heading text-xl font-bold text-deep-obsidian flex items-center gap-2">
+                    <span className="flex h-3 w-3 relative mr-1">
+                      <span className="animate-ping absolute inline-flex h-3 w-3 rounded-full bg-[#4CAF50] opacity-75"></span>
+                      <span className="relative inline-flex rounded-full h-3 w-3 bg-[#4CAF50]"></span>
+                    </span>
+                    Leaderboard Langsung
+                  </h2>
+                </div>
+                <div className="p-6 min-h-[300px]">
                   <div className="space-y-3">
-                    {players
-                      .sort((a, b) => b.score - a.score)
-                      .map((player, idx) => (
-                      <div 
-                        key={player.id} 
-                        className="bg-slate-50 dark:bg-[#1e293b]/80 border border-slate-200 dark:border-slate-700 rounded-xl p-3 flex items-center justify-between shadow-inner transition-all relative overflow-hidden hover:border-blue-400/30 dark:hover:border-cyan-500/30"
-                      >
-                        <div className="absolute left-0 top-0 bottom-0 w-1 bg-gradient-to-b from-blue-400 to-indigo-500 dark:from-blue-500 dark:to-cyan-500"></div>
-                        <div className="flex items-center gap-3 pl-3">
-                          <div className="font-black text-blue-600 dark:text-cyan-500 w-6 drop-shadow-sm dark:drop-shadow-[0_0_5px_rgba(34,211,238,0.5)]">{idx + 1}.</div>
-                          <Avatar className="h-9 w-9 border border-blue-300 dark:border-cyan-500/30">
-                            <AvatarFallback className="bg-blue-100 dark:bg-blue-900 text-blue-600 dark:text-cyan-300 text-xs font-bold">
-                              {player.nickname.substring(0, 2).toUpperCase()}
-                            </AvatarFallback>
-                          </Avatar>
-                          <span className="font-bold text-sm text-slate-800 dark:text-slate-200">
-                            {player.nickname}
-                          </span>
+                    {sortedPlayers.map((player, idx) => {
+                      const { emoji, color } = getPlayerAvatar(player.id, idx);
+                      const isTop3 = idx < 3;
+                      return (
+                        <div 
+                          key={player.id} 
+                          className={`border-2 border-deep-obsidian rounded-xl p-3 flex items-center justify-between transition-all relative overflow-hidden ${isTop3 ? 'bg-surface-container shadow-[0_0_10px_rgba(0,82,255,0.1)]' : 'bg-surface'}`}
+                        >
+                          <div className="flex items-center gap-3">
+                            <div className={`font-heading font-bold w-8 text-center ${idx === 0 ? 'text-[#FFD700] text-lg' : idx === 1 ? 'text-[#C0C0C0]' : idx === 2 ? 'text-[#CD7F32]' : 'text-on-surface-variant'}`}>
+                              {idx === 0 ? '🥇' : idx === 1 ? '🥈' : idx === 2 ? '🥉' : `${idx+1}.`}
+                            </div>
+                            <div className={`w-10 h-10 rounded-full ${color} border-2 border-deep-obsidian flex items-center justify-center text-xl shadow-[2px_2px_0px_rgba(10,10,10,1)]`}>
+                              {emoji}
+                            </div>
+                            <span className="font-heading font-bold text-sm text-deep-obsidian">
+                              {player.nickname}
+                            </span>
+                          </div>
+                          <div className="bg-deep-obsidian text-cyber-lime px-3 py-1.5 rounded-full font-heading font-bold text-sm border border-cyber-lime/30">
+                            {player.score || 0} pts
+                          </div>
                         </div>
-                        <div className="flex items-center gap-2 bg-white dark:bg-[#0f172a] px-3 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700">
-                          <Trophy className="w-4 h-4 text-amber-500 dark:text-amber-400" />
-                          <span className="font-black text-slate-800 dark:text-white">{player.score || 0}</span>
-                        </div>
-                      </div>
-                    ))}
+                      );
+                    })}
                   </div>
-                </CardContent>
+                </div>
               </>
             )}
-          </Card>
+          </div>
 
           {/* Quick Stats Panel */}
-          <Card className="border-slate-200 dark:border-white/10 shadow-[0_0_40px_rgba(59,130,246,0.05)] dark:shadow-[0_0_40px_rgba(59,130,246,0.1)] bg-white/90 dark:bg-[#111827]/80 backdrop-blur-xl rounded-[2rem] overflow-hidden">
-            <CardHeader className="bg-slate-50 dark:bg-[#0f172a]/60 border-b border-slate-200 dark:border-white/10 pb-4">
-              <CardTitle className="flex items-center gap-2 text-xl text-slate-800 dark:text-white">
-                <BarChart className="w-5 h-5 text-blue-600 dark:text-cyan-400" />
+          <div className="bg-[rgba(255,255,255,0.7)] backdrop-blur-xl border-2 border-deep-obsidian rounded-xl overflow-hidden shadow-[0_4px_30px_rgba(0,0,0,0.1)]">
+            <div className="bg-surface-container-high border-b-2 border-deep-obsidian p-6">
+              <h2 className="font-heading text-xl font-bold text-deep-obsidian flex items-center gap-2">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-electric-blue" viewBox="0 0 24 24" fill="currentColor"><path d="M5 9.2h3V19H5zM10.6 5h2.8v14h-2.8zm5.6 8H19v6h-2.8z"/></svg>
                 Statistik Sesi
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="p-6 flex flex-col gap-4">
+              </h2>
+            </div>
+            <div className="p-6 flex flex-col gap-4">
               {joinCode && (
-                <div className="bg-indigo-100 dark:bg-indigo-900/40 p-4 rounded-xl flex items-center justify-between border border-indigo-200 dark:border-indigo-500/30 shadow-inner relative overflow-hidden">
-                  <div className="absolute top-0 left-0 w-1 h-full bg-indigo-500 dark:bg-indigo-400" />
-                  <span className="text-indigo-700 dark:text-indigo-300 font-bold flex items-center gap-2">
-                    Kode Kuis
-                  </span>
-                  <span className="text-2xl font-black text-slate-900 dark:text-white tracking-widest drop-shadow-sm dark:drop-shadow-[0_0_10px_rgba(99,102,241,0.8)]">
+                <div className="bg-deep-obsidian p-4 rounded-xl flex items-center justify-between border-2 border-deep-obsidian relative overflow-hidden">
+                  <span className="text-cyber-lime/70 font-heading font-bold text-sm">Kode Kuis</span>
+                  <span className="text-2xl font-heading font-bold text-cyber-lime tracking-widest drop-shadow-[0_0_10px_rgba(204,255,0,0.5)]">
                     {joinCode}
                   </span>
                 </div>
               )}
-              <div className="bg-blue-100 dark:bg-blue-900/30 p-4 rounded-xl flex items-center justify-between border border-blue-200 dark:border-blue-500/30 shadow-inner">
-                <span className="text-blue-700 dark:text-blue-300 font-bold">Total Peserta</span>
-                <span className="text-2xl font-black text-slate-900 dark:text-white transition-all duration-300 drop-shadow-sm dark:drop-shadow-[0_0_10px_rgba(59,130,246,0.8)]">{players.length}</span>
+              <div className="bg-surface-container rounded-xl p-4 flex items-center justify-between border-2 border-deep-obsidian">
+                <span className="font-heading font-bold text-sm text-on-surface-variant">Total Peserta</span>
+                <span className="text-2xl font-heading font-bold text-deep-obsidian">{players.length}</span>
               </div>
-              <div className={`p-4 rounded-xl flex items-center justify-between border shadow-inner ${
-                quizStatus === 'berjalan' ? "bg-emerald-100 dark:bg-emerald-900/30 border-emerald-200 dark:border-emerald-500/30" : quizStatus === 'selesai' ? "bg-slate-100 dark:bg-slate-800 border-slate-200 dark:border-slate-600" : "bg-amber-100 dark:bg-amber-900/30 border-amber-200 dark:border-amber-500/30"
+              <div className={`rounded-xl p-4 flex items-center justify-between border-2 border-deep-obsidian ${
+                quizStatus === 'berjalan' ? "bg-[#E8F5E9]" : quizStatus === 'selesai' ? "bg-surface-variant" : "bg-[#FFF3E0]"
               }`}>
-                <span className={`${quizStatus === 'berjalan' ? "text-emerald-700 dark:text-emerald-300" : quizStatus === 'selesai' ? "text-slate-700 dark:text-slate-300" : "text-amber-700 dark:text-amber-300"} font-bold`}>Status</span>
-                <span className={`px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider border ${
-                  quizStatus === 'berjalan' ? "bg-emerald-200 dark:bg-emerald-500/20 text-emerald-800 dark:text-emerald-400 border-emerald-300 dark:border-emerald-500/50" : quizStatus === 'selesai' ? "bg-slate-200 dark:bg-slate-700 text-slate-800 dark:text-slate-300 border-slate-300 dark:border-slate-500" : "bg-amber-200 dark:bg-amber-500/20 text-amber-800 dark:text-amber-400 border-amber-300 dark:border-amber-500/50"
+                <span className="font-heading font-bold text-sm text-on-surface-variant">Status</span>
+                <span className={`px-3 py-1 rounded-full text-xs font-heading font-bold uppercase tracking-wider border-2 border-deep-obsidian ${
+                  quizStatus === 'berjalan' ? "bg-[#4CAF50] text-white" : quizStatus === 'selesai' ? "bg-outline text-white" : "bg-[#FF9800] text-white"
                 }`}>
                   {quizStatus}
                 </span>
               </div>
-              <div className="bg-slate-50 dark:bg-[#1e293b] p-4 rounded-xl flex items-center justify-between border border-slate-200 dark:border-slate-700 shadow-inner">
-                <span className="text-slate-700 dark:text-slate-300 font-bold">Total Soal</span>
-                <span className="text-xl font-black text-slate-900 dark:text-white drop-shadow-sm dark:drop-shadow-[0_0_5px_rgba(255,255,255,0.5)]">{totalQuestions}</span>
+              <div className="bg-surface-container rounded-xl p-4 flex items-center justify-between border-2 border-deep-obsidian">
+                <span className="font-heading font-bold text-sm text-on-surface-variant">Total Soal</span>
+                <span className="text-xl font-heading font-bold text-deep-obsidian">{totalQuestions}</span>
               </div>
               
-              <div className="mt-4 p-4 border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-[#0f172a]/50 rounded-xl text-center shadow-inner relative overflow-hidden">
-                <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-400 to-indigo-400 dark:from-blue-500/50 dark:to-purple-500/50" />
-                <p className="text-sm text-slate-600 dark:text-slate-400 font-medium leading-relaxed">
+              <div className="mt-4 p-4 border-2 border-deep-obsidian bg-surface-container-high rounded-xl text-center relative overflow-hidden">
+                <p className="font-sans text-sm text-on-surface-variant leading-relaxed">
                   {quizStatus === 'menunggu' 
                     ? "Pastikan semua siswa sudah memindai QR Code sebelum menekan tombol Mulai Kuis."
                     : "Skor akan otomatis terupdate setiap ada siswa yang menjawab soal."
                   }
                 </p>
               </div>
-            </CardContent>
-          </Card>
+
+              {quizStatus !== 'menunggu' && (
+                <button 
+                  onClick={() => router.push(`/teacher/session/${sessionId}/grading`)}
+                  className="w-full bg-electric-blue text-on-primary font-heading font-bold py-3 rounded-full flex items-center justify-center gap-2 border-2 border-deep-obsidian hover:shadow-[0_0_15px_rgba(0,82,255,0.3)] transition-all text-sm cursor-pointer mt-2"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 24 24" fill="currentColor"><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></svg>
+                  Lihat Penilaian
+                </button>
+              )}
+            </div>
+          </div>
         </div>
       </div>
     </div>
