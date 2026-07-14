@@ -16,7 +16,7 @@ export const metadata: Metadata = {
   title: "ASTHAQUIZZ",
   description: "Platform Kuis Interaktif",
   icons: {
-    icon: "/logo.png",
+    icon: "/logo.png?v=2",
   },
 };
 
