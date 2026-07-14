@@ -24,7 +24,7 @@ export const auth = betterAuth({
     baseURL: process.env.BETTER_AUTH_URL || process.env.NEXT_PUBLIC_APP_URL || process.env.URL || "http://localhost:3000",
     trustedOrigins: [
         "http://localhost:3000",
-        "https://asthaquizz-app.netlify.app",
+        "https://asthaquizz.netlify.app",
         "https://*.netlify.app",
         "*"
     ]
