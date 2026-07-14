@@ -10,6 +10,7 @@ import { Sparkles, Play, Plus, History, LogOut, Loader2, ArrowRight, Settings, P
 import { motion, AnimatePresence } from 'framer-motion';
 import { signIn, signOut, useSession } from '@/lib/auth-client';
 import { updateProfile } from '@/app/actions/user';
+import { ThemeToggle } from '@/components/ThemeToggle';
 
 export default function TeacherPortal() {
   const router = useRouter();
@@ -115,7 +116,7 @@ export default function TeacherPortal() {
   };
 
   return (
-    <div className="min-h-screen bg-[#0B0F19] text-slate-200 font-sans selection:bg-cyan-500/30 relative overflow-hidden">
+    <div className="min-h-screen bg-slate-50 dark:bg-[#0B0F19] text-slate-900 dark:text-slate-200 font-sans selection:bg-cyan-500/30 relative overflow-hidden transition-colors duration-300">
       
       {/* Background Effects */}
       <div className="fixed inset-0 bg-[url('https://www.transparenttextures.com/patterns/stardust.png')] opacity-10 pointer-events-none animate-pulse"></div>
@@ -162,6 +163,9 @@ export default function TeacherPortal() {
             className="flex items-center justify-center min-h-screen p-4 relative overflow-hidden"
           >
             <div className="w-full max-w-[440px] relative z-10">
+              <div className="absolute -top-16 right-0 z-50">
+                <ThemeToggle />
+              </div>
               <div className="text-center mb-10">
                 <div className="inline-flex items-center justify-center p-4 bg-gradient-to-br from-blue-900/50 to-purple-900/50 rounded-2xl shadow-[0_0_20px_rgba(59,130,246,0.5)] mb-6 border border-blue-400/20 relative group">
                   <div className="absolute inset-0 bg-cyan-400/20 rounded-2xl scale-110 opacity-0 group-hover:opacity-100 transition-opacity blur-md" />
@@ -245,9 +249,9 @@ export default function TeacherPortal() {
             transition={{ duration: 0.4 }}
             className="p-4 md:p-8 lg:p-12 max-w-7xl mx-auto relative z-10"
           >
-            <header className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12 bg-white/5 backdrop-blur-2xl p-5 rounded-[2rem] border border-white/10 shadow-[0_0_30px_rgba(59,130,246,0.15)]">
+            <header className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12 bg-white/80 dark:bg-white/5 backdrop-blur-2xl p-5 rounded-[2rem] border border-slate-200 dark:border-white/10 shadow-[0_0_30px_rgba(59,130,246,0.05)] dark:shadow-[0_0_30px_rgba(59,130,246,0.15)]">
               <div className="flex items-center gap-4 px-2">
-                <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-blue-600 to-purple-600 flex items-center justify-center text-white shadow-[0_0_20px_rgba(59,130,246,0.5)] border border-blue-400/30">
+                <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-blue-600 to-purple-600 flex items-center justify-center text-white shadow-[0_0_20px_rgba(59,130,246,0.3)] dark:shadow-[0_0_20px_rgba(59,130,246,0.5)] border border-blue-400/30">
                   <Sparkles className="w-7 h-7" />
                 </div>
                 <div>
@@ -262,6 +266,7 @@ export default function TeacherPortal() {
               </div>
               
               <div className="flex items-center gap-3">
+                <ThemeToggle />
                 {user?.role === 'admin' && (
                   <Button 
                     variant="outline" 
@@ -295,7 +300,7 @@ export default function TeacherPortal() {
               {/* Action Card */}
               <div className="md:col-span-4">
                 <div className="sticky top-8 space-y-6">
-                  <Card className="border border-white/10 shadow-[0_0_40px_rgba(59,130,246,0.15)] bg-[#111827]/80 backdrop-blur-2xl rounded-[2rem] overflow-hidden relative group">
+                  <Card className="border border-slate-200 dark:border-white/10 shadow-[0_0_40px_rgba(59,130,246,0.05)] dark:shadow-[0_0_40px_rgba(59,130,246,0.15)] bg-white/90 dark:bg-[#111827]/80 backdrop-blur-2xl rounded-[2rem] overflow-hidden relative group">
                     <div className="absolute inset-0 bg-gradient-to-br from-blue-500/10 to-purple-500/10 group-hover:opacity-100 opacity-0 transition-opacity duration-500 pointer-events-none" />
                     <CardContent className="p-10 flex flex-col items-center text-center relative z-10">
                       <div className="w-24 h-24 rounded-[2rem] bg-gradient-to-br from-blue-900/50 to-purple-900/50 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-500 border border-blue-400/30 shadow-[0_0_20px_rgba(59,130,246,0.4)]">
@@ -323,13 +328,13 @@ export default function TeacherPortal() {
 
               {/* History List */}
               <div className="md:col-span-8">
-                <div className="bg-[#111827]/60 backdrop-blur-xl rounded-[2rem] shadow-[0_0_40px_rgba(0,0,0,0.5)] border border-white/5 p-8 min-h-[500px]">
+                <div className="bg-white/80 dark:bg-[#111827]/60 backdrop-blur-xl rounded-[2rem] shadow-[0_0_40px_rgba(0,0,0,0.05)] dark:shadow-[0_0_40px_rgba(0,0,0,0.5)] border border-slate-200 dark:border-white/5 p-8 min-h-[500px]">
                   <div className="flex items-center justify-between mb-8">
                     <div className="flex items-center gap-3">
-                      <div className="p-3 bg-blue-900/30 rounded-xl border border-blue-500/20">
-                        <History className="w-5 h-5 text-cyan-400" />
+                      <div className="p-3 bg-blue-100 dark:bg-blue-900/30 rounded-xl border border-blue-200 dark:border-blue-500/20">
+                        <History className="w-5 h-5 text-blue-600 dark:text-cyan-400" />
                       </div>
-                      <h2 className="text-xl font-bold text-white drop-shadow-md">Sesi Kuis Anda</h2>
+                      <h2 className="text-xl font-bold text-slate-800 dark:text-white drop-shadow-sm dark:drop-shadow-md">Sesi Kuis Anda</h2>
                     </div>
                   </div>
 

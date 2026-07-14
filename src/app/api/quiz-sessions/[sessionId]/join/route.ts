@@ -31,8 +31,8 @@ export async function POST(
       return NextResponse.json({ error: 'Session not found' }, { status: 404 });
     }
 
-    if (session.status !== 'waiting') {
-      return NextResponse.json({ error: 'Sesi kuis sudah dimulai atau selesai' }, { status: 400 });
+    if (session.status === 'finished' || session.status === 'draft') {
+      return NextResponse.json({ error: 'Sesi kuis sudah selesai atau belum siap' }, { status: 400 });
     }
 
     // Check uniqueness
@@ -64,7 +64,7 @@ export async function POST(
       participant: newParticipant,
     });
 
-    return NextResponse.json({ participant: newParticipant });
+    return NextResponse.json({ participant: newParticipant, sessionStatus: session.status });
   } catch (error) {
     console.error('Error joining session:', error);
     return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });

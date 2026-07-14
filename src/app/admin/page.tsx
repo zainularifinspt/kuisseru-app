@@ -9,6 +9,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useRouter } from 'next/navigation';
 import { signIn, signOut, useSession, signUp } from '@/lib/auth-client';
 import { getAllSessions, getTeachers, deleteTeacher } from '@/app/actions/admin';
+import { ThemeToggle } from '@/components/ThemeToggle';
 import { updateProfile } from '@/app/actions/user';
 
 export default function AdminPortal() {
@@ -137,7 +138,10 @@ export default function AdminPortal() {
   // Not logged in or logged in but NOT admin
   if (!isLoggedIn || !isAdmin) {
     return (
-      <div className="min-h-screen bg-[#0B0F19] flex items-center justify-center p-4 relative overflow-hidden font-sans">
+      <div className="min-h-screen bg-slate-50 dark:bg-[#0B0F19] text-slate-900 dark:text-slate-200 flex items-center justify-center p-4 relative overflow-hidden font-sans transition-colors duration-300">
+        <div className="absolute top-4 right-4 z-50">
+          <ThemeToggle />
+        </div>
         <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/stardust.png')] opacity-10 pointer-events-none animate-pulse"></div>
         <div className="absolute top-1/4 -left-32 w-96 h-96 bg-blue-600/20 rounded-full blur-[100px] pointer-events-none animate-pulse" style={{ animationDuration: '7s' }} />
         <div className="absolute bottom-1/4 -right-32 w-96 h-96 bg-cyan-600/20 rounded-full blur-[100px] pointer-events-none animate-pulse" style={{ animationDuration: '9s' }} />
@@ -185,7 +189,7 @@ export default function AdminPortal() {
 
   // Admin Dashboard
   return (
-    <div className="min-h-screen bg-[#0B0F19] text-slate-200 font-sans pb-12 relative overflow-hidden">
+    <div className="min-h-screen bg-slate-50 dark:bg-[#0B0F19] text-slate-900 dark:text-slate-200 font-sans pb-12 relative overflow-hidden transition-colors duration-300">
       
       {/* Background Effects */}
       <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/stardust.png')] opacity-10 pointer-events-none animate-pulse"></div>
@@ -222,7 +226,7 @@ export default function AdminPortal() {
       </AnimatePresence>
 
       <div className="max-w-7xl mx-auto p-4 md:p-8 relative z-10">
-        <header className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-10 bg-white/5 backdrop-blur-2xl p-6 rounded-[2rem] shadow-[0_0_30px_rgba(59,130,246,0.15)] border border-white/10">
+        <header className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-10 bg-white/80 dark:bg-white/5 backdrop-blur-2xl p-6 rounded-[2rem] shadow-[0_0_30px_rgba(59,130,246,0.05)] dark:shadow-[0_0_30px_rgba(59,130,246,0.15)] border border-slate-200 dark:border-white/10">
           <div className="flex items-center gap-5">
             <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-blue-600 to-cyan-500 flex items-center justify-center text-white shadow-[0_0_20px_rgba(34,211,238,0.5)] border border-cyan-400/30">
               <Shield className="w-8 h-8" />
@@ -236,8 +240,9 @@ export default function AdminPortal() {
             </div>
           </div>
           <div className="flex items-center gap-3">
-            <Button variant="outline" onClick={() => setIsEditProfileOpen(true)} className="rounded-xl shadow-sm bg-white/5 border-white/10 text-slate-300 hover:text-white hover:bg-white/10">
-              <Settings className="w-4 h-4 mr-2 text-cyan-400" /> Profil
+            <ThemeToggle />
+            <Button variant="outline" onClick={() => setIsEditProfileOpen(true)} className="rounded-xl shadow-sm bg-white/5 border-slate-300 dark:border-white/10 text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/10">
+              <Settings className="w-4 h-4 mr-2 text-blue-500 dark:text-cyan-400" /> Profil
             </Button>
             <Button variant="ghost" onClick={handleLogout} className="rounded-xl text-red-400 hover:bg-red-900/30 hover:text-red-300 border border-transparent hover:border-red-500/30">
               <LogOut className="w-4 h-4 mr-2" /> Keluar
@@ -264,7 +269,7 @@ export default function AdminPortal() {
                 </CardContent>
               </Card>
 
-              <Card className="rounded-[2rem] border border-white/10 shadow-[0_0_30px_rgba(59,130,246,0.1)] bg-[#111827]/80 backdrop-blur-xl">
+              <Card className="rounded-[2rem] border border-slate-200 dark:border-white/10 shadow-[0_0_30px_rgba(59,130,246,0.05)] dark:shadow-[0_0_30px_rgba(59,130,246,0.1)] bg-white/90 dark:bg-[#111827]/80 backdrop-blur-xl">
                 <CardContent className="p-8">
                   <div className="flex items-center gap-3 mb-6">
                     <div className="p-3 bg-blue-900/40 rounded-xl border border-blue-500/30 shadow-inner"><UserPlus className="w-5 h-5 text-cyan-400" /></div>
@@ -300,7 +305,7 @@ export default function AdminPortal() {
             <div className="lg:col-span-8 space-y-8">
               
               {/* Quizzes Section */}
-              <Card className="rounded-[2rem] border border-white/10 shadow-[0_0_30px_rgba(59,130,246,0.1)] bg-[#111827]/80 backdrop-blur-xl">
+              <Card className="rounded-[2rem] border border-slate-200 dark:border-white/10 shadow-[0_0_30px_rgba(59,130,246,0.05)] dark:shadow-[0_0_30px_rgba(59,130,246,0.1)] bg-white/90 dark:bg-[#111827]/80 backdrop-blur-xl">
                 <CardContent className="p-8">
                   <div className="flex items-center justify-between mb-8">
                     <div className="flex items-center gap-3">
@@ -337,7 +342,7 @@ export default function AdminPortal() {
               </Card>
 
               {/* Teachers Section */}
-              <Card className="rounded-[2rem] border border-white/10 shadow-[0_0_30px_rgba(59,130,246,0.1)] bg-[#111827]/80 backdrop-blur-xl">
+              <Card className="rounded-[2rem] border border-slate-200 dark:border-white/10 shadow-[0_0_30px_rgba(59,130,246,0.05)] dark:shadow-[0_0_30px_rgba(59,130,246,0.1)] bg-white/90 dark:bg-[#111827]/80 backdrop-blur-xl">
                 <CardContent className="p-8">
                   <div className="flex items-center justify-between mb-8">
                     <div className="flex items-center gap-3">
