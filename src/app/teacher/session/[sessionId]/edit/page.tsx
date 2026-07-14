@@ -2,7 +2,7 @@
 
 import { useState, useEffect, use } from 'react';
 import { useRouter } from 'next/navigation';
-import { addQuestion, publishSession, getSessionQuestions } from '@/app/actions/question';
+import { addQuestion, publishSession, getSessionQuestions, updateQuestion, deleteQuestion } from '@/app/actions/question';
 import { updateSessionTitle } from '@/app/actions/session';
 import 'katex/dist/katex.min.css';
 import Latex from 'react-latex-next';
@@ -22,6 +22,7 @@ export default function EditQuizSession({ params }: { params: Promise<{ sessionI
   const [isTitleSaved, setIsTitleSaved] = useState(false);
 
   // Question state
+  const [editingQuestionId, setEditingQuestionId] = useState<string | null>(null);
   const [newQuestion, setNewQuestion] = useState('');
   const [timeLimitMinutes, setTimeLimitMinutes] = useState('1');
   const [options, setOptions] = useState([
@@ -73,28 +74,70 @@ export default function EditQuizSession({ params }: { params: Promise<{ sessionI
     setIsSavingTitle(false);
   };
 
-  const handleAddQuestion = async (e: React.FormEvent) => {
+  const resetForm = () => {
+    setEditingQuestionId(null);
+    setNewQuestion('');
+    setTimeLimitMinutes('1');
+    setOptions([
+      { text: '', isCorrect: true },
+      { text: '', isCorrect: false },
+      { text: '', isCorrect: false },
+      { text: '', isCorrect: false }
+    ]);
+  };
+
+  const handleAddOrUpdateQuestion = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!newQuestion.trim()) return;
     
     setIsSubmitting(true);
     const timeLimitVal = parseInt(timeLimitMinutes, 10) || 1;
-    const res = await addQuestion(sessionId, newQuestion, options, timeLimitVal);
+    
+    let res;
+    if (editingQuestionId) {
+      res = await updateQuestion(editingQuestionId, newQuestion, options, timeLimitVal);
+    } else {
+      res = await addQuestion(sessionId, newQuestion, options, timeLimitVal);
+    }
     
     if (res.success) {
-      setNewQuestion('');
-      setTimeLimitMinutes('1');
+      resetForm();
+      await fetchQuestions();
+    } else {
+      alert(res.error);
+    }
+    setIsSubmitting(false);
+  };
+
+  const handleDeleteQuestion = async () => {
+    if (!editingQuestionId) return;
+    if (!confirm("Apakah Anda yakin ingin menghapus soal ini?")) return;
+    
+    setIsSubmitting(true);
+    const res = await deleteQuestion(editingQuestionId);
+    if (res.success) {
+      resetForm();
+      await fetchQuestions();
+    } else {
+      alert(res.error);
+    }
+    setIsSubmitting(false);
+  };
+
+  const handleEditClick = (q: any) => {
+    setEditingQuestionId(q.id);
+    setNewQuestion(q.content);
+    setTimeLimitMinutes(String(q.timeLimit || 1));
+    if (q.options && q.options.length > 0) {
+      setOptions(q.options.map((o: any) => ({ text: o.text, isCorrect: o.isCorrect })));
+    } else {
       setOptions([
         { text: '', isCorrect: true },
         { text: '', isCorrect: false },
         { text: '', isCorrect: false },
         { text: '', isCorrect: false }
       ]);
-      await fetchQuestions();
-    } else {
-      alert(res.error);
     }
-    setIsSubmitting(false);
   };
 
   const handleOptionChange = (index: number, text: string) => {
@@ -109,6 +152,23 @@ export default function EditQuizSession({ params }: { params: Promise<{ sessionI
       isCorrect: i === index
     }));
     setOptions(newOptions);
+  };
+
+  const handleAddOption = () => {
+    if (options.length < 5) {
+      setOptions([...options, { text: '', isCorrect: false }]);
+    }
+  };
+
+  const handleRemoveOption = (index: number) => {
+    if (options.length > 2) {
+      const newOptions = options.filter((_, i) => i !== index);
+      // Ensure at least one is correct if we removed the correct one
+      if (options[index].isCorrect) {
+        newOptions[0].isCorrect = true;
+      }
+      setOptions(newOptions);
+    }
   };
 
   const handlePublish = async () => {
@@ -201,14 +261,31 @@ export default function EditQuizSession({ params }: { params: Promise<{ sessionI
                       Belum ada soal
                     </div>
                   ) : (
-                    questions.map((q, idx) => (
-                      <div key={q.id} className="p-3 rounded-lg border-2 border-outline-variant hover:border-deep-obsidian cursor-pointer flex items-center gap-3 transition-colors bg-white">
-                        <div className="w-8 h-8 rounded-full bg-surface-variant text-deep-obsidian flex items-center justify-center font-heading font-bold text-sm flex-shrink-0">{idx + 1}</div>
-                        <span className="font-sans text-sm truncate flex-1"><Latex>{q.content}</Latex></span>
-                      </div>
-                    ))
+                    questions.map((q, idx) => {
+                      const isActive = editingQuestionId === q.id;
+                      return (
+                        <div 
+                          key={q.id} 
+                          onClick={() => handleEditClick(q)}
+                          className={`p-3 rounded-lg border-2 cursor-pointer flex items-center gap-3 transition-colors ${isActive ? 'border-electric-blue bg-electric-blue/5' : 'border-outline-variant hover:border-deep-obsidian bg-white'}`}
+                        >
+                          <div className={`w-8 h-8 rounded-full flex items-center justify-center font-heading font-bold text-sm flex-shrink-0 ${isActive ? 'bg-electric-blue text-white' : 'bg-surface-variant text-deep-obsidian'}`}>
+                            {idx + 1}
+                          </div>
+                          <span className="font-sans text-sm truncate flex-1"><Latex>{q.content}</Latex></span>
+                        </div>
+                      );
+                    })
                   )}
                 </div>
+                
+                <button 
+                  onClick={resetForm}
+                  className="mt-6 w-full py-3 rounded-full bg-deep-obsidian text-white font-heading font-bold flex items-center justify-center gap-2 hover:bg-electric-blue transition-colors duration-300"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 24 24" fill="currentColor"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>
+                  Tambah Soal Baru
+                </button>
               </div>
             </aside>
 
@@ -239,17 +316,30 @@ export default function EditQuizSession({ params }: { params: Promise<{ sessionI
                 </div>
               </div>
 
-              {/* Add Question Form Card */}
-              <form onSubmit={handleAddQuestion} className="bg-[rgba(255,255,255,0.7)] backdrop-blur-xl p-6 md:p-8 rounded-2xl border-2 border-deep-obsidian relative overflow-hidden shadow-[0_4px_30px_rgba(0,0,0,0.1)]">
+              {/* Add/Edit Question Form Card */}
+              <form onSubmit={handleAddOrUpdateQuestion} className="bg-[rgba(255,255,255,0.7)] backdrop-blur-xl p-6 md:p-8 rounded-2xl border-2 border-deep-obsidian relative overflow-hidden shadow-[0_4px_30px_rgba(0,0,0,0.1)]">
                 {/* Decorative blob */}
                 <div className="absolute -right-20 -top-20 w-64 h-64 bg-electric-blue/10 rounded-full blur-3xl z-0 pointer-events-none"></div>
                 
                 <div className="relative z-10 flex flex-col gap-6 md:gap-8">
                   <div className="flex justify-between items-center">
                     <h3 className="font-heading text-xl md:text-2xl font-bold flex items-center gap-3">
-                      <span className="w-10 h-10 rounded-full bg-electric-blue text-white flex items-center justify-center font-heading text-xl shadow-[2px_2px_0px_rgba(10,10,10,1)] border-2 border-deep-obsidian">+</span>
-                      Pertanyaan Baru
+                      <span className="w-10 h-10 rounded-full bg-electric-blue text-white flex items-center justify-center font-heading text-xl shadow-[2px_2px_0px_rgba(10,10,10,1)] border-2 border-deep-obsidian">
+                        {editingQuestionId ? <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 24 24" fill="currentColor"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34a.995.995 0 00-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg> : '+'}
+                      </span>
+                      {editingQuestionId ? 'Edit Pertanyaan' : 'Pertanyaan Baru'}
                     </h3>
+                    
+                    {editingQuestionId && (
+                      <button 
+                        type="button"
+                        onClick={handleDeleteQuestion}
+                        className="w-10 h-10 rounded-full border-2 border-deep-obsidian flex items-center justify-center hover:bg-error/10 hover:text-error hover:border-error transition-colors text-deep-obsidian"
+                        title="Hapus Soal"
+                      >
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 24 24" fill="currentColor"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg>
+                      </button>
+                    )}
                   </div>
 
                   <div>
@@ -277,45 +367,78 @@ export default function EditQuizSession({ params }: { params: Promise<{ sessionI
                   </div>
 
                   <div className="space-y-4">
-                    <label className="font-heading font-bold text-sm text-deep-obsidian block">Pilihan Jawaban (Pilih satu yang benar dengan ceklis)</label>
+                    <div className="flex justify-between items-center">
+                      <label className="font-heading font-bold text-sm text-deep-obsidian block">Pilihan Jawaban (Pilih satu yang benar dengan ceklis)</label>
+                      {options.length < 5 && (
+                        <button 
+                          type="button" 
+                          onClick={handleAddOption}
+                          className="text-electric-blue font-heading font-bold text-sm hover:underline"
+                        >
+                          + Tambah Opsi (Maks 5)
+                        </button>
+                      )}
+                    </div>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
                       {options.map((opt, idx) => (
-                        <div key={idx} className="relative group">
-                          {/* Glow effect for active/hover */}
-                          <div className={`absolute -inset-1 rounded-xl blur transition duration-300 ${opt.isCorrect ? 'bg-cyber-lime opacity-30' : 'bg-electric-blue opacity-0 group-hover:opacity-20'}`}></div>
-                          <div className={`relative flex items-center bg-white rounded-xl border-2 p-3 md:p-4 gap-3 md:gap-4 transition-all ${opt.isCorrect ? 'border-deep-obsidian shadow-[4px_4px_0px_0px_rgba(204,255,0,1)] border-[4px]' : 'border-deep-obsidian'}`}>
-                            <div className={`w-10 h-10 rounded-lg flex items-center justify-center font-heading text-xl flex-shrink-0 ${opt.isCorrect ? 'bg-cyber-lime text-deep-obsidian' : 'bg-deep-obsidian text-white'}`}>
-                              {String.fromCharCode(65 + idx)}
+                        <div key={idx} className="relative group flex gap-2 items-center">
+                          <div className="flex-1 relative">
+                            {/* Glow effect for active/hover */}
+                            <div className={`absolute -inset-1 rounded-xl blur transition duration-300 ${opt.isCorrect ? 'bg-cyber-lime opacity-30' : 'bg-electric-blue opacity-0 group-hover:opacity-20'}`}></div>
+                            <div className={`relative flex items-center bg-white rounded-xl border-2 p-3 md:p-4 gap-3 md:gap-4 transition-all ${opt.isCorrect ? 'border-deep-obsidian shadow-[4px_4px_0px_0px_rgba(204,255,0,1)] border-[4px]' : 'border-deep-obsidian'}`}>
+                              <div className={`w-10 h-10 rounded-lg flex items-center justify-center font-heading text-xl flex-shrink-0 ${opt.isCorrect ? 'bg-cyber-lime text-deep-obsidian' : 'bg-deep-obsidian text-white'}`}>
+                                {String.fromCharCode(65 + idx)}
+                              </div>
+                              <input 
+                                type="text"
+                                value={opt.text}
+                                onChange={(e) => handleOptionChange(idx, e.target.value)}
+                                required
+                                className="flex-1 border-none bg-transparent focus:ring-0 font-heading p-0 text-base md:text-lg focus:outline-none w-full"
+                                placeholder={`Opsi ${String.fromCharCode(65 + idx)}`}
+                              />
+                              <button 
+                                type="button"
+                                onClick={() => handleSetCorrect(idx)}
+                                className={`w-8 h-8 rounded-full flex items-center justify-center transition-colors flex-shrink-0 ${opt.isCorrect ? 'bg-cyber-lime border-2 border-deep-obsidian text-deep-obsidian' : 'border-2 border-surface-variant hover:border-deep-obsidian text-surface-variant hover:text-deep-obsidian'}`}
+                                title="Tandai sebagai Benar"
+                              >
+                                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 24 24" fill="currentColor"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
+                              </button>
                             </div>
-                            <input 
-                              type="text"
-                              value={opt.text}
-                              onChange={(e) => handleOptionChange(idx, e.target.value)}
-                              required
-                              className="flex-1 border-none bg-transparent focus:ring-0 font-heading p-0 text-base md:text-lg focus:outline-none"
-                              placeholder={`Opsi ${String.fromCharCode(65 + idx)}`}
-                            />
-                            <button 
-                              type="button"
-                              onClick={() => handleSetCorrect(idx)}
-                              className={`w-8 h-8 rounded-full flex items-center justify-center transition-colors flex-shrink-0 ${opt.isCorrect ? 'bg-cyber-lime border-2 border-deep-obsidian text-deep-obsidian' : 'border-2 border-surface-variant hover:border-deep-obsidian text-surface-variant hover:text-deep-obsidian'}`}
-                            >
-                              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 24 24" fill="currentColor"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
-                            </button>
                           </div>
+                          {options.length > 2 && (
+                            <button 
+                              type="button" 
+                              onClick={() => handleRemoveOption(idx)}
+                              className="w-10 h-10 flex items-center justify-center rounded-full border-2 border-transparent hover:border-error text-surface-variant hover:text-error hover:bg-error/10 transition-colors flex-shrink-0"
+                              title="Hapus Opsi"
+                            >
+                              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 24 24" fill="currentColor"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+                            </button>
+                          )}
                         </div>
                       ))}
                     </div>
                   </div>
 
-                  <div className="pt-4 flex justify-end">
+                  <div className="pt-4 flex flex-col-reverse md:flex-row justify-end gap-4">
+                    {editingQuestionId && (
+                      <button 
+                        type="button"
+                        onClick={resetForm}
+                        className="w-full md:w-auto px-8 py-4 rounded-full border-2 border-deep-obsidian font-heading font-bold hover:bg-surface-variant transition-colors text-center"
+                      >
+                        Batal Edit
+                      </button>
+                    )}
                     <button 
                       type="submit"
                       disabled={isSubmitting}
                       className="w-full md:w-auto px-8 py-4 rounded-full bg-deep-obsidian text-white font-heading font-bold flex items-center justify-center gap-2 hover:bg-electric-blue transition-colors duration-300 border-2 border-deep-obsidian disabled:opacity-50"
                     >
                       {isSubmitting ? <Loader2 className="w-5 h-5 animate-spin" /> : (
-                        <><svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 24 24" fill="currentColor"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg> Tambah Soal</>
+                        <><svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 24 24" fill="currentColor"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg> {editingQuestionId ? 'Simpan Perubahan' : 'Tambah Soal'}</>
                       )}
                     </button>
                   </div>

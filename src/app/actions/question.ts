@@ -46,6 +46,67 @@ export async function addQuestion(sessionId: string, questionContent: string, qu
   }
 }
 
+export async function updateQuestion(questionId: string, questionContent: string, questionOptions: {text: string, isCorrect: boolean}[], timeLimit: number = 1) {
+  try {
+    const session = await auth.api.getSession({
+        headers: await headers()
+    });
+    
+    if (!session || !session.user) {
+        return { success: false, error: "Unauthorized" };
+    }
+
+    // Update the question
+    await db.update(questions)
+      .set({
+        content: questionContent,
+        timeLimit: timeLimit,
+      })
+      .where(eq(questions.id, questionId));
+    
+    // Replace options: delete old, insert new
+    await db.delete(options).where(eq(options.questionId, questionId));
+    
+    if (questionOptions.length > 0) {
+        const optionsToInsert = questionOptions.map(opt => ({
+            id: randomUUID(),
+            questionId,
+            text: opt.text,
+            isCorrect: opt.isCorrect,
+        }));
+        
+        await db.insert(options).values(optionsToInsert);
+    }
+    
+    return { success: true };
+  } catch (error) {
+    console.error("Failed to update question:", error);
+    return { success: false, error: "Gagal mengubah pertanyaan" };
+  }
+}
+
+export async function deleteQuestion(questionId: string) {
+  try {
+    const session = await auth.api.getSession({
+        headers: await headers()
+    });
+    
+    if (!session || !session.user) {
+        return { success: false, error: "Unauthorized" };
+    }
+
+    // Delete options first (if not cascading)
+    await db.delete(options).where(eq(options.questionId, questionId));
+    // Delete question
+    await db.delete(questions).where(eq(questions.id, questionId));
+    
+    return { success: true };
+  } catch (error) {
+    console.error("Failed to delete question:", error);
+    return { success: false, error: "Gagal menghapus pertanyaan" };
+  }
+}
+
 export async function publishSession(sessionId: string) {
     try {
         await db.update(quizSessions)
