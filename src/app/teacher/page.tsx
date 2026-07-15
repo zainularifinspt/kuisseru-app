@@ -378,10 +378,10 @@ export default function TeacherPortal() {
                   <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-cyber-lime" viewBox="0 0 24 24" fill="currentColor"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>
                 </div>
                 <span className="bg-deep-obsidian text-cyber-lime font-heading font-bold px-3 py-1 rounded-full text-xs">
-                  {sessions.length} total
+                  0 total
                 </span>
               </div>
-              <h3 className="font-heading text-3xl font-bold text-deep-obsidian relative z-10">{sessions.length}</h3>
+              <h3 className="font-heading text-3xl font-bold text-deep-obsidian relative z-10">0</h3>
               <p className="font-sans text-on-surface-variant relative z-10">Total Sesi Kuis</p>
             </div>
 
@@ -393,10 +393,10 @@ export default function TeacherPortal() {
                   <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-mesh-pink" viewBox="0 0 24 24" fill="currentColor"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
                 </div>
                 <span className="bg-deep-obsidian text-mesh-pink font-heading font-bold px-3 py-1 rounded-full text-xs">
-                  {finishedSessions.length} selesai
+                  0 selesai
                 </span>
               </div>
-              <h3 className="font-heading text-3xl font-bold text-deep-obsidian relative z-10">{finishedSessions.length}</h3>
+              <h3 className="font-heading text-3xl font-bold text-deep-obsidian relative z-10">0</h3>
               <p className="font-sans text-on-surface-variant relative z-10">Kuis Selesai</p>
             </div>
           </div>
@@ -481,62 +481,7 @@ export default function TeacherPortal() {
         </div>
 
         {/* All Sessions / History Section */}
-        {(finishedSessions.length > 0 || draftSessions.length > 0) && (
-          <div className="mt-12">
-            <div className="flex items-center gap-4 mb-8 border-b-2 border-deep-obsidian pb-4">
-              <h3 className="font-heading text-xl font-bold text-deep-obsidian">Riwayat & Konsep</h3>
-              <span className="bg-deep-obsidian text-surface px-3 py-1 rounded-full font-heading font-bold text-sm">{finishedSessions.length + draftSessions.length}</span>
-            </div>
-            <div className="space-y-4">
-              {[...draftSessions, ...finishedSessions].map((session) => (
-                <motion.div 
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  key={session.id} 
-                  className="bg-surface rounded-xl border-2 border-deep-obsidian p-6 flex flex-col sm:flex-row sm:items-center justify-between gap-5 hover:-translate-y-0.5 transition-all duration-300 group cursor-pointer"
-                  onClick={() => {
-                    if (session.status === 'draft') {
-                      router.push(`/teacher/session/${session.id}/edit`);
-                    } else {
-                      router.push(`/teacher/session/${session.id}/grading`);
-                    }
-                  }}
-                >
-                  <div className="flex items-center gap-5 flex-1 min-w-0">
-                    <div className="w-14 h-14 rounded-xl bg-surface-container flex items-center justify-center group-hover:bg-electric-blue group-hover:text-white transition-all duration-300 border-2 border-deep-obsidian flex-shrink-0">
-                      {session.status === 'draft' ? (
-                        <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-outline group-hover:text-white" viewBox="0 0 24 24" fill="currentColor"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg>
-                      ) : (
-                        <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-outline group-hover:text-white" viewBox="0 0 24 24" fill="currentColor"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
-                      )}
-                    </div>
-                    <div className="min-w-0">
-                      <h3 className="font-heading font-bold text-deep-obsidian group-hover:text-electric-blue transition-colors text-lg truncate">
-                        {session.title}
-                      </h3>
-                      <p className="text-sm text-on-surface-variant font-sans">
-                        ID: {session.id.split('-')[0].toUpperCase()} • {new Date(session.createdAt).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })}
-                      </p>
-                    </div>
-                  </div>
-                  
-                  <div className="flex items-center gap-3 flex-shrink-0">
-                    {getStatusBadge(session.status)}
-                    {session.status !== 'draft' && (
-                      <button 
-                        onClick={(e) => { e.stopPropagation(); router.push(`/teacher/session/${session.id}/grading`); }}
-                        className="bg-surface-container text-on-surface-variant font-heading font-bold py-2 px-4 rounded-full flex items-center justify-center gap-2 border-2 border-deep-obsidian hover:bg-electric-blue hover:text-white transition-all text-sm"
-                      >
-                        <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 24 24" fill="currentColor"><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></svg>
-                        Penilaian
-                      </button>
-                    )}
-                  </div>
-                </motion.div>
-              ))}
-            </div>
-          </div>
-        )}
+
 
 
         </div>
