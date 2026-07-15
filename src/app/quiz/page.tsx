@@ -2,9 +2,11 @@
 
 import { useState, useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { Loader2 } from "lucide-react";
+import { Loader2, CheckCircle2, XCircle } from "lucide-react";
 import { QuestionCard } from "@/components/quiz/QuestionCard";
 import { AnimatePresence, motion } from "framer-motion";
+import 'katex/dist/katex.min.css';
+import Latex from "react-latex-next";
 
 type Question = {
   id: string;
@@ -36,6 +38,13 @@ function QuizContent() {
   const [forceSubmit, setForceSubmit] = useState(false);
   const [timeRemaining, setTimeRemaining] = useState(60);
   const [timeLimit, setTimeLimit] = useState(60);
+  
+  const [studentAnswers, setStudentAnswers] = useState<{
+    questionId: string;
+    selectedOptionId: string | null;
+    correctOptionId: string | null;
+    isCorrect: boolean;
+  }[]>([]);
 
   useEffect(() => {
     if (!sessionId || !participantId) {
@@ -99,15 +108,24 @@ function QuizContent() {
   }, [isLoading, isFinished, questions.length, currentQuestionIndex, timeRemaining]);
 
   const handleAnswerSubmit = async (optionId: string, _isCorrect: boolean) => {
+    let currentAnswer = {
+      questionId: questions[currentQuestionIndex].id,
+      selectedOptionId: optionId || null,
+      correctOptionId: null as string | null,
+      isCorrect: false
+    };
+
     try {
       const res = await fetch(`/api/quiz-sessions/${sessionId}/submit`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ questionId: questions[currentQuestionIndex].id, optionId, participantId })
+        body: JSON.stringify({ questionId: questions[currentQuestionIndex].id, optionId: optionId || null, participantId })
       });
       
       if (res.ok) {
         const data = await res.json();
+        currentAnswer.isCorrect = data.isCorrect;
+        currentAnswer.correctOptionId = data.correctOptionId;
         if (data.isCorrect) {
           setCurrentScore(data.newScore);
         }
@@ -115,6 +133,8 @@ function QuizContent() {
     } catch (e) {
       console.error("Failed to submit answer", e);
     }
+
+    setStudentAnswers(prev => [...prev, currentAnswer]);
 
     setTimeout(() => {
       if (currentQuestionIndex < questions.length - 1) {
@@ -147,7 +167,7 @@ function QuizContent() {
 
   if (isFinished) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-[100dvh] w-full max-w-lg mx-auto p-4 z-10">
+      <div className="flex flex-col items-center justify-center min-h-[100dvh] w-full max-w-4xl mx-auto p-4 z-10 py-12">
         <motion.div
           key="finished"
           initial={{ scale: 0.8, opacity: 0 }}
@@ -163,10 +183,66 @@ function QuizContent() {
           <p className="font-sans text-xl text-on-surface-variant mb-8">
             Skor Akhir Kamu: <span className="font-heading font-bold text-electric-blue text-2xl ml-2">{currentScore} pts</span>
           </p>
-          <div className="bg-surface-container-high border-2 border-deep-obsidian rounded-2xl p-6 text-lg font-medium text-deep-obsidian">
-            Silakan tunggu instruksi dari guru.
+          <div className="bg-surface-container-high border-2 border-deep-obsidian rounded-2xl p-6 text-lg font-medium text-deep-obsidian mb-8">
+            Silakan tunggu instruksi dari guru, atau lihat ringkasan jawabanmu di bawah.
           </div>
         </motion.div>
+
+        {/* Review Section */}
+        <div className="w-full space-y-6 pb-20">
+          <h3 className="font-heading text-2xl font-bold text-deep-obsidian mb-6 text-center bg-surface-container-high py-3 rounded-xl border-2 border-deep-obsidian">Ringkasan Jawaban</h3>
+          {questions.map((q, idx) => {
+            const answerRecord = studentAnswers.find(a => a.questionId === q.id);
+            const isCorrect = answerRecord?.isCorrect;
+            
+            return (
+              <div key={q.id} className={`bg-surface border-2 ${isCorrect ? 'border-cyber-lime shadow-[0_4px_15px_rgba(204,255,0,0.2)]' : 'border-error shadow-[0_4px_15px_rgba(255,0,0,0.1)]'} rounded-xl p-6 relative`}>
+                <div className="absolute top-4 right-4">
+                  {isCorrect ? (
+                    <CheckCircle2 className="w-8 h-8 text-cyber-lime" />
+                  ) : (
+                    <XCircle className="w-8 h-8 text-error" />
+                  )}
+                </div>
+                <h4 className="font-heading text-lg font-bold text-deep-obsidian mb-6 pr-10">
+                  <span className="text-on-surface-variant mr-2">{idx + 1}.</span>
+                  <Latex>{q.content}</Latex>
+                </h4>
+                
+                <div className="space-y-3">
+                  {q.options.map(opt => {
+                    const isSelected = answerRecord?.selectedOptionId === opt.id;
+                    const isActuallyCorrect = answerRecord?.correctOptionId === opt.id;
+                    
+                    let bgClass = "bg-surface-container-lowest border-outline/30";
+                    let textClass = "text-on-surface-variant";
+                    
+                    if (isActuallyCorrect) {
+                      bgClass = "bg-cyber-lime/20 border-cyber-lime text-deep-obsidian";
+                      textClass = "text-deep-obsidian font-bold";
+                    } else if (isSelected && !isActuallyCorrect) {
+                      bgClass = "bg-error/10 border-error text-error";
+                      textClass = "text-error font-bold";
+                    }
+
+                    return (
+                      <div key={opt.id} className={`p-4 rounded-lg border-2 ${bgClass} transition-colors flex items-center`}>
+                        <span className={`flex-1 ${textClass}`}>
+                          <Latex>{opt.text}</Latex>
+                        </span>
+                        {isActuallyCorrect && <CheckCircle2 className="w-5 h-5 text-cyber-lime ml-2" />}
+                        {isSelected && !isActuallyCorrect && <XCircle className="w-5 h-5 text-error ml-2" />}
+                      </div>
+                    );
+                  })}
+                  {!answerRecord?.selectedOptionId && (
+                     <p className="text-error text-sm font-semibold mt-4 text-center border-t-2 border-error/20 pt-2">Waktu habis / Tidak dijawab</p>
+                  )}
+                </div>
+              </div>
+            );
+          })}
+        </div>
       </div>
     );
   }

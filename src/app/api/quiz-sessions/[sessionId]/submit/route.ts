@@ -14,20 +14,23 @@ export async function POST(
     const body = await request.json();
     const { questionId, optionId, participantId } = body;
 
-    if (!sessionId || !questionId || !optionId || !participantId) {
+    if (!sessionId || !questionId || !participantId) {
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
     }
 
-    // Check if the option is correct
-    const selectedOption = await db.query.options.findFirst({
-      where: eq(options.id, optionId),
-    });
+    let isCorrect = false;
+    
+    // Check if the option is correct if provided
+    if (optionId) {
+      const selectedOption = await db.query.options.findFirst({
+        where: eq(options.id, optionId),
+      });
 
-    if (!selectedOption) {
-      return NextResponse.json({ error: 'Option not found' }, { status: 404 });
+      if (selectedOption) {
+        isCorrect = selectedOption.isCorrect;
+      }
     }
 
-    const isCorrect = selectedOption.isCorrect;
     const pointsAwarded = isCorrect ? 100 : 0; // Fixed 100 points for correct answer for now
 
     // Update participant score
@@ -49,15 +52,17 @@ export async function POST(
       newScore = p?.score || 0;
     }
 
-    // Insert the answer into the database
-    await db.insert(answers).values({
-      id: randomUUID(),
-      participantId,
-      questionId,
-      optionId,
-      isCorrect: isCorrect,
-      answeredAt: new Date(),
-    });
+    // Insert the answer into the database (if they actually answered)
+    if (optionId) {
+      await db.insert(answers).values({
+        id: randomUUID(),
+        participantId,
+        questionId,
+        optionId,
+        isCorrect: isCorrect,
+        answeredAt: new Date(),
+      });
+    }
 
     // Trigger Pusher event for real-time leaderboard and stats updates
     try {
@@ -71,10 +76,16 @@ export async function POST(
       console.error('Failed to trigger pusher event', e);
     }
 
+    // Fetch the correct option for this question to send back to client for review mode
+    const correctOption = await db.query.options.findFirst({
+      where: (opts, { eq, and }) => and(eq(opts.questionId, questionId), eq(opts.isCorrect, true))
+    });
+
     return NextResponse.json({ 
       isCorrect, 
       newScore,
-      pointsAwarded
+      pointsAwarded,
+      correctOptionId: correctOption?.id || null
     });
   } catch (error) {
     console.error('Error submitting answer:', error);
