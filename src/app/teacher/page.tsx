@@ -2,8 +2,8 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { createNewSession, getSessions } from '@/app/actions/session';
-import { Loader2, Shield, GraduationCap, Hand } from 'lucide-react';
+import { createNewSession, getSessions, deleteSession } from '@/app/actions/session';
+import { Loader2, Shield, GraduationCap, Hand, Trash2, ExternalLink } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { signIn, signOut, useSession } from '@/lib/auth-client';
 import { updateProfile } from '@/app/actions/user';
@@ -79,6 +79,17 @@ export default function TeacherPortal() {
     } else {
       alert("Gagal membuat sesi");
       setIsLoading(false);
+    }
+  };
+
+  const handleDeleteSession = async (sessionId: string) => {
+    if (confirm("Apakah Anda yakin ingin menghapus sesi kuis ini?")) {
+      const result = await deleteSession(sessionId);
+      if (result.success) {
+        if (user?.id) fetchDashboardData(user.id);
+      } else {
+        alert("Gagal menghapus sesi: " + (result.error || "Unknown error"));
+      }
     }
   };
 
@@ -481,9 +492,65 @@ export default function TeacherPortal() {
         </div>
 
         {/* All Sessions / History Section */}
+        <div className="mt-12">
+          <div className="flex items-center gap-4 mb-8 border-b-2 border-deep-obsidian pb-4">
+            <h3 className="font-heading text-xl font-bold text-deep-obsidian">Histori Kuis</h3>
+            <span className="bg-deep-obsidian text-surface px-3 py-1 rounded-full font-heading font-bold text-sm">
+              {finishedSessions.length + draftSessions.length}
+            </span>
+          </div>
 
-
-
+          <div className="bg-surface rounded-xl border-2 border-deep-obsidian overflow-hidden">
+            <div className="overflow-x-auto">
+              <table className="w-full text-left border-collapse">
+                <thead>
+                  <tr className="bg-surface-container border-b-2 border-deep-obsidian">
+                    <th className="py-4 px-6 font-heading font-bold text-deep-obsidian">Judul Kuis</th>
+                    <th className="py-4 px-6 font-heading font-bold text-deep-obsidian">Status</th>
+                    <th className="py-4 px-6 font-heading font-bold text-deep-obsidian">Tanggal</th>
+                    <th className="py-4 px-6 font-heading font-bold text-deep-obsidian text-right">Aksi</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {[...finishedSessions, ...draftSessions].map((session, index) => (
+                    <tr key={session.id} className={index !== 0 ? 'border-t border-outline/20 hover:bg-surface-container-lowest transition-colors' : 'hover:bg-surface-container-lowest transition-colors'}>
+                      <td className="py-4 px-6 font-sans text-on-surface font-medium">{session.title}</td>
+                      <td className="py-4 px-6">{getStatusBadge(session.status)}</td>
+                      <td className="py-4 px-6 font-sans text-on-surface-variant text-sm">
+                        {new Date(session.createdAt).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })}
+                      </td>
+                      <td className="py-4 px-6 text-right">
+                        <div className="flex justify-end gap-2">
+                          <button 
+                            onClick={() => router.push(`/teacher/session/${session.id}/dashboard`)}
+                            className="p-2 text-on-surface-variant hover:text-electric-blue hover:bg-electric-blue/10 rounded-lg transition-colors"
+                            title="Buka Kuis"
+                          >
+                            <ExternalLink className="w-5 h-5" />
+                          </button>
+                          <button 
+                            onClick={() => handleDeleteSession(session.id)}
+                            className="p-2 text-on-surface-variant hover:text-error hover:bg-error/10 rounded-lg transition-colors"
+                            title="Hapus Kuis"
+                          >
+                            <Trash2 className="w-5 h-5" />
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                  {[...finishedSessions, ...draftSessions].length === 0 && (
+                    <tr>
+                      <td colSpan={4} className="py-8 px-6 text-center text-on-surface-variant font-sans">
+                        Belum ada histori kuis.
+                      </td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
         </div>
       </main>
 

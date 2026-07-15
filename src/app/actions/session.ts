@@ -1,8 +1,8 @@
 'use server';
 
 import { db } from "@/db";
-import { quizSessions } from "@/db/schema";
-import { eq } from 'drizzle-orm';
+import { quizSessions, questions, options, participants, answers } from "@/db/schema";
+import { eq, inArray } from 'drizzle-orm';
 import { randomUUID } from 'crypto';
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
@@ -67,5 +67,49 @@ export async function updateSessionTitle(sessionId: string, title: string) {
   } catch (error) {
     console.error("Failed to update session title:", error);
     return { success: false, error: "Gagal memperbarui judul sesi" };
+  }
+}
+
+export async function deleteSession(sessionId: string) {
+  try {
+    const session = await auth.api.getSession({
+        headers: await headers()
+    });
+    
+    if (!session || !session.user) {
+        return { success: false, error: "Unauthorized" };
+    }
+    
+    // Ensure the teacher deleting the session owns it
+    const sessionToDelete = await db.query.quizSessions.findFirst({
+        where: (sessions, { eq }) => eq(sessions.id, sessionId),
+        with: {
+            questions: true,
+            participants: true
+        }
+    });
+
+    if (!sessionToDelete || sessionToDelete.teacherId !== session.user.id) {
+        return { success: false, error: "Unauthorized or session not found" };
+    }
+
+    const questionIds = sessionToDelete.questions.map((q: any) => q.id);
+    const participantIds = sessionToDelete.participants.map((p: any) => p.id);
+
+    if (participantIds.length > 0) {
+        await db.delete(answers).where(inArray(answers.participantId, participantIds));
+        await db.delete(participants).where(inArray(participants.id, participantIds));
+    }
+
+    if (questionIds.length > 0) {
+        await db.delete(options).where(inArray(options.questionId, questionIds));
+        await db.delete(questions).where(inArray(questions.id, questionIds));
+    }
+
+    await db.delete(quizSessions).where(eq(quizSessions.id, sessionId));
+    return { success: true };
+  } catch (error) {
+    console.error("Failed to delete session:", error);
+    return { success: false, error: "Gagal menghapus sesi" };
   }
 }
