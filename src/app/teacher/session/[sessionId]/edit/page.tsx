@@ -8,6 +8,7 @@ import 'katex/dist/katex.min.css';
 import Latex from 'react-latex-next';
 import { Loader2 } from 'lucide-react';
 import Link from 'next/link';
+import { signOut, useSession } from '@/lib/auth-client';
 
 export default function EditQuizSession({ params }: { params: Promise<{ sessionId: string }> }) {
   const router = useRouter();
@@ -15,6 +16,14 @@ export default function EditQuizSession({ params }: { params: Promise<{ sessionI
   
   const [questions, setQuestions] = useState<any[]>([]);
   const [isFetching, setIsFetching] = useState(true);
+  
+  const { data: sessionData } = useSession();
+  const user = sessionData?.user;
+
+  const handleLogout = async () => {
+    await signOut();
+    router.push('/');
+  };
   
   // Title & Settings state
   const [sessionTitle, setSessionTitle] = useState('Memuat judul...');
@@ -227,6 +236,24 @@ export default function EditQuizSession({ params }: { params: Promise<{ sessionI
             </Link>
           </li>
         </ul>
+
+        <div className="mt-auto">
+          <div className="bg-surface-variant/10 rounded-xl p-4 border border-surface-variant/20">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-full bg-electric-blue flex items-center justify-center text-white font-heading font-bold border-2 border-cyber-lime">
+                {user?.name?.substring(0,1).toUpperCase() || 'U'}
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="font-heading font-bold text-sm text-surface-variant truncate">{user?.name || 'Loading...'}</p>
+                <p className="font-sans text-xs text-surface-variant/70 truncate">{user?.email || 'Loading...'}</p>
+              </div>
+            </div>
+          </div>
+          <button onClick={handleLogout} className="flex items-center gap-3 px-4 py-3 mt-3 rounded-lg text-red-400 bg-red-400/10 font-heading font-bold text-sm hover:bg-red-500 hover:text-white transition-colors duration-200 w-full cursor-pointer">
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 24 24" fill="currentColor"><path d="M17 7l-1.41 1.41L18.17 11H8v2h10.17l-2.58 2.58L17 17l5-5zM4 5h8V3H4c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h8v-2H4V5z"/></svg>
+            Keluar
+          </button>
+        </div>
       </nav>
 
       {/* Main Content Area */}
