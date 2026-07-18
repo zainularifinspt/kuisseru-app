@@ -204,12 +204,12 @@ export default function TeacherPortal() {
                   </div>
                 )}
                 <div className="space-y-2">
-                  <label className="font-heading font-semibold text-sm text-on-surface-variant px-2 uppercase tracking-wide">Email Akademik</label>
+                  <label className="font-heading font-semibold text-sm text-on-surface-variant px-2 uppercase tracking-wide">EMAIL</label>
                   <input 
                     type="email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    placeholder="nama@ulm.ac.id"
+                    placeholder="nama@email.com"
                     required
                     className="w-full bg-surface-container-lowest border-2 border-deep-obsidian rounded-full px-6 py-4 font-heading text-lg font-medium text-on-surface placeholder:text-outline focus:outline-none focus:border-electric-blue focus:ring-4 focus:ring-primary-fixed transition-all"
                   />
