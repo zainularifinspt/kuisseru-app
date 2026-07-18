@@ -169,6 +169,16 @@ export default function TeacherDashboard() {
           </div>
           
           <div className="flex flex-wrap items-center gap-3">
+            {quizStatus === 'menunggu' && (
+              <button 
+                onClick={() => router.push(`/teacher/session/${sessionId}/edit`)}
+                className="bg-surface-container text-deep-obsidian font-heading font-bold py-2 px-4 rounded-full flex items-center justify-center gap-2 border-2 border-deep-obsidian hover:bg-surface-container-highest transition-all text-sm cursor-pointer"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 24 24" fill="currentColor"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34a.995.995 0 00-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg>
+                Edit Kuis
+              </button>
+            )}
+
             <button 
               onClick={() => window.open(`/teacher/session/${sessionId}/qr`, '_blank')}
               className="bg-surface-container text-deep-obsidian font-heading font-bold py-2 px-4 rounded-full flex items-center justify-center gap-2 border-2 border-deep-obsidian hover:bg-surface-container-highest transition-all text-sm cursor-pointer"

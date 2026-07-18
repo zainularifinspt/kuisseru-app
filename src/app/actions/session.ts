@@ -51,7 +51,7 @@ export async function getSessions(teacherId: string = "teacher-1") {
   }
 }
 
-export async function updateSessionTitle(sessionId: string, title: string) {
+export async function updateSessionSettings(sessionId: string, title: string, useWaitingRoom: boolean) {
   try {
     const session = await auth.api.getSession({
         headers: await headers()
@@ -62,11 +62,11 @@ export async function updateSessionTitle(sessionId: string, title: string) {
     }
     
     // We should probably check if the user owns the session, but we can assume so for now.
-    await db.update(quizSessions).set({ title }).where(eq(quizSessions.id, sessionId));
+    await db.update(quizSessions).set({ title, useWaitingRoom }).where(eq(quizSessions.id, sessionId));
     return { success: true };
   } catch (error) {
-    console.error("Failed to update session title:", error);
-    return { success: false, error: "Gagal memperbarui judul sesi" };
+    console.error("Failed to update session settings:", error);
+    return { success: false, error: "Gagal memperbarui pengaturan sesi" };
   }
 }
 

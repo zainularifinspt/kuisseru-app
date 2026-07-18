@@ -109,8 +109,16 @@ export async function deleteQuestion(questionId: string) {
 
 export async function publishSession(sessionId: string) {
     try {
+        const session = await db.query.quizSessions.findFirst({
+            where: eq(quizSessions.id, sessionId)
+        });
+        
+        if (!session) return { success: false };
+        
+        const newStatus = session.useWaitingRoom ? 'waiting' : 'active';
+        
         await db.update(quizSessions)
-            .set({ status: 'waiting' })
+            .set({ status: newStatus })
             .where(eq(quizSessions.id, sessionId));
             
         return { success: true };

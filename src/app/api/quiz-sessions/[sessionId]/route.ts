@@ -27,6 +27,7 @@ export async function GET(
         id: session.id,
         title: session.title,
         status: session.status,
+        useWaitingRoom: session.useWaitingRoom,
         joinCode: session.joinCode,
         createdAt: session.createdAt,
         updatedAt: session.updatedAt,

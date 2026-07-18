@@ -3,7 +3,7 @@
 import { useState, useEffect, use } from 'react';
 import { useRouter } from 'next/navigation';
 import { addQuestion, publishSession, getSessionQuestions, updateQuestion, deleteQuestion } from '@/app/actions/question';
-import { updateSessionTitle } from '@/app/actions/session';
+import { updateSessionSettings } from '@/app/actions/session';
 import 'katex/dist/katex.min.css';
 import Latex from 'react-latex-next';
 import { Loader2 } from 'lucide-react';
@@ -16,10 +16,11 @@ export default function EditQuizSession({ params }: { params: Promise<{ sessionI
   const [questions, setQuestions] = useState<any[]>([]);
   const [isFetching, setIsFetching] = useState(true);
   
-  // Title state
+  // Title & Settings state
   const [sessionTitle, setSessionTitle] = useState('Memuat judul...');
-  const [isSavingTitle, setIsSavingTitle] = useState(false);
-  const [isTitleSaved, setIsTitleSaved] = useState(false);
+  const [useWaitingRoom, setUseWaitingRoom] = useState(true);
+  const [isSavingSettings, setIsSavingSettings] = useState(false);
+  const [isSettingsSaved, setIsSettingsSaved] = useState(false);
 
   // Question state
   const [editingQuestionId, setEditingQuestionId] = useState<string | null>(null);
@@ -47,6 +48,7 @@ export default function EditQuizSession({ params }: { params: Promise<{ sessionI
       if (res.ok) {
         const data = await res.json();
         setSessionTitle(data.session.title);
+        setUseWaitingRoom(data.session.useWaitingRoom ?? true);
       }
     } catch (e) {
       console.error(e);
@@ -62,16 +64,16 @@ export default function EditQuizSession({ params }: { params: Promise<{ sessionI
     setIsFetching(false);
   };
 
-  const handleSaveTitle = async () => {
-    setIsSavingTitle(true);
-    const res = await updateSessionTitle(sessionId, sessionTitle);
+  const handleSaveSettings = async () => {
+    setIsSavingSettings(true);
+    const res = await updateSessionSettings(sessionId, sessionTitle, useWaitingRoom);
     if (res.success) {
-      setIsTitleSaved(true);
-      setTimeout(() => setIsTitleSaved(false), 2000);
+      setIsSettingsSaved(true);
+      setTimeout(() => setIsSettingsSaved(false), 2000);
     } else {
-      alert("Gagal menyimpan judul");
+      alert("Gagal menyimpan pengaturan kuis");
     }
-    setIsSavingTitle(false);
+    setIsSavingSettings(false);
   };
 
   const resetForm = () => {
@@ -294,22 +296,31 @@ export default function EditQuizSession({ params }: { params: Promise<{ sessionI
               <div className="bg-[rgba(255,255,255,0.7)] backdrop-blur-xl p-6 md:p-8 rounded-2xl border-2 border-deep-obsidian shadow-[0_4px_30px_rgba(0,0,0,0.1)]">
                 <div className="flex flex-col gap-6">
                   <div>
-                    <label className="font-heading font-bold text-sm text-deep-obsidian mb-2 block uppercase tracking-wide">Judul Kuis</label>
-                    <div className="flex flex-col sm:flex-row gap-4">
+                    <label className="font-heading font-bold text-sm text-deep-obsidian mb-2 block uppercase tracking-wide">Pengaturan Kuis</label>
+                    <div className="flex flex-col sm:flex-row gap-4 mb-4">
                       <input 
                         type="text" 
                         value={sessionTitle}
                         onChange={(e) => setSessionTitle(e.target.value)}
+                        placeholder="Judul Kuis"
                         className="flex-1 bg-white rounded-full border-2 border-deep-obsidian px-6 py-4 font-heading text-xl md:text-2xl focus:border-electric-blue focus:ring-4 focus:ring-primary-fixed focus:outline-none shadow-[4px_4px_0px_0px_rgba(10,10,10,1)] transition-all" 
                       />
-                      <button 
-                        onClick={handleSaveTitle}
-                        disabled={isSavingTitle}
-                        className="bg-deep-obsidian text-cyber-lime font-heading font-bold px-8 py-4 rounded-full hover:bg-inverse-surface transition-colors whitespace-nowrap border-2 border-deep-obsidian disabled:opacity-50"
-                      >
-                        {isSavingTitle ? <Loader2 className="w-5 h-5 animate-spin mx-auto" /> : isTitleSaved ? "Tersimpan!" : "Simpan Judul"}
-                      </button>
                     </div>
+                    <div className="flex items-center gap-3 mb-6">
+                      <label className="relative inline-flex items-center cursor-pointer">
+                        <input type="checkbox" className="sr-only peer" checked={useWaitingRoom} onChange={(e) => setUseWaitingRoom(e.target.checked)} />
+                        <div className="w-11 h-6 bg-surface-variant peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-electric-blue"></div>
+                      </label>
+                      <span className="font-sans text-sm font-bold text-deep-obsidian">Gunakan Ruang Tunggu (Siswa menunggu Anda menekan Mulai)</span>
+                    </div>
+                    <button 
+                      type="button"
+                      onClick={handleSaveSettings}
+                      disabled={isSavingSettings}
+                      className="bg-deep-obsidian text-cyber-lime font-heading font-bold px-8 py-4 rounded-full hover:bg-inverse-surface transition-colors whitespace-nowrap border-2 border-deep-obsidian disabled:opacity-50"
+                    >
+                      {isSavingSettings ? <Loader2 className="w-5 h-5 animate-spin mx-auto" /> : isSettingsSaved ? "Tersimpan!" : "Simpan Pengaturan"}
+                    </button>
                   </div>
                 </div>
               </div>
