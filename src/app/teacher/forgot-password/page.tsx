@@ -19,6 +19,7 @@ export default function ForgotPasswordPage() {
     setMessage('');
 
     try {
+      // @ts-ignore: better-auth type definitions for forgetPassword may be incomplete
       const res = await authClient.forgetPassword({
         email,
         redirectTo: "/teacher/reset-password",
