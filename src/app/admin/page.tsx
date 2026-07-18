@@ -28,13 +28,13 @@ export default function AdminPortal() {
   const [isDataLoading, setIsDataLoading] = useState(false);
 
   // Profile Edit
-  const [isEditProfileOpen, setIsEditProfileOpen] = useState(false);
+  const [activeTab, setActiveTab] = useState<'dashboard' | 'tambah-guru' | 'pengaturan'>('dashboard');
+  // Profile Edit
   const [newName, setNewName] = useState('');
   const [isProfileUpdating, setIsProfileUpdating] = useState(false);
 
   // Teacher Creation Modal
-  const [isCreateTeacherOpen, setIsCreateTeacherOpen] = useState(false);
-  const [newTeacherName, setNewTeacherName] = useState('');
+    const [newTeacherName, setNewTeacherName] = useState('');
   const [newTeacherEmail, setNewTeacherEmail] = useState('');
   const [newTeacherPassword, setNewTeacherPassword] = useState('');
   const [isCreatingTeacher, setIsCreatingTeacher] = useState(false);
@@ -101,7 +101,7 @@ export default function AdminPortal() {
     const res = await updateProfile(newName);
     if (res.success) {
       alert("Profil berhasil diperbarui!");
-      setIsEditProfileOpen(false);
+      setActiveTab('dashboard');
       window.location.reload();
     } else {
       alert("Gagal memperbarui profil: " + res.error);
@@ -127,7 +127,7 @@ export default function AdminPortal() {
       setNewTeacherPassword('');
       fetchAdminData();
       setTimeout(() => {
-        setIsCreateTeacherOpen(false);
+        setActiveTab('dashboard');
         setCreateMessage('');
       }, 2000);
     } else {
@@ -234,73 +234,6 @@ export default function AdminPortal() {
 
   return (
     <div className="min-h-[100dvh] bg-background text-on-background font-sans antialiased overflow-x-hidden">
-      {/* Profile Edit Modal */}
-      <AnimatePresence>
-        {isEditProfileOpen && (
-          <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-deep-obsidian/60 backdrop-blur-md">
-            <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }} className="w-full max-w-md bg-surface-container-lowest border-2 border-deep-obsidian rounded-xl p-8">
-              <h2 className="font-heading text-xl font-bold text-deep-obsidian mb-6">Pengaturan Profil</h2>
-              <form onSubmit={handleUpdateProfile} className="space-y-5">
-                <div className="space-y-2">
-                  <label className="font-heading font-semibold text-sm text-on-surface-variant">Nama Lengkap</label>
-                  <input value={newName} onChange={(e) => setNewName(e.target.value)} className="w-full bg-surface-container-lowest border-2 border-deep-obsidian rounded-xl px-4 py-3 font-heading text-on-surface focus:outline-none focus:border-electric-blue focus:ring-4 focus:ring-primary-fixed transition-all" required />
-                </div>
-                <div className="flex gap-3 pt-2">
-                  <button type="button" onClick={() => setIsEditProfileOpen(false)} className="flex-1 py-3 rounded-xl border-2 border-deep-obsidian font-heading font-bold text-deep-obsidian hover:bg-surface-container-highest transition-colors">Batal</button>
-                  <button type="submit" disabled={isProfileUpdating} className="flex-1 py-3 rounded-xl bg-electric-blue text-on-primary font-heading font-bold border-2 border-deep-obsidian hover:shadow-[0_0_15px_rgba(0,82,255,0.3)] transition-all">
-                    {isProfileUpdating ? <Loader2 className="w-5 h-5 animate-spin mx-auto" /> : 'Simpan'}
-                  </button>
-                </div>
-              </form>
-            </motion.div>
-          </div>
-        )}
-      </AnimatePresence>
-
-      {/* Create Teacher Modal */}
-      <AnimatePresence>
-        {isCreateTeacherOpen && (
-          <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-deep-obsidian/60 backdrop-blur-md">
-            <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }} className="w-full max-w-md bg-surface-container-lowest border-2 border-deep-obsidian rounded-xl p-8">
-              <div className="flex items-center gap-3 mb-6">
-                <div className="w-10 h-10 rounded-xl bg-mesh-pink flex items-center justify-center border-2 border-deep-obsidian">
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-on-primary" viewBox="0 0 24 24" fill="currentColor"><path d="M15 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm-9-2V7H4v3H1v2h3v3h2v-3h3v-2H6zm9 4c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
-                </div>
-                <h2 className="font-heading text-xl font-bold text-deep-obsidian">Tambah Guru Baru</h2>
-              </div>
-              <form onSubmit={handleCreateTeacher} className="space-y-5">
-                <div className="space-y-2">
-                  <label className="font-heading font-semibold text-sm text-on-surface-variant">Nama Lengkap</label>
-                  <input value={newTeacherName} onChange={(e) => setNewTeacherName(e.target.value)} className="w-full bg-surface-container-lowest border-2 border-deep-obsidian rounded-xl px-4 py-3 font-heading text-on-surface focus:outline-none focus:border-electric-blue focus:ring-4 focus:ring-primary-fixed transition-all" required />
-                </div>
-                <div className="space-y-2">
-                  <label className="font-heading font-semibold text-sm text-on-surface-variant">Email (Sebagai Username)</label>
-                  <input type="email" value={newTeacherEmail} onChange={(e) => setNewTeacherEmail(e.target.value)} className="w-full bg-surface-container-lowest border-2 border-deep-obsidian rounded-xl px-4 py-3 font-heading text-on-surface focus:outline-none focus:border-electric-blue focus:ring-4 focus:ring-primary-fixed transition-all" required />
-                </div>
-                <div className="space-y-2">
-                  <label className="font-heading font-semibold text-sm text-on-surface-variant">Kata Sandi Default</label>
-                  <input type="password" value={newTeacherPassword} onChange={(e) => setNewTeacherPassword(e.target.value)} minLength={8} className="w-full bg-surface-container-lowest border-2 border-deep-obsidian rounded-xl px-4 py-3 font-heading text-on-surface focus:outline-none focus:border-electric-blue focus:ring-4 focus:ring-primary-fixed transition-all" required />
-                  <p className="text-xs text-on-surface-variant/70 font-sans">Minimal 8 karakter.</p>
-                </div>
-                
-                {createMessage && (
-                  <div className={`p-3 rounded-lg border-2 font-heading font-bold text-sm ${createMessage.includes('✅') ? 'bg-[#E8F5E9] border-[#4CAF50] text-[#2E7D32]' : 'bg-error-container border-error text-error'}`}>
-                    {createMessage}
-                  </div>
-                )}
-
-                <div className="flex gap-3 pt-2">
-                  <button type="button" onClick={() => setIsCreateTeacherOpen(false)} className="flex-1 py-3 rounded-xl border-2 border-deep-obsidian font-heading font-bold text-deep-obsidian hover:bg-surface-container-highest transition-colors">Batal</button>
-                  <button type="submit" disabled={isCreatingTeacher} className="flex-1 py-3 rounded-xl bg-electric-blue text-on-primary font-heading font-bold border-2 border-deep-obsidian hover:shadow-[0_0_15px_rgba(0,82,255,0.3)] transition-all">
-                    {isCreatingTeacher ? <Loader2 className="w-5 h-5 animate-spin mx-auto" /> : 'Buat Akun'}
-                  </button>
-                </div>
-              </form>
-            </motion.div>
-          </div>
-        )}
-      </AnimatePresence>
-
       {/* Mobile Sidebar Overlay */}
       {isMobileSidebarOpen && (
         <div className="fixed inset-0 z-[55] bg-deep-obsidian/50 md:hidden" onClick={() => setIsMobileSidebarOpen(false)} />
@@ -318,19 +251,19 @@ export default function AdminPortal() {
 
         <ul className="flex flex-col gap-2 flex-grow">
           <li>
-            <Link href="/admin" className="flex items-center gap-4 px-4 py-3 rounded-lg text-cyber-lime font-heading font-bold text-sm border-l-4 border-cyber-lime bg-white/10 transition-colors duration-200 cursor-pointer">
+            <button onClick={() => setActiveTab('dashboard')} className={`flex items-center gap-4 px-4 py-3 rounded-lg font-heading font-bold text-sm transition-colors duration-200 cursor-pointer w-full text-left ${activeTab === 'dashboard' ? 'text-cyber-lime border-l-4 border-cyber-lime bg-white/10' : 'text-surface-variant/70 hover:bg-white/5 hover:text-surface-variant'}`}>
               <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 24 24" fill="currentColor"><path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z"/></svg>
               Dashboard
-            </Link>
+            </button>
           </li>
           <li>
-            <button onClick={() => setIsCreateTeacherOpen(true)} className="flex items-center gap-4 px-4 py-3 rounded-lg text-surface-variant/70 font-heading font-bold text-sm hover:bg-white/5 hover:text-surface-variant transition-colors duration-200 w-full text-left cursor-pointer">
+            <button onClick={() => setActiveTab('tambah-guru')} className={`flex items-center gap-4 px-4 py-3 rounded-lg font-heading font-bold text-sm transition-colors duration-200 cursor-pointer w-full text-left ${activeTab === 'tambah-guru' ? 'text-cyber-lime border-l-4 border-cyber-lime bg-white/10' : 'text-surface-variant/70 hover:bg-white/5 hover:text-surface-variant'}`}>
               <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 24 24" fill="currentColor"><path d="M15 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm-9-2V7H4v3H1v2h3v3h2v-3h3v-2H6zm9 4c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
               Tambah Guru
             </button>
           </li>
           <li>
-            <button onClick={() => setIsEditProfileOpen(true)} className="flex items-center gap-4 px-4 py-3 rounded-lg text-surface-variant/70 font-heading font-bold text-sm hover:bg-white/5 hover:text-surface-variant transition-colors duration-200 w-full text-left cursor-pointer">
+            <button onClick={() => setActiveTab('pengaturan')} className={`flex items-center gap-4 px-4 py-3 rounded-lg font-heading font-bold text-sm transition-colors duration-200 cursor-pointer w-full text-left ${activeTab === 'pengaturan' ? 'text-cyber-lime border-l-4 border-cyber-lime bg-white/10' : 'text-surface-variant/70 hover:bg-white/5 hover:text-surface-variant'}`}>
               <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 24 24" fill="currentColor"><path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58a.49.49 0 00.12-.61l-1.92-3.32a.488.488 0 00-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.07.62-.07.94s.02.64.07.94l-2.03 1.58a.49.49 0 00-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/></svg>
               Pengaturan Admin
             </button>
@@ -387,7 +320,10 @@ export default function AdminPortal() {
       <main className="flex-1 p-4 md:p-8 pb-32 md:pb-8">
         <div className="max-w-6xl mx-auto w-full">
         
-        {/* Header Section */}
+        
+        {activeTab === 'dashboard' && (
+          <>
+{/* Header Section */}
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-6 pt-4 md:pt-0">
           <div>
             <h1 className="font-heading text-3xl md:text-4xl font-bold text-deep-obsidian mb-2">
@@ -398,7 +334,7 @@ export default function AdminPortal() {
             </p>
           </div>
           <button 
-            onClick={() => setIsCreateTeacherOpen(true)}
+            onClick={() => setActiveTab('tambah-guru')}
             className="bg-electric-blue text-on-primary font-heading font-bold px-6 py-3 rounded-full flex items-center gap-2 hover:scale-105 hover:shadow-[0_0_20px_rgba(0,82,255,0.4)] transition-all duration-300 border-2 border-deep-obsidian cursor-pointer"
           >
             <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 24 24" fill="currentColor"><path d="M15 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm-9-2V7H4v3H1v2h3v3h2v-3h3v-2H6zm9 4c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
@@ -578,20 +514,79 @@ export default function AdminPortal() {
             </div>
           )}
         </div>
+      </>
+        )}
+
+        
+        {activeTab === 'tambah-guru' && (
+          <div className="max-w-2xl mx-auto">
+            <h2 className="font-heading text-3xl font-bold text-deep-obsidian mb-6">Tambah Guru Baru</h2>
+            <div className="bg-surface-container-lowest border-2 border-deep-obsidian rounded-xl p-8">
+              <form onSubmit={handleCreateTeacher} className="space-y-5">
+                <div className="space-y-2">
+                  <label className="font-heading font-semibold text-sm text-on-surface-variant">Nama Lengkap</label>
+                  <input value={newTeacherName} onChange={(e) => setNewTeacherName(e.target.value)} className="w-full bg-surface-container-lowest border-2 border-deep-obsidian rounded-xl px-4 py-3 font-heading text-on-surface focus:outline-none focus:border-electric-blue focus:ring-4 focus:ring-primary-fixed transition-all" required />
+                </div>
+                <div className="space-y-2">
+                  <label className="font-heading font-semibold text-sm text-on-surface-variant">Email (Sebagai Username)</label>
+                  <input type="email" value={newTeacherEmail} onChange={(e) => setNewTeacherEmail(e.target.value)} className="w-full bg-surface-container-lowest border-2 border-deep-obsidian rounded-xl px-4 py-3 font-heading text-on-surface focus:outline-none focus:border-electric-blue focus:ring-4 focus:ring-primary-fixed transition-all" required />
+                </div>
+                <div className="space-y-2">
+                  <label className="font-heading font-semibold text-sm text-on-surface-variant">Kata Sandi Default</label>
+                  <input type="password" value={newTeacherPassword} onChange={(e) => setNewTeacherPassword(e.target.value)} minLength={8} className="w-full bg-surface-container-lowest border-2 border-deep-obsidian rounded-xl px-4 py-3 font-heading text-on-surface focus:outline-none focus:border-electric-blue focus:ring-4 focus:ring-primary-fixed transition-all" required />
+                  <p className="text-xs text-on-surface-variant/70 font-sans">Minimal 8 karakter.</p>
+                </div>
+                
+                {createMessage && (
+                  <div className={`p-3 rounded-lg border-2 font-heading font-bold text-sm ${createMessage.includes('✅') ? 'bg-[#E8F5E9] border-[#4CAF50] text-[#2E7D32]' : 'bg-error-container border-error text-error'}`}>
+                    {createMessage}
+                  </div>
+                )}
+
+                <div className="flex gap-3 pt-2">
+                  <button type="button" onClick={() => setActiveTab('dashboard')} className="flex-1 py-3 rounded-xl border-2 border-deep-obsidian font-heading font-bold text-deep-obsidian hover:bg-surface-container-highest transition-colors">Batal</button>
+                  <button type="submit" disabled={isCreatingTeacher} className="flex-1 py-3 rounded-xl bg-electric-blue text-on-primary font-heading font-bold border-2 border-deep-obsidian hover:shadow-[0_0_15px_rgba(0,82,255,0.3)] transition-all">
+                    {isCreatingTeacher ? <Loader2 className="w-5 h-5 animate-spin mx-auto" /> : 'Buat Akun'}
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        )}
+
+        {activeTab === 'pengaturan' && (
+          <div className="max-w-2xl mx-auto">
+            <h2 className="font-heading text-3xl font-bold text-deep-obsidian mb-6">Pengaturan Profil</h2>
+            <div className="bg-surface-container-lowest border-2 border-deep-obsidian rounded-xl p-8">
+              <form onSubmit={handleUpdateProfile} className="space-y-5">
+                <div className="space-y-2">
+                  <label className="font-heading font-semibold text-sm text-on-surface-variant">Nama Lengkap</label>
+                  <input value={newName} onChange={(e) => setNewName(e.target.value)} className="w-full bg-surface-container-lowest border-2 border-deep-obsidian rounded-xl px-4 py-3 font-heading text-on-surface focus:outline-none focus:border-electric-blue focus:ring-4 focus:ring-primary-fixed transition-all" required />
+                </div>
+                <div className="flex gap-3 pt-2">
+                  <button type="button" onClick={() => setActiveTab('dashboard')} className="flex-1 py-3 rounded-xl border-2 border-deep-obsidian font-heading font-bold text-deep-obsidian hover:bg-surface-container-highest transition-colors">Batal</button>
+                  <button type="submit" disabled={isProfileUpdating} className="flex-1 py-3 rounded-xl bg-electric-blue text-on-primary font-heading font-bold border-2 border-deep-obsidian hover:shadow-[0_0_15px_rgba(0,82,255,0.3)] transition-all">
+                    {isProfileUpdating ? <Loader2 className="w-5 h-5 animate-spin mx-auto" /> : 'Simpan'}
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        )}
         </div>
       </main>
 
       {/* BottomNavBar (Mobile Only) */}
       <nav className="md:hidden fixed bottom-0 w-full bg-surface/90 backdrop-blur-md border-t-2 border-deep-obsidian z-50 px-6 py-4 flex justify-between items-center">
-        <Link href="/admin" className="flex flex-col items-center gap-1 text-electric-blue">
+        <button onClick={() => setActiveTab('dashboard')} className={`flex flex-col items-center gap-1 ${activeTab === 'dashboard' ? 'text-electric-blue' : 'text-on-surface-variant hover:text-electric-blue'}`}>
           <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 24 24" fill="currentColor"><path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z"/></svg>
           <span className="font-heading font-bold text-[10px]">Dashboard</span>
-        </Link>
-        <button onClick={() => setIsCreateTeacherOpen(true)} className="flex flex-col items-center gap-1 text-on-surface-variant hover:text-electric-blue">
+        </button>
+        <button onClick={() => setActiveTab('tambah-guru')} className="flex flex-col items-center gap-1 text-on-surface-variant hover:text-electric-blue">
           <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 24 24" fill="currentColor"><path d="M15 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm-9-2V7H4v3H1v2h3v3h2v-3h3v-2H6zm9 4c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
           <span className="font-heading font-bold text-[10px]">Tambah</span>
         </button>
-        <button onClick={() => setIsEditProfileOpen(true)} className="flex flex-col items-center gap-1 text-on-surface-variant hover:text-electric-blue">
+        <button onClick={() => setActiveTab('pengaturan')} className={`flex flex-col items-center gap-1 ${activeTab === 'pengaturan' ? 'text-electric-blue' : 'text-on-surface-variant hover:text-electric-blue'}`}>
           <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 24 24" fill="currentColor"><path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58a.49.49 0 00.12-.61l-1.92-3.32a.488.488 0 00-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.07.62-.07.94s.02.64.07.94l-2.03 1.58a.49.49 0 00-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/></svg>
           <span className="font-heading font-bold text-[10px]">Profil</span>
         </button>
