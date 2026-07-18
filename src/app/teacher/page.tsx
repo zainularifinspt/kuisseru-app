@@ -313,7 +313,7 @@ export default function TeacherPortal() {
       )}
 
       {/* SideNavBar */}
-      <nav className={`${isMobileSidebarOpen ? 'translate-x-0' : '-translate-x-full'} md:translate-x-0 fixed left-0 top-0 h-screen w-64 bg-deep-obsidian border-r-2 border-deep-obsidian py-8 px-4 z-[56] transition-transform duration-300`}>
+      <nav className={`${isMobileSidebarOpen ? 'translate-x-0' : '-translate-x-full'} md:translate-x-0 fixed left-0 top-0 h-screen w-64 bg-deep-obsidian border-r-2 border-deep-obsidian py-8 px-4 z-[56] transition-transform duration-300 flex flex-col`}>
         <div className="mb-12 flex items-center gap-3">
           <img src="/logo.png" alt="AsthaQuizz Logo" className="w-10 h-10 object-contain drop-shadow-md" />
           <div>
