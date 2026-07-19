@@ -1,7 +1,7 @@
 'use server';
 
 import { db } from "@/db";
-import { user, quizSessions } from "@/db/schema";
+import { user, quizSessions, account, session } from "@/db/schema";
 import { eq, desc } from "drizzle-orm";
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
@@ -62,9 +62,11 @@ export async function deleteTeacher(userId: string) {
       .set({ teacherId: null })
       .where(eq(quizSessions.teacherId, userId));
       
-    // Delete the user (this will cascade delete sessions and accounts if we configured it, 
-    // but better-auth adapter doesn't automatically cascade unless set in DB schema).
-    // Let's just delete from user table.
+    // First, delete related Better Auth records (accounts and sessions) to avoid foreign key constraints
+    await db.delete(account).where(eq(account.userId, userId));
+    await db.delete(session).where(eq(session.userId, userId));
+
+    // Then delete the user
     await db.delete(user).where(eq(user.id, userId));
     
     return { success: true };
