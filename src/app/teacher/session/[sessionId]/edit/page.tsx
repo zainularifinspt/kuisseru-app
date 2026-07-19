@@ -9,9 +9,11 @@ import Latex from 'react-latex-next';
 import { Loader2 } from 'lucide-react';
 import Link from 'next/link';
 import { signOut, useSession } from '@/lib/auth-client';
+import { usePopup } from '@/components/ui/PopupProvider';
 
 export default function EditQuizSession({ params }: { params: Promise<{ sessionId: string }> }) {
   const router = useRouter();
+  const { showConfirm, showAlert } = usePopup();
   const { sessionId } = use(params);
   
   const [questions, setQuestions] = useState<any[]>([]);
@@ -80,7 +82,7 @@ export default function EditQuizSession({ params }: { params: Promise<{ sessionI
       setIsSettingsSaved(true);
       setTimeout(() => setIsSettingsSaved(false), 2000);
     } else {
-      alert("Gagal menyimpan pengaturan kuis");
+      showAlert("Gagal", "Gagal menyimpan pengaturan kuis", "error");
     }
     setIsSavingSettings(false);
   };
@@ -115,14 +117,15 @@ export default function EditQuizSession({ params }: { params: Promise<{ sessionI
       resetForm();
       await fetchQuestions();
     } else {
-      alert(res.error);
+      showAlert("Gagal", res.error || 'Terjadi kesalahan', "error");
     }
     setIsSubmitting(false);
   };
 
   const handleDeleteQuestion = async () => {
     if (!editingQuestionId) return;
-    if (!confirm("Apakah Anda yakin ingin menghapus soal ini?")) return;
+    const isConfirmed = await showConfirm("Hapus Soal?", "Apakah Anda yakin ingin menghapus soal ini?");
+    if (!isConfirmed) return;
     
     setIsSubmitting(true);
     const res = await deleteQuestion(editingQuestionId);
@@ -130,7 +133,7 @@ export default function EditQuizSession({ params }: { params: Promise<{ sessionI
       resetForm();
       await fetchQuestions();
     } else {
-      alert(res.error);
+      showAlert("Gagal", res.error || 'Terjadi kesalahan', "error");
     }
     setIsSubmitting(false);
   };
@@ -184,7 +187,7 @@ export default function EditQuizSession({ params }: { params: Promise<{ sessionI
 
   const handlePublish = async () => {
     if (questions.length === 0) {
-      alert("Tambahkan setidaknya satu soal sebelum meluncurkan sesi.");
+      showAlert("Peringatan", "Tambahkan setidaknya satu soal sebelum meluncurkan sesi.", "error");
       return;
     }
     
@@ -193,7 +196,7 @@ export default function EditQuizSession({ params }: { params: Promise<{ sessionI
     if (res.success) {
       router.push(`/teacher/session/${sessionId}/dashboard`);
     } else {
-      alert("Gagal meluncurkan kuis.");
+      showAlert("Gagal", "Gagal meluncurkan kuis.", "error");
     }
     setIsSubmitting(false);
   };

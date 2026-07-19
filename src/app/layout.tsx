@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Inter, Space_Grotesk } from "next/font/google";
 import "./globals.css";
+import { PopupProvider } from "@/components/ui/PopupProvider";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -31,7 +32,9 @@ export default function RootLayout({
       className={`${inter.variable} ${spaceGrotesk.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col transition-colors duration-300">
-        {children}
+        <PopupProvider>
+          {children}
+        </PopupProvider>
       </body>
     </html>
   );

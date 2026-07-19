@@ -5,9 +5,11 @@ import { useRouter } from 'next/navigation';
 import { createNewSession } from '@/app/actions/session';
 import { signOut } from '@/lib/auth-client';
 import { Loader2 } from 'lucide-react';
+import { usePopup } from '@/components/ui/PopupProvider';
 
 export function TeacherSidebar({ user }: { user: any }) {
   const router = useRouter();
+  const { showAlert } = usePopup();
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -17,7 +19,7 @@ export function TeacherSidebar({ user }: { user: any }) {
     if (result.success) {
       router.push(`/teacher/session/${result.sessionId}/edit`);
     } else {
-      alert("Gagal membuat sesi");
+      showAlert("Gagal", "Gagal membuat sesi", "error");
       setIsLoading(false);
     }
   };

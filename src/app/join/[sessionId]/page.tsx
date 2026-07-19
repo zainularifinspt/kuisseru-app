@@ -3,10 +3,12 @@
 import { useState, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { Loader2 } from "lucide-react";
+import { usePopup } from "@/components/ui/PopupProvider";
 
 export default function JoinSessionPage() {
   const params = useParams();
   const router = useRouter();
+  const { showAlert } = usePopup();
   
   const sessionId = params.sessionId as string;
   const [nickname, setNickname] = useState("");
@@ -50,7 +52,7 @@ export default function JoinSessionPage() {
   const handleJoin = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!nickname.trim()) {
-      alert("Silakan masukkan namamu terlebih dahulu!");
+      showAlert("Peringatan", "Silakan masukkan namamu terlebih dahulu!", "error");
       return;
     }
 
@@ -80,7 +82,7 @@ export default function JoinSessionPage() {
       }
       
     } catch (error: any) {
-      alert(error.message || "Terjadi kesalahan saat bergabung ke kuis");
+      showAlert("Gagal", error.message || "Terjadi kesalahan saat bergabung ke kuis", "error");
       setIsJoining(false);
     }
   };

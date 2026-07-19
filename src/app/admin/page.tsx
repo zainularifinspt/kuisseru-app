@@ -8,9 +8,11 @@ import { getAllSessions, getTeachers, deleteTeacher } from '@/app/actions/admin'
 import { updateProfile } from '@/app/actions/user';
 import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
+import { usePopup } from '@/components/ui/PopupProvider';
 
 export default function AdminPortal() {
   const router = useRouter();
+  const { showConfirm, showAlert } = usePopup();
   const { data: sessionData, isPending } = useSession();
   
   const isLoggedIn = !!sessionData?.user;
@@ -85,12 +87,16 @@ export default function AdminPortal() {
   };
 
   const handleDeleteTeacher = async (id: string, name: string) => {
-    if (confirm(`Apakah Anda yakin ingin menghapus guru ${name}?\n\nKuis yang dibuat oleh guru ini tidak akan dihapus.`)) {
+    const isConfirmed = await showConfirm(
+      "Hapus Guru?",
+      `Apakah Anda yakin ingin menghapus guru ${name}?\n\nKuis yang dibuat oleh guru ini tidak akan dihapus.`
+    );
+    if (isConfirmed) {
       const res = await deleteTeacher(id);
       if (res.success) {
         fetchAdminData();
       } else {
-        alert("Gagal menghapus guru: " + res.error);
+        showAlert("Gagal", "Gagal menghapus guru: " + res.error, "error");
       }
     }
   };
@@ -100,11 +106,11 @@ export default function AdminPortal() {
     setIsProfileUpdating(true);
     const res = await updateProfile(newName);
     if (res.success) {
-      alert("Profil berhasil diperbarui!");
+      showAlert("Berhasil", "Profil berhasil diperbarui!", "success");
       setActiveTab('dashboard');
       window.location.reload();
     } else {
-      alert("Gagal memperbarui profil: " + res.error);
+      showAlert("Gagal", "Gagal memperbarui profil: " + res.error, "error");
     }
     setIsProfileUpdating(false);
   };

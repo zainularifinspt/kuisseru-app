@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { Loader2 } from "lucide-react";
 import { getPusherClient } from "@/lib/pusherClient";
+import { usePopup } from "@/components/ui/PopupProvider";
 
 type Player = {
   id: string;
@@ -26,6 +27,7 @@ function getPlayerAvatar(id: string, idx: number) {
 export default function TeacherDashboard() {
   const params = useParams();
   const router = useRouter();
+  const { showConfirm, showAlert } = usePopup();
   const sessionId = params.sessionId as string;
 
   const [players, setPlayers] = useState<Player[]>([]);
@@ -40,7 +42,7 @@ export default function TeacherDashboard() {
       try {
         const res = await fetch(`/api/quiz-sessions/${sessionId}`);
         if (!res.ok) {
-          alert("Sesi tidak ditemukan");
+          showAlert("Error", "Sesi tidak ditemukan", "error");
           router.push("/teacher");
           return;
         }
@@ -96,7 +98,7 @@ export default function TeacherDashboard() {
 
   const handleStartQuiz = async () => {
     if (players.length === 0) {
-      alert("Belum ada peserta yang bergabung!");
+      showAlert("Peringatan", "Belum ada peserta yang bergabung!", "error");
       return;
     }
     
@@ -107,7 +109,7 @@ export default function TeacherDashboard() {
       if (res.ok) {
         setQuizStatus('berjalan');
       } else {
-        alert("Gagal memulai kuis");
+        showAlert("Gagal", "Gagal memulai kuis", "error");
       }
     } catch (e) {
       console.error(e);
@@ -115,7 +117,8 @@ export default function TeacherDashboard() {
   };
   
   const handleEndQuiz = async () => {
-    if (window.confirm('Yakin ingin mengakhiri kuis ini sekarang?')) {
+    const isConfirmed = await showConfirm("Akhiri Kuis?", "Yakin ingin mengakhiri kuis ini sekarang?");
+    if (isConfirmed) {
       try {
         const res = await fetch(`/api/quiz-sessions/${sessionId}/end`, {
           method: 'POST',
@@ -123,7 +126,7 @@ export default function TeacherDashboard() {
         if (res.ok) {
           setQuizStatus('selesai');
         } else {
-          alert("Gagal mengakhiri kuis");
+          showAlert("Gagal", "Gagal mengakhiri kuis", "error");
         }
       } catch (e) {
         console.error(e);

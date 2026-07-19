@@ -8,9 +8,11 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { signIn, signUp, signOut, useSession } from '@/lib/auth-client';
 import { updateProfile } from '@/app/actions/user';
 import Link from 'next/link';
+import { usePopup } from '@/components/ui/PopupProvider';
 
 export default function TeacherPortal() {
   const router = useRouter();
+  const { showConfirm, showAlert } = usePopup();
   const { data: sessionData, isPending } = useSession();
   const isLoggedIn = !!sessionData?.user;
   const user = sessionData?.user;
@@ -100,18 +102,19 @@ export default function TeacherPortal() {
     if (result.success) {
       router.push(`/teacher/session/${result.sessionId}/edit`);
     } else {
-      alert("Gagal membuat sesi");
+      showAlert("Gagal", "Gagal membuat sesi", "error");
       setIsLoading(false);
     }
   };
 
   const handleDeleteSession = async (sessionId: string) => {
-    if (confirm("Apakah Anda yakin ingin menghapus sesi kuis ini?")) {
+    const isConfirmed = await showConfirm("Hapus Sesi?", "Apakah Anda yakin ingin menghapus sesi kuis ini?");
+    if (isConfirmed) {
       const result = await deleteSession(sessionId);
       if (result.success) {
         if (user?.id) fetchDashboardData(user.id);
       } else {
-        alert("Gagal menghapus sesi: " + (result.error || "Unknown error"));
+        showAlert("Gagal", "Gagal menghapus sesi: " + (result.error || "Unknown error"), "error");
       }
     }
   };
@@ -121,11 +124,11 @@ export default function TeacherPortal() {
     setIsProfileUpdating(true);
     const res = await updateProfile(newName);
     if (res.success) {
-      alert("Profil berhasil diperbarui!");
+      showAlert("Berhasil", "Profil berhasil diperbarui!", "success");
       setActiveTab('dashboard');
       window.location.reload();
     } else {
-      alert("Gagal memperbarui profil: " + res.error);
+      showAlert("Gagal", "Gagal memperbarui profil: " + res.error, "error");
     }
     setIsProfileUpdating(false);
   };
