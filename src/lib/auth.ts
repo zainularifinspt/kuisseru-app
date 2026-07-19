@@ -59,7 +59,8 @@ export const auth = betterAuth({
     account: {
         accountLinking: {
             enabled: true,
-            trustedProviders: ["google"]
+            trustedProviders: ["google"],
+            requireLocalEmailVerified: false
         }
     },
     secret: process.env.BETTER_AUTH_SECRET || "fallback_secret_for_development_only_12345",
